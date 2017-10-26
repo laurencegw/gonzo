@@ -1,0 +1,13 @@
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.2.1'
+}
+
+project(':web-server') {
+
+
+}
+
+project(':web-client') {
+
+
+}
