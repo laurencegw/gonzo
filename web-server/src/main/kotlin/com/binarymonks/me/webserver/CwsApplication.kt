@@ -1,4 +1,4 @@
-package com.binarymonks..webserver
+package com.binarymonks.me.webserver
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication

@@ -23,7 +23,7 @@ export class StubBlogService implements BlogService {
           i,
           new Date(),
           new Date(),
-          "My Blog Entry ${i}",
+          "My Blog Entry "+i,
           "A bunch of text that gets shown as a blog entry" +
           "A bunch of text that gets shown as a blog entry" +
           "A bunch of text that gets shown as a blog entry" +
