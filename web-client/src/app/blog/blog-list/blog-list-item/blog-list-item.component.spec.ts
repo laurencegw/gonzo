@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BlogListItemComponent } from './blog-list-item.component';
+import {BlogEntryHeader} from "../../blog.models";
+import {blogEntryHeader} from "../../fixtures";
 
 describe('BlogListItemComponent', () => {
   let component: BlogListItemComponent;
@@ -16,6 +18,7 @@ describe('BlogListItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BlogListItemComponent);
     component = fixture.componentInstance;
+    component.blogEntryHeader = blogEntryHeader();
     fixture.detectChanges();
   });
 

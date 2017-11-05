@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {BlogEntry} from "../blog.models";
 
 @Component({
   selector: 'app-blog-entry-view',
@@ -7,7 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BlogEntryViewComponent implements OnInit {
 
-  constructor() { }
+  @Input() blogEntry: BlogEntry;
+
+  constructor() {
+  }
 
   ngOnInit() {
   }

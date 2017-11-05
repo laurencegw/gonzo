@@ -13,8 +13,7 @@ export interface BlogService {
 
 export class StubBlogService implements BlogService {
 
-
-  private blogEntries: BlogEntry[] = []
+  private blogEntries: BlogEntry[] = [];
 
   constructor() {
     for (let i = 0; i < 100; i++) {
