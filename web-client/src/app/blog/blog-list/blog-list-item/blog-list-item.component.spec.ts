@@ -1,8 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {RouterTestingModule} from '@angular/router/testing';
 
-import { BlogListItemComponent } from './blog-list-item.component';
-import {BlogEntryHeader} from "../../blog.models";
+import {BlogListItemComponent} from './blog-list-item.component';
 import {blogEntryHeader} from "../../fixtures";
+import {Component} from "@angular/core";
+
+@Component({
+  template: ''
+})
+class DummyComponent {
+}
 
 describe('BlogListItemComponent', () => {
   let component: BlogListItemComponent;
@@ -10,9 +17,14 @@ describe('BlogListItemComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BlogListItemComponent ]
+      declarations: [BlogListItemComponent, DummyComponent],
+      imports: [
+        RouterTestingModule.withRoutes([
+          {path: ":id", component: DummyComponent}
+        ])
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

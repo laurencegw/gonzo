@@ -14,6 +14,9 @@ import {StubBlogService} from "./blog/blog.service";
 import {BlogListComponent} from './blog/blog-list/blog-list.component';
 import { BlogListItemComponent } from './blog/blog-list/blog-list-item/blog-list-item.component';
 import { BlogEntryViewComponent } from './blog/blog-entry-view/blog-entry-view.component';
+import {BlogEntryBlankComponent} from "./blog/blog-entry-view/blog-entry-blank.component";
+import {BlogEntryResolverComponent} from "./blog/blog-entry-view/blog-entry-resolver.component";
+import {BlogEntryResolver} from "./blog/resolvers";
 
 @NgModule({
   declarations: [
@@ -26,6 +29,8 @@ import { BlogEntryViewComponent } from './blog/blog-entry-view/blog-entry-view.c
     BlogListComponent,
     BlogListItemComponent,
     BlogEntryViewComponent,
+    BlogEntryBlankComponent,
+    BlogEntryResolverComponent
   ],
   imports: [
     AppRoutingModule,
@@ -34,9 +39,11 @@ import { BlogEntryViewComponent } from './blog/blog-entry-view/blog-entry-view.c
     HttpModule,
   ],
   providers: [
-    {provide: "BlogService", useClass: StubBlogService}
+    {provide: "BlogService", useClass: StubBlogService},
+    BlogEntryResolver
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
+
 }
