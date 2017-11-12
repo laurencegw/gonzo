@@ -11,6 +11,7 @@ describe('BlogEntryViewComponent', () => {
     1,
     new Date(),
     new Date(),
+    new Date(),
     "My Blog Entry",
     "The contents of my blog entry"
   );

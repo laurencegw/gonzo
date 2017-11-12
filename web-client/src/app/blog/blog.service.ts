@@ -26,19 +26,16 @@ export class StubBlogService implements BlogService {
           this.idCounter,
           new Date(),
           new Date(),
+          new Date(),
           "My Blog Entry " + this.idCounter,
-          "A bunch of text that gets shown as a blog entry" +
-          "A bunch of text that gets shown as a blog entry" +
-          "A bunch of text that gets shown as a blog entry" +
-          "A bunch of text that gets shown as a blog entry" +
-          "A bunch of text that gets shown as a blog entry" +
-          "A bunch of text that gets shown as a blog entry" +
-          "A bunch of text that gets shown as a blog entry" +
-          "A bunch of text that gets shown as a blog entry" +
-          "A bunch of text that gets shown as a blog entry" +
-          "A bunch of text that gets shown as a blog entry" +
-          "A bunch of text that gets shown as a blog entry" +
-          "A bunch of text that gets shown as a blog entry"
+          "A bunch of text that gets shown as a blog entry. " +
+          "A bunch of text that gets shown as a blog entry. " +
+          "A bunch of text that gets shown as a blog entry. " +
+          "A bunch of text that gets shown as a blog entry. " +
+          "A bunch of text that gets shown as a blog entry. " +
+          "A bunch of text that gets shown as a blog entry. " +
+          "A bunch of text that gets shown as a blog entry. " +
+          "A bunch of text that gets shown as a blog entry. "
         )
       )
     }
