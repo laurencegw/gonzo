@@ -17,6 +17,8 @@ import { BlogEntryViewComponent } from './blog/blog-entry-view/blog-entry-view.c
 import {BlogEntryBlankComponent} from "./blog/blog-entry-view/blog-entry-blank.component";
 import {BlogEntryResolverComponent} from "./blog/blog-entry-view/blog-entry-resolver.component";
 import {BlogEntryResolver} from "./blog/resolvers";
+import { BlogEntryEditComponent } from './blog/blog-entry-edit/blog-entry-edit.component';
+import { BlogEntryNewComponent } from './blog/blog-entry-new/blog-entry-new.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import {BlogEntryResolver} from "./blog/resolvers";
     BlogListItemComponent,
     BlogEntryViewComponent,
     BlogEntryBlankComponent,
-    BlogEntryResolverComponent
+    BlogEntryResolverComponent,
+    BlogEntryEditComponent,
+    BlogEntryNewComponent
   ],
   imports: [
     AppRoutingModule,

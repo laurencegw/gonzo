@@ -8,9 +8,10 @@ import {BlogEntry} from "../blog.models";
 })
 export class BlogEntryViewComponent implements OnInit {
 
-  @Input() blogEntry: BlogEntry;
+  @Input() blogEntry: BlogEntry = new BlogEntry();
 
   constructor() {
+
   }
 
   ngOnInit() {

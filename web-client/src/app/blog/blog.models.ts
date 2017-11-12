@@ -5,8 +5,7 @@ export class BlogEntry {
   title: String;
   content: String;
 
-
-  constructor(id: number, created: Date, updated: Date, title: String, content: String) {
+  constructor(id?: number, created?: Date, updated?: Date, title?: String, content?: String) {
     this.id = id;
     this.created = created;
     this.updated = updated;
@@ -24,6 +23,17 @@ export class BlogEntry {
   }
 
 }
+
+export function copyBlogEntry(blogEntry: BlogEntry): BlogEntry {
+  return new BlogEntry(
+    blogEntry.id,
+    blogEntry.created,
+    blogEntry.updated,
+    blogEntry.title,
+    blogEntry.content
+  )
+}
+
 
 /**
  * A snapshot summary of a BlogEntry
