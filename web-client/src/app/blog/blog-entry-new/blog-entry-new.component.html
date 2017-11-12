@@ -1,3 +1,17 @@
-<p>
-  blog-entry-new works!
-</p>
+<div class="row">
+  <div class="col-xs-12 col-sm-10 col-md-8">
+    <form [formGroup]="newBlogEntryFormGroup" (ngSubmit)="onSubmit()">
+      <button class="btn btn-primary" type="submit">Create</button>
+      <hr>
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" id="title" class="form-control" formControlName="title">
+      </div>
+      <div class="form-group">
+        <label for="content">Content</label>
+        <textarea rows="20" type="text" id="content" class="form-control" formControlName="content">
+        </textarea>
+      </div>
+    </form>
+  </div>
+</div>

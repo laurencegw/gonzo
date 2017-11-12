@@ -4,6 +4,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {BlogComponent} from './blog.component';
 import {BlogListComponent} from "./blog-list/blog-list.component";
 import {StubBlogService} from "./blog.service";
+import {RouterTestingModule} from "@angular/router/testing";
 
 @Component({
   selector: 'app-blog-list',
@@ -12,13 +13,25 @@ import {StubBlogService} from "./blog.service";
 class MockBlogListComponent {
 }
 
+@Component({
+  template: ''
+})
+class MockNewEntryComponent {
+}
+
+
 describe('BlogComponent', () => {
   let component: BlogComponent;
   let fixture: ComponentFixture<BlogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [BlogComponent],
+      declarations: [BlogComponent, MockNewEntryComponent],
+      imports: [
+        RouterTestingModule.withRoutes([
+          {path: "new", component: MockNewEntryComponent}
+        ])
+      ],
       providers: [
         {
           provide: BlogListComponent,

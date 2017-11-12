@@ -3,7 +3,7 @@ import {NgModule} from '@angular/core';
 
 import {AppComponent} from './app.component';
 import {WipComponent} from './header/wip/wip.component';
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {TitleComponent} from './header/title/title.component';
 import {TabsComponent} from './header/tabs/tabs.component';
@@ -40,6 +40,7 @@ import { BlogEntryNewComponent } from './blog/blog-entry-new/blog-entry-new.comp
     AppRoutingModule,
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
   ],
   providers: [

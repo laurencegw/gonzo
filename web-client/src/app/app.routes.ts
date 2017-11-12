@@ -5,6 +5,7 @@ import {BlogComponent} from "./blog/blog.component";
 import {BlogEntryBlankComponent} from "./blog/blog-entry-view/blog-entry-blank.component";
 import {BlogEntryResolverComponent} from "./blog/blog-entry-view/blog-entry-resolver.component";
 import {BlogEntryResolver} from "./blog/resolvers";
+import {BlogEntryNewComponent} from "./blog/blog-entry-new/blog-entry-new.component";
 
 
 const appRoutes: Routes = [
@@ -13,6 +14,7 @@ const appRoutes: Routes = [
   {path: "blog", component: BlogComponent,
   children:[
     {path:"", pathMatch:'full', component: BlogEntryBlankComponent},
+    {path:"new", component: BlogEntryNewComponent},
     {path:":id", resolve: {blogEntry: BlogEntryResolver }, component: BlogEntryResolverComponent},
   ]
   },
