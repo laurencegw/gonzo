@@ -1,14 +1,28 @@
+export class NewBlogEntry {
+  title: String;
+  content: String;
+  publish: boolean;
+
+
+  constructor(title: String, content: String, publish: boolean) {
+    this.title = title;
+    this.content = content;
+    this.publish = publish;
+  }
+}
+
+
 export class BlogEntry {
   id: number;
-  published: Date;
+  firstPublished: Date;
   created: Date;
   updated: Date;
   title: String;
   content: String;
 
-  constructor(id?: number, published?: Date, created?: Date, updated?: Date, title?: String, content?: String) {
+  constructor(id?: number, firstPublished?: Date, created?: Date, updated?: Date, title?: String, content?: String) {
     this.id = id;
-    this.published = published;
+    this.firstPublished = firstPublished;
     this.created = created;
     this.updated = updated;
     this.title = title;
@@ -18,7 +32,7 @@ export class BlogEntry {
   toHeader(): BlogEntryHeader {
     return new BlogEntryHeader(
       this.id,
-      this.published,
+      this.firstPublished,
       this.created,
       this.updated,
       this.title
@@ -30,7 +44,7 @@ export class BlogEntry {
 export function copyBlogEntry(blogEntry: BlogEntry): BlogEntry {
   return new BlogEntry(
     blogEntry.id,
-    blogEntry.published,
+    blogEntry.firstPublished,
     blogEntry.created,
     blogEntry.updated,
     blogEntry.title,
@@ -44,15 +58,15 @@ export function copyBlogEntry(blogEntry: BlogEntry): BlogEntry {
  */
 export class BlogEntryHeader {
   id: number;
-  published: Date;
+  firstPublished: Date;
   created: Date;
   updated: Date;
   title: String;
 
 
-  constructor(id: number, published?: Date, created?: Date, updated?: Date, title?: String) {
+  constructor(id: number, firstPublished?: Date, created?: Date, updated?: Date, title?: String) {
     this.id = id;
-    this.published = published;
+    this.firstPublished = firstPublished;
     this.created = created;
     this.updated = updated;
     this.title = title;

@@ -1,5 +1,5 @@
 import {Observable} from "rxjs/Observable";
-import {BlogEntry, BlogEntryHeader, copyBlogEntry} from "./blog.models";
+import {BlogEntry, BlogEntryHeader, copyBlogEntry, NewBlogEntry} from "./blog.models";
 import "rxjs/add/observable/of";
 
 export interface BlogService {
@@ -8,7 +8,7 @@ export interface BlogService {
 
   getBlogEntryById(id: number): Observable<BlogEntry>
 
-  createBlogEntry(newBlogEntry: BlogEntry): Observable<BlogEntry>
+  createBlogEntry(newBlogEntry: NewBlogEntry): Observable<BlogEntry>
 
 }
 
@@ -16,7 +16,7 @@ export interface BlogService {
 export class StubBlogService implements BlogService {
 
   private idCounter = 0;
-  private blogEntries: BlogEntry[] = [];
+  blogEntries: BlogEntry[] = [];
 
   constructor() {
     for (let i = 0; i < 3; i++) {
@@ -46,10 +46,16 @@ export class StubBlogService implements BlogService {
     return this.idCounter
   }
 
-  createBlogEntry(newBlogEntry: BlogEntry): Observable<BlogEntry> {
-    var created = copyBlogEntry(newBlogEntry)
-    created.id = this.nextID()
-    this.blogEntries.push(created)
+  createBlogEntry(newBlogEntry: NewBlogEntry): Observable<BlogEntry> {
+    let created = new BlogEntry(
+      this.nextID(),
+      newBlogEntry.publish ? new Date() : null,
+      new Date(),
+      new Date(),
+      newBlogEntry.title,
+      newBlogEntry.content
+    );
+    this.blogEntries.push(created);
     return Observable.of(copyBlogEntry(created))
   }
 

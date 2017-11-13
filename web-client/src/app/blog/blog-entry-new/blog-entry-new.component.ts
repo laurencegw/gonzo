@@ -1,5 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {BlogService} from "../blog.service";
+import {NewBlogEntry} from "../blog.models";
 
 @Component({
   selector: 'app-blog-entry-new',
@@ -10,7 +12,7 @@ export class BlogEntryNewComponent implements OnInit {
 
   newBlogEntryFormGroup: FormGroup;
 
-  constructor() {
+  constructor(@Inject('BlogService') private blogService: BlogService) {
   }
 
   ngOnInit() {
@@ -22,8 +24,12 @@ export class BlogEntryNewComponent implements OnInit {
     );
   }
 
-  onSubmit(){
-
+  onSubmit() {
+    this.blogService.createBlogEntry(new NewBlogEntry(
+      this.newBlogEntryFormGroup.get('title').value,
+      this.newBlogEntryFormGroup.get('content').value,
+      true
+    ))
   }
 
 }
