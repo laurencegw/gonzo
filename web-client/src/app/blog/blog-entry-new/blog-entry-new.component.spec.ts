@@ -4,21 +4,37 @@ import {BlogEntryNewComponent} from './blog-entry-new.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {StubBlogService} from "../blog.service";
 import {By} from "@angular/platform-browser";
+import {RouterTestingModule} from "@angular/router/testing";
+import {Component} from "@angular/core";
+import {Router} from "@angular/router";
+
+
+@Component({
+  template: ''
+})
+class StubComponent {
+}
+
 
 describe('BlogEntryNewComponent', () => {
   let component: BlogEntryNewComponent;
   let fixture: ComponentFixture<BlogEntryNewComponent>;
   let blogServiceStub: StubBlogService;
+  let router: Router;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [BlogEntryNewComponent],
+      declarations: [BlogEntryNewComponent, StubComponent],
       imports: [
         FormsModule,
         ReactiveFormsModule,
+        RouterTestingModule.withRoutes([
+          {path: "new", component: BlogEntryNewComponent},
+          {path: ":id", component: StubComponent},
+        ])
       ],
       providers: [
-        {provide: "BlogService", useClass: StubBlogService}
+        {provide: "BlogService", useClass: StubBlogService},
       ]
     })
       .compileComponents();
@@ -27,6 +43,8 @@ describe('BlogEntryNewComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BlogEntryNewComponent);
     blogServiceStub = TestBed.get("BlogService");
+    router = TestBed.get(Router);
+    router.navigate(["new"]);
     blogServiceStub.blogEntries = [];
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -44,7 +62,7 @@ describe('BlogEntryNewComponent', () => {
     titleElement.value = title;
     titleElement.dispatchEvent(new Event('input'));
     const contentElement = fixture.debugElement.query(By.css("#content")).nativeElement;
-    contentElement.value = title;
+    contentElement.value = content;
     contentElement.dispatchEvent(new Event('input'));
     fixture.detectChanges();
 

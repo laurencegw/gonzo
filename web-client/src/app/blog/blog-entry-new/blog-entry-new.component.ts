@@ -1,7 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {BlogService} from "../blog.service";
-import {NewBlogEntry} from "../blog.models";
+import {BlogEntry, NewBlogEntry} from "../blog.models";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-blog-entry-new',
@@ -12,7 +13,7 @@ export class BlogEntryNewComponent implements OnInit {
 
   newBlogEntryFormGroup: FormGroup;
 
-  constructor(@Inject('BlogService') private blogService: BlogService) {
+  constructor(@Inject('BlogService') private blogService: BlogService, private route: ActivatedRoute, private router: Router) {
   }
 
   ngOnInit() {
@@ -29,7 +30,12 @@ export class BlogEntryNewComponent implements OnInit {
       this.newBlogEntryFormGroup.get('title').value,
       this.newBlogEntryFormGroup.get('content').value,
       true
-    ))
+    )).subscribe(
+      (blogEntry: BlogEntry) => {
+        this.newBlogEntryFormGroup.reset();
+        this.router.navigate(['../' + blogEntry.id], {relativeTo: this.route})
+      }
+    );
   }
 
 }
