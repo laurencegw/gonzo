@@ -1,4 +1,4 @@
-package com.binarymonks..webserver
+package com.binarymonks.me.webserver
 
 import org.junit.Test
 import org.junit.runner.RunWith

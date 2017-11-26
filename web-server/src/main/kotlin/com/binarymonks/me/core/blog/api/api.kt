@@ -30,8 +30,15 @@ data class BlogEntry(
         val published: Boolean,
         val created: ZonedDateTime,
         val updated: ZonedDateTime,
-        val firstPublished: ZonedDateTime?
-)
+        val publishedOn: ZonedDateTime?
+) {
+    fun toUpdate(): UpdateBlogEntry = UpdateBlogEntry(
+            id = id,
+            title = title,
+            content = content,
+            published = published
+    )
+}
 
 data class BlogEntryHeader(
         val id: Long,
@@ -39,5 +46,5 @@ data class BlogEntryHeader(
         val published: Boolean,
         val created: ZonedDateTime,
         val updated: ZonedDateTime,
-        val firstPublished: ZonedDateTime?
+        val publishedOn: ZonedDateTime?
 )

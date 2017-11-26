@@ -1,6 +1,7 @@
 .gradle
 build
 web-server/build
+web-server/out
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###

@@ -1,35 +1,43 @@
 package com.binarymonks.me.core.blog.persistence
 
-import org.hibernate.annotations.UpdateTimestamp
-import org.springframework.data.annotation.CreatedDate
+import com.binarymonks.me.core.blog.api.BlogEntry
+import com.binarymonks.me.core.extensions.time.normalise
 import org.springframework.data.repository.CrudRepository
 import java.time.ZonedDateTime
 import javax.persistence.*
 
 @Entity
-data class BlogEntry(
+data class BlogEntryEntity(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         var id: Long? = null,
 
         @Column(nullable = false)
-        var title: String,
+        var title: String = "",
 
         @Lob
         @Column(nullable = false)
-        var content: String,
+        var content: String = "",
 
         @Column(nullable = false)
-        var published: Boolean,
+        var published: Boolean = false,
 
         @Column(nullable = true)
         var firstPublished: ZonedDateTime? = null,
 
-        @CreatedDate
-        var created: ZonedDateTime,
+        var created: ZonedDateTime? = null,
 
-        @UpdateTimestamp
-        var updated: ZonedDateTime
-)
+        var updated: ZonedDateTime? = null
+) {
+    fun toBlogEntry(): BlogEntry = BlogEntry(
+            id = id!!,
+            title = title,
+            content = content,
+            published = published,
+            publishedOn = firstPublished?.normalise(),
+            created = created!!.normalise(),
+            updated = updated!!.normalise()
+    )
+}
 
-interface BlogRepo : CrudRepository<BlogEntry, Long>
+interface BlogRepo : CrudRepository<BlogEntryEntity, Long>
