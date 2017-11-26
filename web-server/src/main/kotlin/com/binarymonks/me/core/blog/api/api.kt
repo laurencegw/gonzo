@@ -11,9 +11,9 @@ interface Blog {
 }
 
 data class NewBlogEntry(
-        var title: String,
-        var content: String = "",
-        var published: Boolean = true
+        val title: String,
+        val content: String = "",
+        val published: Boolean = true
 )
 
 data class UpdateBlogEntry(
@@ -37,6 +37,15 @@ data class BlogEntry(
             title = title,
             content = content,
             published = published
+    )
+
+    fun toHeader(): BlogEntryHeader = BlogEntryHeader(
+            id = id,
+            title = title,
+            published = published,
+            updated = updated,
+            created = created,
+            publishedOn = publishedOn
     )
 }
 

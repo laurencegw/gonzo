@@ -25,8 +25,10 @@ data class BlogEntryEntity(
         @Column(nullable = true)
         var firstPublished: ZonedDateTime? = null,
 
+        @Column(nullable = false)
         var created: ZonedDateTime? = null,
 
+        @Column(nullable = false)
         var updated: ZonedDateTime? = null
 ) {
     fun toBlogEntry(): BlogEntry = BlogEntry(

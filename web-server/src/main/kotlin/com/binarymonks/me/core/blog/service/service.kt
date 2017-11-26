@@ -18,17 +18,15 @@ class BlogService : Blog {
 
     var clock: Clock = java.time.Clock.systemUTC()
 
-    override fun createBlogEntry(newBlogEntry: NewBlogEntry): BlogEntry {
-        val saved = blogRepo.save(BlogEntryEntity(
-                title = newBlogEntry.title,
-                content = newBlogEntry.content,
-                published = newBlogEntry.published,
-                firstPublished = if (newBlogEntry.published) now() else null,
-                created = now(),
-                updated = now()
-        ))
-        return saved.toBlogEntry()
-    }
+    override fun createBlogEntry(newBlogEntry: NewBlogEntry): BlogEntry = blogRepo.save(BlogEntryEntity(
+            title = newBlogEntry.title,
+            content = newBlogEntry.content,
+            published = newBlogEntry.published,
+            firstPublished = if (newBlogEntry.published) now() else null,
+            created = now(),
+            updated = now()
+    )).toBlogEntry()
+
 
     override fun updateBlogEntry(update: UpdateBlogEntry): BlogEntry {
         val entity = blogRepo.findById(update.id).get()
@@ -43,15 +41,9 @@ class BlogService : Blog {
         return entity.toBlogEntry()
     }
 
-    override fun getBlogEntryHeaders(): List<BlogEntryHeader> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getBlogEntryHeaders(): List<BlogEntryHeader> = blogRepo.findAll().map { it.toBlogEntry().toHeader() }
 
-    override fun getBlogEntryById(id: Long): BlogEntry {
-        val option = blogRepo.findById(id)
-        val entity = option.get()
-        return entity.toBlogEntry()
-    }
+    override fun getBlogEntryById(id: Long): BlogEntry = blogRepo.findById(id).get().toBlogEntry()
 
     private fun now(): ZonedDateTime = Instant.ofEpochMilli(clock.instant().toEpochMilli()).atZone(ZoneOffset.UTC)
 }

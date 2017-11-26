@@ -2,6 +2,7 @@ package com.binarymonks.me.core.blog.service
 
 import com.binarymonks.me.TestConfig
 import com.binarymonks.me.core.blog.api.BlogEntry
+import com.binarymonks.me.core.blog.api.BlogEntryHeader
 import com.binarymonks.me.core.blog.api.NewBlogEntry
 import com.binarymonks.me.core.blog.api.UpdateBlogEntry
 import org.junit.Before
@@ -32,6 +33,7 @@ class BlogServiceTest {
     fun setUp() {
         mockClock = Mockito.mock(Clock::class.java)
         blogService.clock = mockClock
+        itIsNow()
     }
 
     @Test
@@ -187,6 +189,17 @@ class BlogServiceTest {
         })
     }
 
+    @Test
+    fun getBlogEntryHeaders() {
+        val created: List<BlogEntryHeader> = listOf(
+                blogService.createBlogEntry(NewBlogEntry("Entry1")).toHeader(),
+                blogService.createBlogEntry(NewBlogEntry("Entry2")).toHeader()
+        )
+        val actual = blogService.getBlogEntryHeaders()
+        for (header in created){
+            Assertions.assertTrue(actual.contains(header))
+        }
+    }
 
     /**
      * Helper for setting the mock time.
