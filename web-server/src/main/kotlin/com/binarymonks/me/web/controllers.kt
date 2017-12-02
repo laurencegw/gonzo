@@ -1,4 +1,4 @@
-package com.binarymonks.me.webserver
+package com.binarymonks.me.web
 
 import org.springframework.stereotype.Controller
 
