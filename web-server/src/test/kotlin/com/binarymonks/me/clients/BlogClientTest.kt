@@ -1,6 +1,7 @@
 package com.binarymonks.me.clients
 
 import com.binarymonks.me.blogEntry
+import com.binarymonks.me.blogEntryHeader
 import com.binarymonks.me.blogEntryNew
 import com.binarymonks.me.blogEntryUpdate
 import com.binarymonks.me.core.blog.service.BlogService
@@ -59,5 +60,30 @@ class BlogClientTest {
         Assert.assertEquals(expectedBlogEntry, actual)
     }
 
+    @Test
+    fun getBlogEntryHeaders(){
+        val expectedHeaders = listOf(
+                blogEntryHeader().copy(id=1),
+                blogEntryHeader().copy(id=2)
+        )
+
+        Mockito.`when`(blogServiceMock.getBlogEntryHeaders()).thenReturn(expectedHeaders)
+
+        val actual = blogClient.getBlogEntryHeaders()
+
+        Mockito.verify(blogServiceMock).getBlogEntryHeaders()
+        Assert.assertEquals(expectedHeaders, actual)
+    }
+
+    @Test
+    fun getBlogEntryById(){
+        val expected = blogEntry()
+        Mockito.`when`(blogServiceMock.getBlogEntryById(expected.id)).thenReturn(expected)
+
+        val actual = blogClient.getBlogEntryById(expected.id)
+
+        Mockito.verify(blogServiceMock).getBlogEntryById(expected.id)
+        Assert.assertEquals(expected, actual)
+    }
 
 }
