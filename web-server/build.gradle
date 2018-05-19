@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlinVersion = '1.1.60'
+        kotlinVersion = '1.2.40'
         springBootVersion = '2.0.0.M4'
         junitJupiterVersion = '5.0.2'
     }
@@ -34,6 +34,7 @@ repositories {
     mavenCentral()
     maven { url "https://repo.spring.io/snapshot" }
     maven { url "https://repo.spring.io/milestone" }
+    maven { url "http://jcenter.bintray.com" }
 }
 
 
@@ -41,12 +42,13 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter")
     compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
     compile("org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion")
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:${kotlinVersion}")
+    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
     compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+    compile("khttp:khttp:0.1.0")
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testCompile("com.h2database:h2:1.4.194")
 }
 
-build.dependsOn(':web-client:build')
+build.dependsOn(':web-clients:build')

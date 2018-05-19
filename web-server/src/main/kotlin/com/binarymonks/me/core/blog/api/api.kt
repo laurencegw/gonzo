@@ -1,38 +1,40 @@
 package com.binarymonks.me.core.blog.api
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import java.time.ZonedDateTime
 
 
 interface Blog {
-    fun createBlogEntry(newBlogEntry: NewBlogEntry): BlogEntry
-    fun updateBlogEntry(update: UpdateBlogEntry): BlogEntry
+    fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntry
+    fun updateBlogEntry(update: BlogEntryUpdate): BlogEntry
     fun getBlogEntryHeaders(): List<BlogEntryHeader>
     fun getBlogEntryById(id: Long): BlogEntry
 }
 
-data class NewBlogEntry(
-        val title: String,
-        val content: String = "",
-        val published: Boolean = true
-)
-
-data class UpdateBlogEntry(
-        val id: Long,
+data class BlogEntryNew @JsonCreator constructor(
         val title: String,
         val content: String,
         val published: Boolean
 )
 
-data class BlogEntry(
-        val id: Long,
+data class BlogEntryUpdate @JsonCreator constructor(
+        val id: Long = -1,
         val title: String,
         val content: String,
-        val published: Boolean,
-        val created: ZonedDateTime,
-        val updated: ZonedDateTime,
-        val publishedOn: ZonedDateTime?
+        val published: Boolean
+)
+
+data class BlogEntry @JsonCreator constructor(
+        var id: Long,
+        var title: String,
+        var content: String,
+        var published: Boolean,
+        var created: ZonedDateTime,
+        var updated: ZonedDateTime,
+        var publishedOn: ZonedDateTime?
 ) {
-    fun toUpdate(): UpdateBlogEntry = UpdateBlogEntry(
+
+    fun toUpdate(): BlogEntryUpdate = BlogEntryUpdate(
             id = id,
             title = title,
             content = content,
@@ -49,7 +51,7 @@ data class BlogEntry(
     )
 }
 
-data class BlogEntryHeader(
+data class BlogEntryHeader @JsonCreator constructor(
         val id: Long,
         val title: String,
         val published: Boolean,

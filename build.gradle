@@ -7,7 +7,7 @@ project(':web-server') {
 
 }
 
-project(':web-client') {
+project(':web-clients') {
 
 
 }

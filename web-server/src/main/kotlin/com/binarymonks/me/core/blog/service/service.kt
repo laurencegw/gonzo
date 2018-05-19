@@ -18,17 +18,17 @@ class BlogService : Blog {
 
     var clock: Clock = java.time.Clock.systemUTC()
 
-    override fun createBlogEntry(newBlogEntry: NewBlogEntry): BlogEntry = blogRepo.save(BlogEntryEntity(
-            title = newBlogEntry.title,
-            content = newBlogEntry.content,
-            published = newBlogEntry.published,
-            firstPublished = if (newBlogEntry.published) now() else null,
+    override fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntry = blogRepo.save(BlogEntryEntity(
+            title = blogEntryNew.title,
+            content = blogEntryNew.content,
+            published = blogEntryNew.published,
+            firstPublished = if (blogEntryNew.published) now() else null,
             created = now(),
             updated = now()
     )).toBlogEntry()
 
 
-    override fun updateBlogEntry(update: UpdateBlogEntry): BlogEntry {
+    override fun updateBlogEntry(update: BlogEntryUpdate): BlogEntry {
         val entity = blogRepo.findById(update.id).get()
         entity.title = update.title
         entity.content = update.content

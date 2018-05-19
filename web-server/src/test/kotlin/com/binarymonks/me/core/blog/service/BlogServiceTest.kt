@@ -1,10 +1,11 @@
 package com.binarymonks.me.core.blog.service
 
 import com.binarymonks.me.TestConfig
+import com.binarymonks.me.blogEntryNew
 import com.binarymonks.me.core.blog.api.BlogEntry
 import com.binarymonks.me.core.blog.api.BlogEntryHeader
-import com.binarymonks.me.core.blog.api.NewBlogEntry
-import com.binarymonks.me.core.blog.api.UpdateBlogEntry
+import com.binarymonks.me.core.blog.api.BlogEntryNew
+import com.binarymonks.me.core.blog.api.BlogEntryUpdate
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
@@ -40,7 +41,7 @@ class BlogServiceTest {
     fun createAndGetBlogEntry_Published() {
         val now = itIsNow()
 
-        val newBlogEntry = NewBlogEntry(
+        val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
                 published = true
@@ -71,7 +72,7 @@ class BlogServiceTest {
     fun createAndGetBlogEntry_NotPublished() {
         val now = itIsNow()
 
-        val newBlogEntry = NewBlogEntry(
+        val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
                 published = false
@@ -110,7 +111,7 @@ class BlogServiceTest {
     fun update_UnPublishedToPublished() {
         val createdTime = itIsNow()
 
-        val newBlogEntry = NewBlogEntry(
+        val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
                 published = false
@@ -134,7 +135,7 @@ class BlogServiceTest {
     fun update_PublishedStaysPublished() {
         val createdTime = itIsNow()
 
-        val newBlogEntry = NewBlogEntry(
+        val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
                 published = true
@@ -158,7 +159,7 @@ class BlogServiceTest {
     fun update_PublishedToUnPublished_keepLastPublished() {
         val createdTime = itIsNow()
 
-        val newBlogEntry = NewBlogEntry(
+        val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
                 published = true
@@ -185,15 +186,15 @@ class BlogServiceTest {
     @Test
     fun update_DoesNotExist() {
         Assertions.assertThrows(NoSuchElementException::class.java, {
-            blogService.updateBlogEntry(UpdateBlogEntry(-1, "", "", true))
+            blogService.updateBlogEntry(BlogEntryUpdate(-1, "", "", true))
         })
     }
 
     @Test
     fun getBlogEntryHeaders() {
         val created: List<BlogEntryHeader> = listOf(
-                blogService.createBlogEntry(NewBlogEntry("Entry1")).toHeader(),
-                blogService.createBlogEntry(NewBlogEntry("Entry2")).toHeader()
+                blogService.createBlogEntry(blogEntryNew().copy(title="Entry1")).toHeader(),
+                blogService.createBlogEntry(blogEntryNew().copy(title="Entry2")).toHeader()
         )
         val actual = blogService.getBlogEntryHeaders()
         for (header in created){
