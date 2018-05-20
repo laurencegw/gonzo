@@ -5,10 +5,7 @@ import com.binarymonks.gonzo.core.blog.persistence.BlogEntryEntity
 import com.binarymonks.gonzo.core.blog.persistence.BlogRepo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
+import java.time.*
 
 @Service
 class BlogService : Blog {
@@ -45,5 +42,5 @@ class BlogService : Blog {
 
     override fun getBlogEntryById(id: Long): BlogEntry = blogRepo.findById(id).get().toBlogEntry()
 
-    private fun now(): ZonedDateTime = Instant.ofEpochMilli(clock.instant().toEpochMilli()).atZone(ZoneOffset.UTC)
+    private fun now(): ZonedDateTime = Instant.ofEpochMilli(clock.instant().toEpochMilli()).atZone(ZoneId.of("UTC"))
 }

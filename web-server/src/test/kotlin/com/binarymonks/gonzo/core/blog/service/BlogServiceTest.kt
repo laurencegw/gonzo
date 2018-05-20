@@ -6,6 +6,7 @@ import com.binarymonks.gonzo.core.blog.api.BlogEntry
 import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
 import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
 import com.binarymonks.gonzo.core.blog.api.BlogEntryUpdate
+import com.binarymonks.gonzo.core.extensions.time.normalise
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
@@ -15,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.support.AnnotationConfigContextLoader
-import java.time.Clock
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
+import java.time.*
 
 
 @RunWith(SpringRunner::class)
@@ -205,7 +203,7 @@ class BlogServiceTest {
     /**
      * Helper for setting the mock time.
      */
-    private fun itIsNow(now: ZonedDateTime = LocalDateTime.now().atZone(ZoneOffset.UTC)): ZonedDateTime {
+    private fun itIsNow(now: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.of("UTC"))): ZonedDateTime {
         Mockito.`when`(mockClock.instant()).thenReturn(now.toInstant())
         return now
     }
