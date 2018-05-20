@@ -1,8 +1,8 @@
-package com.binarymonks.me.core.blog.service
+package com.binarymonks.gonzo.core.blog.service
 
-import com.binarymonks.me.core.blog.api.*
-import com.binarymonks.me.core.blog.persistence.BlogEntryEntity
-import com.binarymonks.me.core.blog.persistence.BlogRepo
+import com.binarymonks.gonzo.core.blog.api.*
+import com.binarymonks.gonzo.core.blog.persistence.BlogEntryEntity
+import com.binarymonks.gonzo.core.blog.persistence.BlogRepo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.Clock

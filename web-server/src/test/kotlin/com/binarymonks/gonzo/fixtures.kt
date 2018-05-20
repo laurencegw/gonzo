@@ -1,10 +1,10 @@
-package com.binarymonks.me
+package com.binarymonks.gonzo
 
-import com.binarymonks.me.core.blog.api.BlogEntry
-import com.binarymonks.me.core.blog.api.BlogEntryHeader
-import com.binarymonks.me.core.blog.api.BlogEntryNew
-import com.binarymonks.me.core.blog.api.BlogEntryUpdate
-import com.binarymonks.me.core.extensions.time.normalise
+import com.binarymonks.gonzo.core.blog.api.BlogEntry
+import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
+import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
+import com.binarymonks.gonzo.core.blog.api.BlogEntryUpdate
+import com.binarymonks.gonzo.core.extensions.time.normalise
 import java.time.ZonedDateTime
 
 

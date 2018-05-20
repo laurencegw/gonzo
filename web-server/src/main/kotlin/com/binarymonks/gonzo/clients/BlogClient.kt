@@ -1,7 +1,7 @@
-package com.binarymonks.me.clients
+package com.binarymonks.gonzo.clients
 
-import com.binarymonks.me.core.blog.api.*
-import com.binarymonks.me.web.Routes
+import com.binarymonks.gonzo.core.blog.api.*
+import com.binarymonks.gonzo.web.Routes
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod

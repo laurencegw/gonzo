@@ -1,4 +1,4 @@
-package com.binarymonks.me.web
+package com.binarymonks.gonzo.web
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -6,8 +6,8 @@ import org.springframework.context.annotation.ComponentScan
 
 @SpringBootApplication
 @ComponentScan(basePackages = [
-    "com.binarymonks.me.core",
-    "com.binarymonks.me.web"
+    "com.binarymonks.gonzo.core",
+    "com.binarymonks.gonzo.web"
 ])
 class GonzoApplication
 

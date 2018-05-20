@@ -1,2 +1,2 @@
-include 'web-server', 'web-clients'
+include 'web-server', 'web-clients', 'integration-test'
 

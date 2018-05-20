@@ -1,7 +1,7 @@
-package com.binarymonks.me.core.blog.persistence
+package com.binarymonks.gonzo.core.blog.persistence
 
-import com.binarymonks.me.core.blog.api.BlogEntry
-import com.binarymonks.me.core.extensions.time.normalise
+import com.binarymonks.gonzo.core.blog.api.BlogEntry
+import com.binarymonks.gonzo.core.extensions.time.normalise
 import org.springframework.data.repository.CrudRepository
 import java.time.ZonedDateTime
 import javax.persistence.*

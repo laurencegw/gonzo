@@ -1,4 +1,4 @@
-package com.binarymonks.me.core.blog.api
+package com.binarymonks.gonzo.core.blog.api
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import java.time.ZonedDateTime

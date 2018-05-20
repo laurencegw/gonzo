@@ -1,6 +1,6 @@
-package com.binarymonks.me
+package com.binarymonks.gonzo
 
-import com.binarymonks.me.core.blog.service.BlogService
+import com.binarymonks.gonzo.core.blog.service.BlogService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.Bean
@@ -16,12 +16,12 @@ import javax.sql.DataSource
 
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan(basePackages = arrayOf(
-        "com.binarymonks.me.core.blog.persistence"
-))
-@EnableJpaRepositories(basePackages = arrayOf(
-        "com.binarymonks.me.core.blog.persistence"
-))
+@ComponentScan(basePackages = [
+        "com.binarymonks.gonzo.core.blog.persistence"
+])
+@EnableJpaRepositories(basePackages = [
+        "com.binarymonks.gonzo.core.blog.persistence"
+])
 @PropertySource("test_db.properties")
 @EnableTransactionManagement
 class TestConfig {

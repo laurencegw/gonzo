@@ -1,4 +1,4 @@
-package com.binarymonks.me.core.extensions.time
+package com.binarymonks.gonzo.core.extensions.time
 
 import java.time.ZoneId
 import java.time.ZonedDateTime

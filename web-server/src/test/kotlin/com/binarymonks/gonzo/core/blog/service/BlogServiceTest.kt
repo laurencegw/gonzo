@@ -1,11 +1,11 @@
-package com.binarymonks.me.core.blog.service
+package com.binarymonks.gonzo.core.blog.service
 
-import com.binarymonks.me.TestConfig
-import com.binarymonks.me.blogEntryNew
-import com.binarymonks.me.core.blog.api.BlogEntry
-import com.binarymonks.me.core.blog.api.BlogEntryHeader
-import com.binarymonks.me.core.blog.api.BlogEntryNew
-import com.binarymonks.me.core.blog.api.BlogEntryUpdate
+import com.binarymonks.gonzo.TestConfig
+import com.binarymonks.gonzo.blogEntryNew
+import com.binarymonks.gonzo.core.blog.api.BlogEntry
+import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
+import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
+import com.binarymonks.gonzo.core.blog.api.BlogEntryUpdate
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions

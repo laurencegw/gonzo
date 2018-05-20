@@ -1,11 +1,11 @@
-package com.binarymonks.me.clients
+package com.binarymonks.gonzo.clients
 
-import com.binarymonks.me.blogEntry
-import com.binarymonks.me.blogEntryHeader
-import com.binarymonks.me.blogEntryNew
-import com.binarymonks.me.blogEntryUpdate
-import com.binarymonks.me.core.blog.service.BlogService
-import com.binarymonks.me.web.GonzoApplication
+import com.binarymonks.gonzo.blogEntry
+import com.binarymonks.gonzo.blogEntryHeader
+import com.binarymonks.gonzo.blogEntryNew
+import com.binarymonks.gonzo.blogEntryUpdate
+import com.binarymonks.gonzo.core.blog.service.BlogService
+import com.binarymonks.gonzo.web.GonzoApplication
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test

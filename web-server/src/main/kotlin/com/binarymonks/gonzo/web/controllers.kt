@@ -1,10 +1,10 @@
-package com.binarymonks.me.web
+package com.binarymonks.gonzo.web
 
-import com.binarymonks.me.core.blog.api.BlogEntry
-import com.binarymonks.me.core.blog.api.BlogEntryHeader
-import com.binarymonks.me.core.blog.api.BlogEntryNew
-import com.binarymonks.me.core.blog.api.BlogEntryUpdate
-import com.binarymonks.me.core.blog.service.BlogService
+import com.binarymonks.gonzo.core.blog.api.BlogEntry
+import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
+import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
+import com.binarymonks.gonzo.core.blog.api.BlogEntryUpdate
+import com.binarymonks.gonzo.core.blog.service.BlogService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 

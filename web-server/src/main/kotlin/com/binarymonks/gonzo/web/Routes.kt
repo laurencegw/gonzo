@@ -1,4 +1,4 @@
-package com.binarymonks.me.web
+package com.binarymonks.gonzo.web
 
 
 object Routes {
