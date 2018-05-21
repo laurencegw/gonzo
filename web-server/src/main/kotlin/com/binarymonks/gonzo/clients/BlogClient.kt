@@ -18,7 +18,7 @@ class BlogClient(private val baseURL: String) : Blog {
                 HttpEntity(blogEntryNew),
                 object : ParameterizedTypeReference<BlogEntry>() {}
         )
-        return response.body
+        return checkNotNull(response.body)
     }
 
     override fun updateBlogEntry(update: BlogEntryUpdate): BlogEntry {
@@ -28,7 +28,7 @@ class BlogClient(private val baseURL: String) : Blog {
                 HttpEntity(update),
                 object : ParameterizedTypeReference<BlogEntry>() {}
         )
-        return response.body
+        return checkNotNull(response.body)
     }
 
     override fun getBlogEntryHeaders(): List<BlogEntryHeader> {
@@ -38,7 +38,7 @@ class BlogClient(private val baseURL: String) : Blog {
                 null,
                 object : ParameterizedTypeReference<List<BlogEntryHeader>>() {}
         )
-        return response.body
+        return checkNotNull(response.body)
     }
 
     override fun getBlogEntryById(id: Long): BlogEntry {
@@ -48,6 +48,6 @@ class BlogClient(private val baseURL: String) : Blog {
                 null,
                 object : ParameterizedTypeReference<BlogEntry>() {}
         )
-        return response.body
+        return checkNotNull(response.body)
     }
 }
