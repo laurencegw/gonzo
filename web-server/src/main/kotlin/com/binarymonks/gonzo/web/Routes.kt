@@ -2,5 +2,6 @@ package com.binarymonks.gonzo.web
 
 
 object Routes {
-      const val BLOGS = "blogs"
+      const val API = "api"
+      const val BLOGS = "$API/blogs"
 }

@@ -14,23 +14,23 @@ class BlogController {
     @Autowired
     lateinit var blogService: BlogService
 
-    @PostMapping(value = "/${Routes.BLOGS}")
+    @PostMapping("/${Routes.BLOGS}")
     fun createBlogEntry(@RequestBody newBlogEntry: BlogEntryNew): BlogEntry {
         return blogService.createBlogEntry(newBlogEntry)
     }
 
-    @PutMapping(value = "/${Routes.BLOGS}/{id}")
+    @PutMapping("/${Routes.BLOGS}/{id}")
     fun updateBlogEntry(@PathVariable id: Long, @RequestBody update: BlogEntryUpdate): BlogEntry {
         val update = update.copy(id = id)
         return blogService.updateBlogEntry(update)
     }
 
-    @GetMapping(value = "/${Routes.BLOGS}")
+    @GetMapping("/${Routes.BLOGS}")
     fun getBlogEntryHeaders(): List<BlogEntryHeader> {
         return blogService.getBlogEntryHeaders()
     }
 
-    @GetMapping(value = "/${Routes.BLOGS}/{id}")
+    @GetMapping("/${Routes.BLOGS}/{id}")
     fun getBlogEntryById(@PathVariable id: Long): BlogEntry {
         return blogService.getBlogEntryById(id)
     }
