@@ -17,10 +17,12 @@ import javax.sql.DataSource
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan(basePackages = [
-        "com.binarymonks.gonzo.core.blog.persistence"
+        "com.binarymonks.gonzo.core.blog",
+        "com.binarymonks.gonzo.core.users"
 ])
 @EnableJpaRepositories(basePackages = [
-        "com.binarymonks.gonzo.core.blog.persistence"
+        "com.binarymonks.gonzo.core.blog.persistence",
+        "com.binarymonks.gonzo.core.users.persistence"
 ])
 @PropertySource("test_db.properties")
 @EnableTransactionManagement

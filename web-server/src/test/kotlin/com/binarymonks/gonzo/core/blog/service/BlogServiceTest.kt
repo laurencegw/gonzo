@@ -6,7 +6,6 @@ import com.binarymonks.gonzo.core.blog.api.BlogEntry
 import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
 import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
 import com.binarymonks.gonzo.core.blog.api.BlogEntryUpdate
-import com.binarymonks.gonzo.core.extensions.time.normalise
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
@@ -16,11 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.support.AnnotationConfigContextLoader
-import java.time.*
+import java.time.Clock
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 
 @RunWith(SpringRunner::class)
-@ContextConfiguration(classes = arrayOf(TestConfig::class), loader = AnnotationConfigContextLoader::class)
+@ContextConfiguration(classes = [TestConfig::class], loader = AnnotationConfigContextLoader::class)
 class BlogServiceTest {
 
     lateinit var mockClock: Clock

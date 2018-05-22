@@ -5,6 +5,7 @@ import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
 import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
 import com.binarymonks.gonzo.core.blog.api.BlogEntryUpdate
 import com.binarymonks.gonzo.core.extensions.time.normalise
+import com.binarymonks.gonzo.core.users.api.UserNew
 import java.time.ZonedDateTime
 
 
@@ -37,7 +38,7 @@ fun blogEntryUpdate(): BlogEntryUpdate {
     )
 }
 
-fun blogEntryHeader():BlogEntryHeader {
+fun blogEntryHeader(): BlogEntryHeader {
     return BlogEntryHeader(
             id = 2,
             title = "Some Blog Entry",
@@ -45,5 +46,12 @@ fun blogEntryHeader():BlogEntryHeader {
             created = ZonedDateTime.now().normalise(),
             updated = ZonedDateTime.now().normalise(),
             publishedOn = ZonedDateTime.now().normalise()
+    )
+}
+
+fun userNew(): UserNew {
+    return UserNew(
+            email = "jane@somewhere.com",
+            password = "password"
     )
 }
