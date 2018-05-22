@@ -26,5 +26,7 @@ dist/
 nbdist/
 .nb-gradle/
 
+package-lock.json
+
 ### Angular genereated
 web-server/src/main/resources/static
