@@ -34,7 +34,13 @@ class UserService : Users {
     }
 
     override fun updateUser(user: UserUpdate): User {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val userEntity = userRepo.findById(user.id).get()
+        userEntity.apply {
+            email=user.email
+            firstName=user.firstName
+            lastName=user.lastName
+        }
+        return userRepo.save(userEntity).toUser()
     }
 
     override fun getUserByEmail(email: String): User {

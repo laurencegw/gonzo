@@ -30,7 +30,14 @@ data class User @JsonCreator constructor(
         val email: String,
         val firstName: String? = null,
         val lastName: String? = null
-)
+) {
+    fun toUpdate(): UserUpdate = UserUpdate(
+            id=id,
+            email=email,
+            firstName = firstName,
+            lastName = lastName
+    )
+}
 
 data class UserUpdate @JsonCreator constructor(
         val id: Long,
@@ -45,8 +52,8 @@ data class LoginCredentials @JsonCreator constructor(
 )
 
 data class Token @JsonCreator constructor(
-        val token: String,
-        val expires: ZonedDateTime
+        val contents: String,
+        val token: String
 )
 
 data class UserPasswordUpdate @JsonCreator constructor(

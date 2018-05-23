@@ -2,6 +2,7 @@ package com.binarymonks.gonzo.core.users.service
 
 import com.binarymonks.gonzo.TestConfig
 import com.binarymonks.gonzo.core.users.api.User
+import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import com.binarymonks.gonzo.userNew
 import org.junit.Before
 import org.junit.Test
@@ -19,7 +20,10 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 
 @RunWith(SpringRunner::class)
-@ContextConfiguration(classes = [TestConfig::class], loader = AnnotationConfigContextLoader::class)
+@ContextConfiguration(
+        classes = [TestConfig::class],
+        loader = AnnotationConfigContextLoader::class
+)
 class UserServiceTest {
 
     @Mock
@@ -28,10 +32,14 @@ class UserServiceTest {
     @Autowired
     lateinit var userService: UserService
 
+    @Autowired
+    lateinit var userRepo: UserRepo
+
     @Before
     fun setUp() {
         userService.clock = mockClock
         itIsNow()
+        userRepo.deleteAll()
     }
 
     @Test
@@ -47,6 +55,29 @@ class UserServiceTest {
 
         Assertions.assertEquals(expected, created)
         Assertions.assertEquals(expected,userService.getUserByEmail(newUser.email))
+    }
+
+    @Test
+    fun updateUser(){
+        val newUser = userNew()
+
+        val created = userService.createUser(newUser)
+
+        val update = created.toUpdate().copy(
+                email = "new@email.com",
+                firstName = "Jane",
+                lastName = "Smith"
+        )
+
+        val expected = User(
+                id=update.id,
+                email = update.email,
+                firstName = update.firstName,
+                lastName = update.lastName
+        )
+
+        Assertions.assertEquals(expected, userService.updateUser(update))
+        Assertions.assertEquals(expected, userService.getUserByEmail(update.email))
     }
 
     /**
