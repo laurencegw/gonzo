@@ -16,14 +16,16 @@ class UserService : Users {
 
     @Autowired
     lateinit var userRepo: UserRepo
+    @Autowired
+    lateinit var passwords: Passwords
 
-    @Value( "\${bcrypt.logrounds}" )
+    @Value("\${bcrypt.logrounds}")
     var pwdLogRounds: Int = 10
 
     override fun createUser(user: UserNew): User {
         val password = user.password
-        val pepper = BCrypt.gensalt(pwdLogRounds)
-        val encryptedPassword = BCrypt.hashpw(password, pepper)
+        val pepper = passwords.genSalt(pwdLogRounds)
+        val encryptedPassword = passwords.hashPassword(password, pepper)
         val userEntity = UserEntity(
                 email = user.email,
                 encryptedPassword = encryptedPassword,
@@ -36,9 +38,9 @@ class UserService : Users {
     override fun updateUser(user: UserUpdate): User {
         val userEntity = userRepo.findById(user.id).get()
         userEntity.apply {
-            email=user.email
-            firstName=user.firstName
-            lastName=user.lastName
+            email = user.email
+            firstName = user.firstName
+            lastName = user.lastName
         }
         return userRepo.save(userEntity).toUser()
     }
@@ -59,4 +61,20 @@ class UserService : Users {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+}
+
+interface Passwords {
+    fun genSalt(logRounds: Int): String
+    fun hashPassword(password: String, salt: String): String
+}
+
+@Service
+class BCryptPasswords : Passwords {
+    override fun genSalt(logRounds: Int): String {
+        return BCrypt.gensalt(logRounds)
+    }
+
+    override fun hashPassword(password: String, salt: String): String {
+        return BCrypt.hashpw(password, salt)
+    }
 }
