@@ -12,10 +12,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
     "com.binarymonks.gonzo.web"
 ])
 @EnableJpaRepositories(basePackages = [
-    "com.binarymonks.gonzo.core.blog.persistence"
+    "com.binarymonks.gonzo.core"
 ])
 @EntityScan(basePackages = [
-    "com.binarymonks.gonzo.core.blog.persistence"
+    "com.binarymonks.gonzo.core"
 ])
 class GonzoApplication
 

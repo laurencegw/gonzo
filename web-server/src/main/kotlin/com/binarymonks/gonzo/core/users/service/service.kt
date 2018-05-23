@@ -5,6 +5,7 @@ import com.binarymonks.gonzo.core.users.persistence.Spice
 import com.binarymonks.gonzo.core.users.persistence.UserEntity
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.bcrypt.BCrypt
 import org.springframework.stereotype.Service
 import java.time.Clock
@@ -16,9 +17,12 @@ class UserService : Users {
     @Autowired
     lateinit var userRepo: UserRepo
 
+    @Value( "\${bcrypt.logrounds}" )
+    var pwdLogRounds: Int = 10
+
     override fun createUser(user: UserNew): User {
         val password = user.password
-        val pepper = BCrypt.gensalt(20)
+        val pepper = BCrypt.gensalt(pwdLogRounds)
         val encryptedPassword = BCrypt.hashpw(password, pepper)
         val userEntity = UserEntity(
                 email = user.email,

@@ -3,10 +3,7 @@ package com.binarymonks.gonzo
 import com.binarymonks.gonzo.core.blog.service.BlogService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.PropertySource
+import org.springframework.context.annotation.*
 import org.springframework.core.env.Environment
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.jdbc.datasource.DriverManagerDataSource
@@ -17,14 +14,17 @@ import javax.sql.DataSource
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan(basePackages = [
-        "com.binarymonks.gonzo.core.blog",
-        "com.binarymonks.gonzo.core.users"
+    "com.binarymonks.gonzo.core.blog",
+    "com.binarymonks.gonzo.core.users"
 ])
 @EnableJpaRepositories(basePackages = [
-        "com.binarymonks.gonzo.core.blog.persistence",
-        "com.binarymonks.gonzo.core.users.persistence"
+    "com.binarymonks.gonzo.core.blog.persistence",
+    "com.binarymonks.gonzo.core.users.persistence"
 ])
-@PropertySource("test_db.properties")
+@PropertySources(
+    PropertySource("test_application.properties"),
+    PropertySource("test_db.properties")
+)
 @EnableTransactionManagement
 class TestConfig {
 
