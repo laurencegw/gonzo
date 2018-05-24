@@ -1,5 +1,6 @@
 package com.binarymonks.gonzo.core.users.service
 
+import com.binarymonks.gonzo.core.time.nowUTC
 import com.binarymonks.gonzo.core.users.api.*
 import com.binarymonks.gonzo.core.users.persistence.Spice
 import com.binarymonks.gonzo.core.users.persistence.UserEntity
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.bcrypt.BCrypt
 import org.springframework.stereotype.Service
 import java.time.Clock
+import java.time.Duration
 
 @Service
 class UserService : Users {
@@ -18,6 +20,8 @@ class UserService : Users {
     lateinit var userRepo: UserRepo
     @Autowired
     lateinit var passwords: Passwords
+
+    var resetPasswordWindow: Duration = Duration.ofHours(1)
 
     @Value("\${bcrypt.logrounds}")
     var pwdLogRounds: Int = 10
@@ -59,12 +63,22 @@ class UserService : Users {
         userRepo.save(userEntity)
     }
 
-    override fun requestPasswordResetToken(email: String): Token {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun requestPasswordResetToken(userID:Long): Token {
+       return Token(
+               contents = "",
+               token = "",
+               expiry = nowUTC(clock).plus(resetPasswordWindow)
+       )
     }
 
-    override fun resetPassword(token: String, newPassword: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun resetPassword(passwordReset: PasswordReset) {
+        val userEntity = userRepo.findById(passwordReset.userID).get()
+        val password = passwordReset.newPassword
+        val pepper = passwords.genSalt(pwdLogRounds)
+        val encryptedPassword = passwords.hashPassword(password, pepper)
+        userEntity.encryptedPassword=encryptedPassword
+        userEntity.spice.pepper=pepper
+        userRepo.save(userEntity)
     }
 
 }

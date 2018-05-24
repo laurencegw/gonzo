@@ -3,6 +3,7 @@ package com.binarymonks.gonzo.core.blog.service
 import com.binarymonks.gonzo.core.blog.api.*
 import com.binarymonks.gonzo.core.blog.persistence.BlogEntryEntity
 import com.binarymonks.gonzo.core.blog.persistence.BlogRepo
+import com.binarymonks.gonzo.core.time.nowUTC
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.*
@@ -19,9 +20,9 @@ class BlogService : Blog {
             title = blogEntryNew.title,
             content = blogEntryNew.content,
             published = blogEntryNew.published,
-            firstPublished = if (blogEntryNew.published) now() else null,
-            created = now(),
-            updated = now()
+            firstPublished = if (blogEntryNew.published) nowUTC(clock) else null,
+            created = nowUTC(clock),
+            updated = nowUTC(clock)
     )).toBlogEntry()
 
 
@@ -30,10 +31,10 @@ class BlogService : Blog {
         entity.title = update.title
         entity.content = update.content
         if (!entity.published && update.published) {
-            entity.firstPublished = now()
+            entity.firstPublished = nowUTC(clock)
         }
         entity.published = update.published
-        entity.updated = now()
+        entity.updated = nowUTC(clock)
         blogRepo.save(entity)
         return entity.toBlogEntry()
     }
@@ -42,5 +43,4 @@ class BlogService : Blog {
 
     override fun getBlogEntryById(id: Long): BlogEntry = blogRepo.findById(id).get().toBlogEntry()
 
-    private fun now(): ZonedDateTime = Instant.ofEpochMilli(clock.instant().toEpochMilli()).atZone(ZoneId.of("UTC"))
 }

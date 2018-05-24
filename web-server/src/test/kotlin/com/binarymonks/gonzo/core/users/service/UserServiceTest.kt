@@ -2,6 +2,9 @@ package com.binarymonks.gonzo.core.users.service
 
 import com.binarymonks.gonzo.PasswordsStub
 import com.binarymonks.gonzo.TestConfig
+import com.binarymonks.gonzo.core.common.InvalidToken
+import com.binarymonks.gonzo.core.time.nowUTC
+import com.binarymonks.gonzo.core.users.api.PasswordReset
 import com.binarymonks.gonzo.core.users.api.User
 import com.binarymonks.gonzo.core.users.api.PasswordUpdate
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
@@ -61,8 +64,8 @@ class UserServiceTest {
         Assertions.assertEquals(expected, created)
         Assertions.assertEquals(expected,userService.getUserByEmail(newUser.email))
         val userEntity = userRepo.findById(created.id).get()
-        Assertions.assertEquals("${newUser.password} hashed with pepper", userEntity.encryptedPassword)
-        Assertions.assertEquals("pepper", userEntity.spice.pepper)
+        Assertions.assertEquals("${newUser.password} hashed with ${passwordStub.salt}", userEntity.encryptedPassword)
+        Assertions.assertEquals(passwordStub.salt, userEntity.spice.pepper)
     }
 
     @Test
@@ -91,10 +94,10 @@ class UserServiceTest {
     @Test
     fun updatePassword(){
         //TODO: Maybe remove this functionalit completely?
-        passwordStub.salt="pepper2"
         val newUser = userNew().copy(password = "oldpassword")
-
         val created = userService.createUser(newUser)
+
+        passwordStub.salt="pepper2"
 
         userService.updatePassword(PasswordUpdate(
                 id=created.id,
@@ -107,17 +110,62 @@ class UserServiceTest {
     }
 
     @Test
-    fun requestResetPasswordTokenReset(){
-        passwordStub.salt="pepper2"
+    fun requestResetPasswordTokenAndReset(){
         val newUser = userNew().copy(password = "oldpassword")
-
         val created = userService.createUser(newUser)
+        passwordStub.salt="pepper2"
 
-        val resetRequestToken = userService.requestPasswordResetToken(created.email)
+        val resetRequestToken = userService.requestPasswordResetToken(created.id)
+        val expectedExpiryDate = nowUTC(mockClock).plus(userService.resetPasswordWindow)
+        Assertions.assertEquals(expectedExpiryDate, resetRequestToken.expiry)
+
         val newPassword = "newpassword"
 
-        userService.resetPassword()
+        userService.resetPassword(
+                PasswordReset(
+                        userID = created.id,
+                        token = resetRequestToken.token,
+                        newPassword = newPassword
+                )
+        )
+
+        val userEntity = userRepo.findById(created.id).get()
+        Assertions.assertEquals("$newPassword hashed with ${passwordStub.salt}", userEntity.encryptedPassword)
+        Assertions.assertEquals(passwordStub.salt, userEntity.spice.pepper)
     }
+
+    @Test(expected = InvalidToken::class)
+    fun requestResetPasswordTokenAndReset_wrongToken(){
+        val newUser = userNew().copy(password = "oldpassword")
+        val created = userService.createUser(newUser)
+        passwordStub.salt="pepper2"
+
+        val resetRequestToken = userService.requestPasswordResetToken(created.id)
+        val expectedExpiryDate = nowUTC(mockClock).plus(userService.resetPasswordWindow)
+        Assertions.assertEquals(expectedExpiryDate, resetRequestToken.expiry)
+
+        val newPassword = "newpassword"
+
+        userService.resetPassword(
+                PasswordReset(
+                        userID = created.id,
+                        token = "some other token",
+                        newPassword = newPassword
+                )
+        )
+    }
+
+    /**
+     * TODO: Password reset considerations:
+     *
+     *  - Do not expose email address in token
+     *  - email layer should send an email regardless of the user existing or not
+     *  - captchas
+     *  - logging failed attempts
+     *  - Personal questions before reset sent
+     *
+     */
+
 
     /**
      * Helper for setting the mock time.
