@@ -2,6 +2,8 @@ package com.binarymonks.gonzo.core.users.persistence
 
 import com.binarymonks.gonzo.core.users.api.User
 import org.springframework.data.repository.CrudRepository
+import java.time.ZonedDateTime
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -21,6 +23,12 @@ data class UserEntity(
 
         @Column(nullable = true)
         var lastName: String? = null,
+
+        @Column(nullable = true)
+        var resetPasswordToken: String? = null,
+
+        @Column(nullable = true)
+        var resetPasswordExpiry: ZonedDateTime? = null,
 
         @OneToOne(cascade = [CascadeType.ALL])
         var spice: Spice = Spice()
@@ -44,5 +52,5 @@ class Spice(
 )
 
 interface UserRepo : CrudRepository<UserEntity, Long> {
-    fun findByEmail(email: String): UserEntity
+    fun findByEmail(email: String): Optional<UserEntity>
 }

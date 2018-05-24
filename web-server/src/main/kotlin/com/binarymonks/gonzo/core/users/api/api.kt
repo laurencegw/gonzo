@@ -8,16 +8,14 @@ interface Users {
     fun createUser(user: UserNew): User
     fun updateUser(user: UserUpdate): User
     fun getUserByEmail(email: String): User
-    fun updatePassword(passwordUpdate: PasswordUpdate)
-    fun requestPasswordResetToken(userID:Long): Token
+    fun requestPasswordResetToken(email: String): ResetToken
     fun resetPassword(passwordReset: PasswordReset)
 }
 
-interface UserSignIn{
-    fun login(credentials: LoginCredentials): Token
-    fun signOutToken(token: String)
-    fun signOutEmail(email: String)
-    fun getUserByToken(token: String): User
+interface SignIn {
+    fun login(credentials: LoginCredentials): String
+    fun assertLoggedIn(token:String)
+    fun getUserFromToken(token:String): User
 }
 
 data class UserNew @JsonCreator constructor(
@@ -32,8 +30,8 @@ data class User @JsonCreator constructor(
         val lastName: String? = null
 ) {
     fun toUpdate(): UserUpdate = UserUpdate(
-            id=id,
-            email=email,
+            id = id,
+            email = email,
             firstName = firstName,
             lastName = lastName
     )
@@ -51,15 +49,9 @@ data class LoginCredentials @JsonCreator constructor(
         val password: String
 )
 
-data class Token @JsonCreator constructor(
-        val contents: String,
+data class ResetToken @JsonCreator constructor(
         val expiry: ZonedDateTime,
         val token: String
-)
-
-data class PasswordUpdate @JsonCreator constructor(
-        val id: Long,
-        val newPassword: String
 )
 
 data class PasswordReset @JsonCreator constructor(

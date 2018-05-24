@@ -1,4 +1,5 @@
 package com.binarymonks.gonzo.core.common
 
 
-class InvalidToken:Exception()
+class InvalidCredentials:Exception()
+class ExpiredToken:Exception()

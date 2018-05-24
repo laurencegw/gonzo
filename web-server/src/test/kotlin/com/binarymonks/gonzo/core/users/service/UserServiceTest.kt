@@ -2,11 +2,11 @@ package com.binarymonks.gonzo.core.users.service
 
 import com.binarymonks.gonzo.PasswordsStub
 import com.binarymonks.gonzo.TestConfig
-import com.binarymonks.gonzo.core.common.InvalidToken
+import com.binarymonks.gonzo.core.common.ExpiredToken
+import com.binarymonks.gonzo.core.common.InvalidCredentials
 import com.binarymonks.gonzo.core.time.nowUTC
 import com.binarymonks.gonzo.core.users.api.PasswordReset
 import com.binarymonks.gonzo.core.users.api.User
-import com.binarymonks.gonzo.core.users.api.PasswordUpdate
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import com.binarymonks.gonzo.userNew
 import org.junit.Before
@@ -41,6 +41,8 @@ class UserServiceTest {
 
     @Autowired
     lateinit var userRepo: UserRepo
+
+    lateinit var currentNow: ZonedDateTime
 
     @Before
     fun setUp() {
@@ -92,30 +94,12 @@ class UserServiceTest {
     }
 
     @Test
-    fun updatePassword(){
-        //TODO: Maybe remove this functionalit completely?
-        val newUser = userNew().copy(password = "oldpassword")
-        val created = userService.createUser(newUser)
-
-        passwordStub.salt="pepper2"
-
-        userService.updatePassword(PasswordUpdate(
-                id=created.id,
-                newPassword = "newpassword"
-        ))
-
-        val userEntity = userRepo.findById(created.id).get()
-        Assertions.assertEquals("newpassword hashed with pepper2", userEntity.encryptedPassword)
-        Assertions.assertEquals("pepper2", userEntity.spice.pepper)
-    }
-
-    @Test
     fun requestResetPasswordTokenAndReset(){
         val newUser = userNew().copy(password = "oldpassword")
         val created = userService.createUser(newUser)
         passwordStub.salt="pepper2"
 
-        val resetRequestToken = userService.requestPasswordResetToken(created.id)
+        val resetRequestToken = userService.requestPasswordResetToken(created.email)
         val expectedExpiryDate = nowUTC(mockClock).plus(userService.resetPasswordWindow)
         Assertions.assertEquals(expectedExpiryDate, resetRequestToken.expiry)
 
@@ -134,13 +118,13 @@ class UserServiceTest {
         Assertions.assertEquals(passwordStub.salt, userEntity.spice.pepper)
     }
 
-    @Test(expected = InvalidToken::class)
+    @Test(expected = InvalidCredentials::class)
     fun requestResetPasswordTokenAndReset_wrongToken(){
         val newUser = userNew().copy(password = "oldpassword")
         val created = userService.createUser(newUser)
         passwordStub.salt="pepper2"
 
-        val resetRequestToken = userService.requestPasswordResetToken(created.id)
+        val resetRequestToken = userService.requestPasswordResetToken(created.email)
         val expectedExpiryDate = nowUTC(mockClock).plus(userService.resetPasswordWindow)
         Assertions.assertEquals(expectedExpiryDate, resetRequestToken.expiry)
 
@@ -154,6 +138,30 @@ class UserServiceTest {
                 )
         )
     }
+
+    @Test(expected = ExpiredToken::class)
+    fun requestResetPasswordTokenAndReset_expiredToken(){
+        val newUser = userNew().copy(password = "oldpassword")
+        val created = userService.createUser(newUser)
+        passwordStub.salt="pepper2"
+
+
+        val resetRequestToken = userService.requestPasswordResetToken(created.email)
+
+        itIsNow(currentNow.plus(userService.resetPasswordWindow).plusMinutes(1))
+
+        val newPassword = "newpassword"
+
+        userService.resetPassword(
+                PasswordReset(
+                        userID = created.id,
+                        token = resetRequestToken.token,
+                        newPassword = newPassword
+                )
+        )
+    }
+
+
 
     /**
      * TODO: Password reset considerations:
@@ -171,6 +179,7 @@ class UserServiceTest {
      * Helper for setting the mock time.
      */
     private fun itIsNow(now: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.of("UTC"))): ZonedDateTime {
+        currentNow = now
         Mockito.`when`(mockClock.instant()).thenReturn(now.toInstant())
         return now
     }
