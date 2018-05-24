@@ -1,14 +1,13 @@
 package com.binarymonks.gonzo.core.users.api
 
 import com.fasterxml.jackson.annotation.JsonCreator
-import java.time.ZonedDateTime
 
 
 interface Users {
     fun createUser(user: UserNew): User
     fun updateUser(user: UserUpdate): User
     fun getUserByEmail(email: String): User
-    fun updatePassword(passwordUpdate: UserPasswordUpdate)
+    fun updatePassword(passwordUpdate: PasswordUpdate)
     fun requestPasswordResetToken(email:String): Token
     fun resetPassword(token: String, newPassword: String)
 }
@@ -56,8 +55,14 @@ data class Token @JsonCreator constructor(
         val token: String
 )
 
-data class UserPasswordUpdate @JsonCreator constructor(
+data class PasswordUpdate @JsonCreator constructor(
         val id: Long,
+        val newPassword: String
+)
+
+data class PasswordReset @JsonCreator constructor(
+        val tokenContents: String,
+        val token: String,
         val newPassword: String
 )
 

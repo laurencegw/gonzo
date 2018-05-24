@@ -49,8 +49,14 @@ class UserService : Users {
         return userRepo.findByEmail(email).toUser()
     }
 
-    override fun updatePassword(passwordUpdate: UserPasswordUpdate) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun updatePassword(passwordUpdate: PasswordUpdate) {
+        val userEntity = userRepo.findById(passwordUpdate.id).get()
+        val password = passwordUpdate.newPassword
+        val pepper = passwords.genSalt(pwdLogRounds)
+        val encryptedPassword = passwords.hashPassword(password, pepper)
+        userEntity.encryptedPassword=encryptedPassword
+        userEntity.spice.pepper=pepper
+        userRepo.save(userEntity)
     }
 
     override fun requestPasswordResetToken(email: String): Token {
