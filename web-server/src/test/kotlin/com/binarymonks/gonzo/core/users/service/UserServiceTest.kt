@@ -4,6 +4,7 @@ import com.binarymonks.gonzo.PasswordsStub
 import com.binarymonks.gonzo.TestConfig
 import com.binarymonks.gonzo.core.common.ExpiredToken
 import com.binarymonks.gonzo.core.common.InvalidCredentials
+import com.binarymonks.gonzo.core.common.UniqueConstrainteException
 import com.binarymonks.gonzo.core.time.nowUTC
 import com.binarymonks.gonzo.core.users.api.PasswordReset
 import com.binarymonks.gonzo.core.users.api.User
@@ -60,18 +61,65 @@ class UserServiceTest {
 
         val expected = User(
                 id = created.id,
+                nickName = newUser.nickname,
                 email = newUser.email
         )
 
         Assertions.assertEquals(expected, created)
-        Assertions.assertEquals(expected,userService.getUserByEmail(newUser.email))
+        Assertions.assertEquals(expected, userService.getUserByEmail(newUser.email))
         val userEntity = userRepo.findById(created.id).get()
         Assertions.assertEquals("${newUser.password} hashed with ${passwordStub.salt}", userEntity.encryptedPassword)
         Assertions.assertEquals(passwordStub.salt, userEntity.spice.pepper)
     }
 
     @Test
-    fun updateUser(){
+    fun createUser_UniqueConstraints() {
+        val newUser1 = userNew()
+        val duplicateNickNameUser = newUser1.copy(
+                email = "2${newUser1.email}"
+        )
+        val duplicateEmailUser = newUser1.copy(
+                nickname = "2${newUser1.nickname}"
+        )
+        userService.createUser(newUser1)
+
+        try {
+            userService.createUser(duplicateNickNameUser)
+            Assertions.fail<String>("Should be an error")
+        } catch (e: UniqueConstrainteException) {
+            Assertions.assertEquals(e.attributeName.toLowerCase(),"nickname")
+        }
+
+        try {
+            userService.createUser(duplicateEmailUser)
+            Assertions.fail<String>("Should be an error")
+        } catch (e: UniqueConstrainteException) {
+            Assertions.assertEquals(e.attributeName.toLowerCase(),"email")
+        }
+    }
+
+    @Test
+    fun updateUser_UniqueConstraints() {
+        val newUser1 = userNew()
+        val newUser2 = newUser1.copy(
+                email = "2${newUser1.email}",
+                nickname = "2${newUser1.nickname}"
+        )
+        userService.createUser(newUser1)
+        val user2 = userService.createUser(newUser2)
+
+        try {
+            userService.updateUser(user2.toUpdate().copy(
+                    email = newUser1.email
+            ))
+            Assertions.fail<String>("Should be an error")
+        } catch (e: UniqueConstrainteException) {
+            Assertions.assertEquals(e.attributeName.toLowerCase(),"email")
+        }
+    }
+
+    @Test
+    fun updateUser() {
         val newUser = userNew()
 
         val created = userService.createUser(newUser)
@@ -83,8 +131,9 @@ class UserServiceTest {
         )
 
         val expected = User(
-                id=update.id,
+                id = update.id,
                 email = update.email,
+                nickName = created.nickName,
                 firstName = update.firstName,
                 lastName = update.lastName
         )
@@ -94,10 +143,10 @@ class UserServiceTest {
     }
 
     @Test
-    fun requestResetPasswordTokenAndReset(){
+    fun requestResetPasswordTokenAndReset() {
         val newUser = userNew().copy(password = "oldpassword")
         val created = userService.createUser(newUser)
-        passwordStub.salt="pepper2"
+        passwordStub.salt = "pepper2"
 
         val resetRequestToken = userService.requestPasswordResetToken(created.email)
         val expectedExpiryDate = nowUTC(mockClock).plus(userService.resetPasswordWindow)
@@ -119,10 +168,10 @@ class UserServiceTest {
     }
 
     @Test(expected = InvalidCredentials::class)
-    fun requestResetPasswordTokenAndReset_wrongToken(){
+    fun requestResetPasswordTokenAndReset_wrongToken() {
         val newUser = userNew().copy(password = "oldpassword")
         val created = userService.createUser(newUser)
-        passwordStub.salt="pepper2"
+        passwordStub.salt = "pepper2"
 
         val resetRequestToken = userService.requestPasswordResetToken(created.email)
         val expectedExpiryDate = nowUTC(mockClock).plus(userService.resetPasswordWindow)
@@ -140,10 +189,10 @@ class UserServiceTest {
     }
 
     @Test(expected = ExpiredToken::class)
-    fun requestResetPasswordTokenAndReset_expiredToken(){
+    fun requestResetPasswordTokenAndReset_expiredToken() {
         val newUser = userNew().copy(password = "oldpassword")
         val created = userService.createUser(newUser)
-        passwordStub.salt="pepper2"
+        passwordStub.salt = "pepper2"
 
 
         val resetRequestToken = userService.requestPasswordResetToken(created.email)
@@ -160,7 +209,6 @@ class UserServiceTest {
                 )
         )
     }
-
 
 
     /**

@@ -121,9 +121,6 @@ class SignInServiceTest {
         }catch (e:ExpiredToken){}
     }
 
-
-
-
     /**
      * Helper for setting the mock time.
      */

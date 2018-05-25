@@ -20,12 +20,14 @@ interface SignIn {
 
 data class UserNew @JsonCreator constructor(
         val email: String,
+        val nickname: String,
         val password: String
 )
 
 data class User @JsonCreator constructor(
         val id: Long,
         val email: String,
+        val nickName: String,
         val firstName: String? = null,
         val lastName: String? = null
 ) {

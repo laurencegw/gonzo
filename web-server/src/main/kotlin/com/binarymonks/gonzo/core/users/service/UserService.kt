@@ -2,6 +2,7 @@ package com.binarymonks.gonzo.core.users.service
 
 import com.binarymonks.gonzo.core.common.ExpiredToken
 import com.binarymonks.gonzo.core.common.InvalidCredentials
+import com.binarymonks.gonzo.core.common.UniqueConstrainteException
 import com.binarymonks.gonzo.core.time.nowUTC
 import com.binarymonks.gonzo.core.users.api.*
 import com.binarymonks.gonzo.core.users.persistence.Spice
@@ -28,11 +29,18 @@ class UserService : Users {
     var pwdLogRounds: Int = 10
 
     override fun createUser(user: UserNew): User {
+        if (userRepo.findByNickName(user.nickname).isPresent) {
+            throw UniqueConstrainteException("nickname")
+        }
+        if (userRepo.findByEmail(user.email).isPresent) {
+            throw UniqueConstrainteException("email")
+        }
         val password = user.password
         val pepper = passwords.genSalt(pwdLogRounds)
         val encryptedPassword = passwords.hashPassword(password, pepper)
         val userEntity = UserEntity(
                 email = user.email,
+                nickName = user.nickname,
                 encryptedPassword = encryptedPassword,
                 spice = Spice(pepper = pepper)
         )
@@ -42,6 +50,9 @@ class UserService : Users {
 
     override fun updateUser(user: UserUpdate): User {
         val userEntity = userRepo.findById(user.id).get()
+        if (user.email != userEntity.email && userRepo.findByEmail(user.email).isPresent) {
+            throw UniqueConstrainteException("email")
+        }
         userEntity.apply {
             email = user.email
             firstName = user.firstName

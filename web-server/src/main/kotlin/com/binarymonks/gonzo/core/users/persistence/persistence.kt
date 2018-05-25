@@ -15,6 +15,9 @@ data class UserEntity(
         @Column(nullable = false, unique = true)
         var email: String = "",
 
+        @Column(nullable = false, unique = true)
+        var nickName: String = "",
+
         @Column(nullable = false)
         var encryptedPassword: String = "",
 
@@ -36,6 +39,7 @@ data class UserEntity(
     fun toUser(): User = User(
             id = id!!,
             email = email,
+            nickName = nickName,
             firstName = firstName,
             lastName = lastName
     )
@@ -53,4 +57,5 @@ class Spice(
 
 interface UserRepo : CrudRepository<UserEntity, Long> {
     fun findByEmail(email: String): Optional<UserEntity>
+    fun findByNickName(nickName: String): Optional<UserEntity>
 }
