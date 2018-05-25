@@ -1,15 +1,16 @@
 package com.binarymonks.gonzo.core.users.service
 
 import com.binarymonks.gonzo.PasswordsStub
-import com.binarymonks.gonzo.TestConfig
 import com.binarymonks.gonzo.core.common.ExpiredToken
 import com.binarymonks.gonzo.core.common.InvalidCredentials
 import com.binarymonks.gonzo.core.common.UniqueConstrainteException
 import com.binarymonks.gonzo.core.time.nowUTC
+import com.binarymonks.gonzo.core.users.UsersConfig
 import com.binarymonks.gonzo.core.users.api.PasswordReset
 import com.binarymonks.gonzo.core.users.api.User
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import com.binarymonks.gonzo.userNew
+import com.binarymonks.gonzo.web.DataConfig
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
@@ -27,7 +28,10 @@ import java.time.ZonedDateTime
 
 @RunWith(SpringRunner::class)
 @ContextConfiguration(
-        classes = [TestConfig::class],
+        classes = [
+            UsersConfig::class,
+            DataConfig::class
+        ],
         loader = AnnotationConfigContextLoader::class
 )
 class UserServiceTest {

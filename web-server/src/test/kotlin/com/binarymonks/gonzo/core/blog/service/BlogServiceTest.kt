@@ -1,17 +1,20 @@
 package com.binarymonks.gonzo.core.blog.service
 
-import com.binarymonks.gonzo.TestConfig
 import com.binarymonks.gonzo.blogEntryNew
+import com.binarymonks.gonzo.core.blog.BlogConfig
 import com.binarymonks.gonzo.core.blog.api.BlogEntry
 import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
 import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
 import com.binarymonks.gonzo.core.blog.api.BlogEntryUpdate
+import com.binarymonks.gonzo.web.DataConfig
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
 import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.PropertySource
+import org.springframework.context.annotation.PropertySources
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.support.AnnotationConfigContextLoader
@@ -22,7 +25,13 @@ import java.time.ZonedDateTime
 
 
 @RunWith(SpringRunner::class)
-@ContextConfiguration(classes = [TestConfig::class], loader = AnnotationConfigContextLoader::class)
+@ContextConfiguration(
+        classes = [
+            BlogConfig::class,
+            DataConfig::class
+        ],
+        loader = AnnotationConfigContextLoader::class
+)
 class BlogServiceTest {
 
     lateinit var mockClock: Clock
@@ -193,11 +202,11 @@ class BlogServiceTest {
     @Test
     fun getBlogEntryHeaders() {
         val created: List<BlogEntryHeader> = listOf(
-                blogService.createBlogEntry(blogEntryNew().copy(title="Entry1")).toHeader(),
-                blogService.createBlogEntry(blogEntryNew().copy(title="Entry2")).toHeader()
+                blogService.createBlogEntry(blogEntryNew().copy(title = "Entry1")).toHeader(),
+                blogService.createBlogEntry(blogEntryNew().copy(title = "Entry2")).toHeader()
         )
         val actual = blogService.getBlogEntryHeaders()
-        for (header in created){
+        for (header in created) {
             Assertions.assertTrue(actual.contains(header))
         }
     }

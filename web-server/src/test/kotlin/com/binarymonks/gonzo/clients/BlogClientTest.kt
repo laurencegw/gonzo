@@ -1,9 +1,6 @@
 package com.binarymonks.gonzo.clients
 
-import com.binarymonks.gonzo.blogEntry
-import com.binarymonks.gonzo.blogEntryHeader
-import com.binarymonks.gonzo.blogEntryNew
-import com.binarymonks.gonzo.blogEntryUpdate
+import com.binarymonks.gonzo.*
 import com.binarymonks.gonzo.core.blog.service.BlogService
 import com.binarymonks.gonzo.web.GonzoApplication
 import org.junit.Assert
@@ -22,7 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = [GonzoApplication::class]
 )
-@Ignore("Some issue with http")
+@Ignore("401 Unauthorized")
 class BlogClientTest {
 
     @LocalServerPort

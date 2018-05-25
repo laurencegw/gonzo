@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.*
 import java.time.ZonedDateTime
 
 @RestController
-class BlogController {
-
-    @Autowired
-    lateinit var blogService: BlogService
+class BlogController(var blogService: BlogService) {
 
     @PostMapping("/${Routes.BLOGS}")
     fun createBlogEntry(@RequestBody newBlogEntry: BlogEntryNew): BlogEntry {
@@ -22,8 +19,8 @@ class BlogController {
 
     @PutMapping("/${Routes.BLOGS}/{id}")
     fun updateBlogEntry(@PathVariable id: Long, @RequestBody update: BlogEntryUpdate): BlogEntry {
-        val update = update.copy(id = id)
-        return blogService.updateBlogEntry(update)
+        val updateWithPathID = update.copy(id = id)
+        return blogService.updateBlogEntry(updateWithPathID)
     }
 
     @GetMapping("/${Routes.BLOGS}")

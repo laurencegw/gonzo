@@ -1,22 +1,19 @@
 package com.binarymonks.gonzo.web
 
+import com.binarymonks.gonzo.core.blog.BlogConfig
+import com.binarymonks.gonzo.core.users.UsersConfig
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.domain.EntityScan
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.PropertySource
+import org.springframework.context.annotation.PropertySources
 
 @SpringBootApplication
-@ComponentScan(basePackages = [
-    "com.binarymonks.gonzo.core",
-    "com.binarymonks.gonzo.web"
-])
-@EnableJpaRepositories(basePackages = [
-    "com.binarymonks.gonzo.core"
-])
-@EntityScan(basePackages = [
-    "com.binarymonks.gonzo.core"
-])
+@Import(
+        BlogConfig::class,
+        UsersConfig::class,
+        DataConfig::class
+)
 class GonzoApplication
 
 fun main(args: Array<String>) {
