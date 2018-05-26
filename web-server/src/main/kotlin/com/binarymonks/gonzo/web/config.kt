@@ -8,6 +8,9 @@ import org.springframework.context.annotation.PropertySource
 import org.springframework.context.annotation.PropertySources
 import org.springframework.core.env.Environment
 import org.springframework.jdbc.datasource.DriverManagerDataSource
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import javax.sql.DataSource
 
@@ -15,7 +18,7 @@ import javax.sql.DataSource
 @EnableTransactionManagement
 @EnableAutoConfiguration
 @PropertySource("classpath:db.properties")
-class DataConfig {
+class GonzoDataConfig {
 
     @Autowired
     lateinit var env: Environment
@@ -29,5 +32,17 @@ class DataConfig {
         dataSource.password = env.getProperty("jdbc.pass")
 
         return dataSource
+    }
+}
+
+@Configuration
+@EnableWebSecurity
+class GonzoSecurityConfig: WebSecurityConfigurerAdapter() {
+
+    override fun configure(http: HttpSecurity?) {
+        http?.authorizeRequests()
+                ?.antMatchers("/**")
+                ?.permitAll()
+        http?.csrf()?.disable()
     }
 }

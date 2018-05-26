@@ -7,7 +7,7 @@ import com.binarymonks.gonzo.core.users.UsersConfig
 import com.binarymonks.gonzo.core.users.api.LoginCredentials
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import com.binarymonks.gonzo.userNew
-import com.binarymonks.gonzo.web.DataConfig
+import com.binarymonks.gonzo.web.GonzoDataConfig
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
@@ -27,7 +27,7 @@ import java.time.ZonedDateTime
 @ContextConfiguration(
         classes = [
             UsersConfig::class,
-            DataConfig::class
+            GonzoDataConfig::class
         ],
         loader = AnnotationConfigContextLoader::class
 )

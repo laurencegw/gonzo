@@ -5,14 +5,13 @@ import com.binarymonks.gonzo.core.users.UsersConfig
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Import
-import org.springframework.context.annotation.PropertySource
-import org.springframework.context.annotation.PropertySources
 
 @SpringBootApplication
 @Import(
         BlogConfig::class,
         UsersConfig::class,
-        DataConfig::class
+        GonzoDataConfig::class,
+        GonzoSecurityConfig::class
 )
 class GonzoApplication
 

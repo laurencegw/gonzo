@@ -1,14 +1,18 @@
 package com.binarymonks.gonzo.clients
 
-import com.binarymonks.gonzo.*
+import com.binarymonks.gonzo.blogEntry
+import com.binarymonks.gonzo.blogEntryHeader
+import com.binarymonks.gonzo.blogEntryNew
+import com.binarymonks.gonzo.blogEntryUpdate
 import com.binarymonks.gonzo.core.blog.service.BlogService
 import com.binarymonks.gonzo.web.GonzoApplication
 import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.web.server.LocalServerPort
@@ -19,7 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = [GonzoApplication::class]
 )
-@Ignore("401 Unauthorized")
+@EnableAutoConfiguration(exclude = [SecurityAutoConfiguration::class])
 class BlogClientTest {
 
     @LocalServerPort

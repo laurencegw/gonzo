@@ -3,7 +3,6 @@ package com.binarymonks.gonzo.core.blog.api
 import com.fasterxml.jackson.annotation.JsonCreator
 import java.time.ZonedDateTime
 
-
 interface Blog {
     fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntry
     fun updateBlogEntry(update: BlogEntryUpdate): BlogEntry

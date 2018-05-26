@@ -6,15 +6,13 @@ import com.binarymonks.gonzo.core.blog.api.BlogEntry
 import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
 import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
 import com.binarymonks.gonzo.core.blog.api.BlogEntryUpdate
-import com.binarymonks.gonzo.web.DataConfig
+import com.binarymonks.gonzo.web.GonzoDataConfig
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
 import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.PropertySource
-import org.springframework.context.annotation.PropertySources
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.support.AnnotationConfigContextLoader
@@ -28,7 +26,7 @@ import java.time.ZonedDateTime
 @ContextConfiguration(
         classes = [
             BlogConfig::class,
-            DataConfig::class
+            GonzoDataConfig::class
         ],
         loader = AnnotationConfigContextLoader::class
 )
