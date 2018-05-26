@@ -11,6 +11,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import javax.sql.DataSource
 
@@ -43,6 +44,7 @@ class GonzoSecurityConfig: WebSecurityConfigurerAdapter() {
         http?.authorizeRequests()
                 ?.antMatchers("/**")
                 ?.permitAll()
-        http?.csrf()?.disable()
+        http?.cors()?.and()?.csrf()?.disable()
+        http?.sessionManagement()?.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     }
 }

@@ -42,10 +42,8 @@ class SignInService : SignIn {
         }
         val expiry= nowUTC(clock).plus(tokenLifeSpan)
         val jwts: JwtBuilder = Jwts.builder()
-                .setClaims(mutableMapOf(
-                        Pair<String,Any>("sub",userEntity.email),
-                        Pair<String,Any>("exp",expiry.toEpochSecond())
-                ))
+                .setExpiration(Date(expiry.toInstant().toEpochMilli()))
+                .setSubject(userEntity.email)
                 .signWith(SignatureAlgorithm.HS512, key)
         return jwts.compact()
     }
