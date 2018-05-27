@@ -65,15 +65,19 @@ class GonzoSecurityConfig: WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity?) {
         http?.authorizeRequests()
-                ?.antMatchers(HttpMethod.GET,"/**")
+                ?.antMatchers(HttpMethod.POST,Routes.LOGIN)
                 ?.permitAll()
                 ?.and()
                 ?.authorizeRequests()
-                ?.antMatchers(HttpMethod.POST,"/**")
+                ?.antMatchers(HttpMethod.GET,"${Routes.API}/**")
+                ?.permitAll()
+                ?.and()
+                ?.authorizeRequests()
+                ?.antMatchers(HttpMethod.POST,"${Routes.API}/**")
                 ?.authenticated()
                 ?.and()
                 ?.authorizeRequests()
-                ?.antMatchers(HttpMethod.PUT,"/**")
+                ?.antMatchers(HttpMethod.PUT,"${Routes.API}/**")
                 ?.authenticated()
                 ?.and()
                 ?.addFilter(JWTAuthenticationFilter(

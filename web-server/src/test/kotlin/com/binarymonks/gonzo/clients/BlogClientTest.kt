@@ -1,11 +1,10 @@
 package com.binarymonks.gonzo.clients
 
-import com.binarymonks.gonzo.blogEntry
-import com.binarymonks.gonzo.blogEntryHeader
-import com.binarymonks.gonzo.blogEntryNew
-import com.binarymonks.gonzo.blogEntryUpdate
+import com.binarymonks.gonzo.*
 import com.binarymonks.gonzo.core.blog.service.BlogService
 import com.binarymonks.gonzo.core.common.NotAuthentic
+import com.binarymonks.gonzo.core.users.persistence.UserRepo
+import com.binarymonks.gonzo.core.users.service.UserService
 import com.binarymonks.gonzo.web.GonzoApplication
 import org.junit.Assert
 import org.junit.Before
@@ -13,6 +12,7 @@ import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
@@ -34,11 +34,17 @@ class BlogClientTest {
     @MockBean
     lateinit var blogServiceMock: BlogService
 
+    @Autowired
+    lateinit var userService: UserService
+    @Autowired
+    lateinit var userRepo: UserRepo
+
     lateinit var blogClient: BlogClient
 
     @Before
     fun setUp() {
         blogClient = BlogClient("http://localhost:$port")
+        userRepo.deleteAll()
     }
 
     @Test(expected = NotAuthentic::class)
@@ -50,8 +56,9 @@ class BlogClientTest {
     }
 
     @Test()
-    @Ignore("Need an api to sign in with first")
     fun createBlogEntry() {
+        login()
+
         val newBlogEntry = blogEntryNew()
         val expectedBlogEntry = blogEntry()
         Mockito.`when`(blogServiceMock.createBlogEntry(newBlogEntry)).thenReturn(expectedBlogEntry)
@@ -60,6 +67,12 @@ class BlogClientTest {
 
         Mockito.verify(blogServiceMock).createBlogEntry(newBlogEntry)
         Assert.assertEquals(expectedBlogEntry, actual)
+    }
+
+    private fun login() {
+        val newUser = userNew()
+        userService.createUser(newUser)
+        blogClient.signIn(newUser.email, newUser.password)
     }
 
     @Test
