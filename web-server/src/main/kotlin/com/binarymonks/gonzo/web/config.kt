@@ -4,12 +4,14 @@ import com.binarymonks.gonzo.core.users.service.SignInService
 import com.binarymonks.gonzo.web.filters.JWTAuthenticationFilter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.PropertySource
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpMethod
 import org.springframework.jdbc.datasource.DriverManagerDataSource
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -44,17 +46,18 @@ class GonzoDataConfig {
 }
 
 class Correct4XXEntryPoint : AuthenticationEntryPoint {
-
     /**
      * 401 for Authentication errors and 403 for Authorization errors
+     * TODO: Might not need this - will see when we have authorization errors.
      */
-    override fun commence(request: HttpServletRequest, response: HttpServletResponse, arg2: AuthenticationException) {
+    override fun commence(request: HttpServletRequest, response: HttpServletResponse, exception: AuthenticationException) {
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Not Authentic")
     }
 }
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled=true)
 class GonzoSecurityConfig: WebSecurityConfigurerAdapter() {
 
     @Autowired
@@ -79,6 +82,8 @@ class GonzoSecurityConfig: WebSecurityConfigurerAdapter() {
                 ))
         http?.cors()?.and()?.csrf()?.disable()
         http?.sessionManagement()?.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        http?.exceptionHandling()?.authenticationEntryPoint(Correct4XXEntryPoint())
+        http?.exceptionHandling()?.authenticationEntryPoint(
+                Http401AuthenticationEntryPoint("Bearer realm=\"gonzocode.com\"")
+        )
     }
 }
