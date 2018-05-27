@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate
 
 
 class BlogClient(private val baseURL: String) : Blog {
-    private val restTemplate = RestTemplate()
+    private val restTemplate = restTemplateWithErrorHandler()
 
     override fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntry {
         val response = restTemplate.exchange(

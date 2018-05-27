@@ -3,7 +3,7 @@ package com.binarymonks.gonzo.core.users.service
 import com.binarymonks.gonzo.PasswordsStub
 import com.binarymonks.gonzo.core.common.ExpiredToken
 import com.binarymonks.gonzo.core.common.InvalidCredentials
-import com.binarymonks.gonzo.core.common.UniqueConstrainteException
+import com.binarymonks.gonzo.core.common.UniqueConstraintException
 import com.binarymonks.gonzo.core.time.nowUTC
 import com.binarymonks.gonzo.core.users.UsersConfig
 import com.binarymonks.gonzo.core.users.api.PasswordReset
@@ -90,14 +90,14 @@ class UserServiceTest {
         try {
             userService.createUser(duplicateNickNameUser)
             Assertions.fail<String>("Should be an error")
-        } catch (e: UniqueConstrainteException) {
+        } catch (e: UniqueConstraintException) {
             Assertions.assertEquals(e.attributeName.toLowerCase(),"nickname")
         }
 
         try {
             userService.createUser(duplicateEmailUser)
             Assertions.fail<String>("Should be an error")
-        } catch (e: UniqueConstrainteException) {
+        } catch (e: UniqueConstraintException) {
             Assertions.assertEquals(e.attributeName.toLowerCase(),"email")
         }
     }
@@ -117,7 +117,7 @@ class UserServiceTest {
                     email = newUser1.email
             ))
             Assertions.fail<String>("Should be an error")
-        } catch (e: UniqueConstrainteException) {
+        } catch (e: UniqueConstraintException) {
             Assertions.assertEquals(e.attributeName.toLowerCase(),"email")
         }
     }

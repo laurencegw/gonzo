@@ -45,10 +45,11 @@ data class JWTAuthentication(
  *
  * Cool article explaining this stuff here: https://auth0.com/blog/implementing-jwt-authentication-on-spring-boot/
  */
-class JWTAuthenticationFilter(authManager:AuthenticationManager): BasicAuthenticationFilter(authManager) {
+class JWTAuthenticationFilter(
+        var signInService: SignInService,
+        authManager:AuthenticationManager
+): BasicAuthenticationFilter(authManager) {
 
-    @Autowired
-    lateinit var signInService: SignInService
 
     override fun doFilterInternal(request: HttpServletRequest?, response: HttpServletResponse?, chain: FilterChain?) {
         val header: String? = request?.getHeader(AUTH_HEADER)

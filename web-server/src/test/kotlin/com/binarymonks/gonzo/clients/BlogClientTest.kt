@@ -5,9 +5,11 @@ import com.binarymonks.gonzo.blogEntryHeader
 import com.binarymonks.gonzo.blogEntryNew
 import com.binarymonks.gonzo.blogEntryUpdate
 import com.binarymonks.gonzo.core.blog.service.BlogService
+import com.binarymonks.gonzo.core.common.NotAuthentic
 import com.binarymonks.gonzo.web.GonzoApplication
 import org.junit.Assert
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
@@ -39,7 +41,16 @@ class BlogClientTest {
         blogClient = BlogClient("http://localhost:$port")
     }
 
+    @Test(expected = NotAuthentic::class)
+    fun createBlogEntry_notSignedIn() {
+        val newBlogEntry = blogEntryNew()
+        Mockito.`when`(blogServiceMock.createBlogEntry(newBlogEntry)).thenReturn(blogEntry())
+
+        blogClient.createBlogEntry(newBlogEntry)
+    }
+
     @Test()
+    @Ignore("Need an api to sign in with first")
     fun createBlogEntry() {
         val newBlogEntry = blogEntryNew()
         val expectedBlogEntry = blogEntry()
@@ -52,6 +63,7 @@ class BlogClientTest {
     }
 
     @Test
+    @Ignore("Need an api to sign in with first")
     fun updateBlogEntry() {
         val blogEntryUpdate = blogEntryUpdate()
         val expectedBlogEntry = blogEntry()
@@ -61,6 +73,14 @@ class BlogClientTest {
 
         Mockito.verify(blogServiceMock).updateBlogEntry(blogEntryUpdate)
         Assert.assertEquals(expectedBlogEntry, actual)
+    }
+
+    @Test(expected = NotAuthentic::class)
+    fun updateBlogEntry_notSignedIn() {
+        val blogEntryUpdate = blogEntryUpdate()
+        Mockito.`when`(blogServiceMock.updateBlogEntry(blogEntryUpdate)).thenReturn(blogEntry())
+
+        blogClient.updateBlogEntry(blogEntryUpdate)
     }
 
     @Test
