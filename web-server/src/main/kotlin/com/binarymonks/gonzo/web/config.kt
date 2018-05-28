@@ -57,7 +57,6 @@ class Correct4XXEntryPoint : AuthenticationEntryPoint {
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled=true)
 class GonzoSecurityConfig: WebSecurityConfigurerAdapter() {
 
     @Autowired

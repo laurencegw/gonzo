@@ -8,10 +8,25 @@ import com.binarymonks.gonzo.core.blog.service.BlogService
 import com.binarymonks.gonzo.core.users.api.LoginCredentials
 import com.binarymonks.gonzo.core.users.service.SignInService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.ModelAndView
+
 
 @RestController
-class BlogController{
+class SPAProxyController {
+
+    @RequestMapping(
+            "/home/**",
+            "/blog/**"
+    )
+    fun forward(model: ModelMap): ModelAndView {
+        return ModelAndView("forward:/")
+    }
+}
+
+@RestController
+class BlogController {
 
     @Autowired
     lateinit var blogService: BlogService
@@ -40,7 +55,7 @@ class BlogController{
 }
 
 @RestController
-class SignInController{
+class SignInController {
     @Autowired
     lateinit var signInService: SignInService
 
