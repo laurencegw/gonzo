@@ -51,7 +51,6 @@ class BlogClientTest {
     fun createBlogEntry_notSignedIn() {
         val newBlogEntry = blogEntryNew()
         Mockito.`when`(blogServiceMock.createBlogEntry(newBlogEntry)).thenReturn(blogEntry())
-
         blogClient.createBlogEntry(newBlogEntry)
     }
 

@@ -21,7 +21,7 @@ class BlogClient(private val baseURL: String) : Blog {
             init {
                 val encodedAuth = Base64.encodeBase64(
                         token.toByteArray(Charset.forName("US-ASCII")))
-                val authHeader = "Bearer " + String(encodedAuth)
+                val authHeader = "Bearer " + token
                 set("Authorization", authHeader)
             }
         }
