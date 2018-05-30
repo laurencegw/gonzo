@@ -1,5 +1,6 @@
 package com.binarymonks.gonzo
 
+import com.binarymonks.gonzo.core.authz.api.AccessRequest
 import com.binarymonks.gonzo.core.blog.api.BlogEntry
 import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
 import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
@@ -54,5 +55,13 @@ fun userNew(): UserNew {
             email = "jane@somewhere.com",
             nickname = "Jane",
             password = "password"
+    )
+}
+
+fun accessRequest(): AccessRequest{
+    return AccessRequest(
+            mapOf(),
+            "",
+            mapOf()
     )
 }
