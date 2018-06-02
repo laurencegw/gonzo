@@ -1,59 +1,58 @@
 package com.binarymonks.gonzo.core.authz.policies
 
 import com.binarymonks.gonzo.accessRequest
-import com.binarymonks.gonzo.core.authz.api.AccessRequest
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
 
 
-class BasicMatcherTest {
+class BasicPolicyTest {
 
     @Test
-    fun userAttributeMatcher() {
+    fun userAttributePolicy() {
         val accessRequest = accessRequest().copy(
                 subject = mapOf(Pair("id", 20))
         )
-        val matchingMatcher = UserAttributeMatcher("id", 20)
-        val sameKeyDifferentValueMatcher = UserAttributeMatcher("id", 21)
-        val sameValueDifferentKeyMatcher = UserAttributeMatcher("age", 21)
+        val matchingPolicy = SubjectAttributePolicy("id", 20)
+        val sameKeyDifferentValuePolicy = SubjectAttributePolicy("id", 21)
+        val sameValueDifferentKeyPolicy = SubjectAttributePolicy("age", 21)
 
-        Assertions.assertTrue(matchingMatcher.checkAuthorized(accessRequest))
-        Assertions.assertFalse(sameKeyDifferentValueMatcher.checkAuthorized(accessRequest))
-        Assertions.assertFalse(sameValueDifferentKeyMatcher.checkAuthorized(accessRequest))
+        Assertions.assertTrue(matchingPolicy.checkAuthorized(accessRequest))
+        Assertions.assertFalse(sameKeyDifferentValuePolicy.checkAuthorized(accessRequest))
+        Assertions.assertFalse(sameValueDifferentKeyPolicy.checkAuthorized(accessRequest))
     }
 
     @Test
-    fun resourceAttributeMatcher() {
+    fun resourceAttributePolicy() {
         val accessRequest = accessRequest().copy(
                 resource = mapOf(Pair("id", 20))
         )
 
-        val matchingMatcher = ResourceAttributeMatcher("id", 20)
-        val sameKeyDifferentValueMatcher = ResourceAttributeMatcher("id", 21)
-        val sameValueDifferentKeyMatcher = ResourceAttributeMatcher("age", 21)
+        val matchingPolicy = ResourceAttributePolicy("id", 20)
+        val sameKeyDifferentValuePolicy = ResourceAttributePolicy("id", 21)
+        val sameValueDifferentKeyPolicy = ResourceAttributePolicy("age", 21)
 
-        Assertions.assertTrue(matchingMatcher.checkAuthorized(accessRequest))
-        Assertions.assertFalse(sameKeyDifferentValueMatcher.checkAuthorized(accessRequest))
-        Assertions.assertFalse(sameValueDifferentKeyMatcher.checkAuthorized(accessRequest))
+        Assertions.assertTrue(matchingPolicy.checkAuthorized(accessRequest))
+        Assertions.assertFalse(sameKeyDifferentValuePolicy.checkAuthorized(accessRequest))
+        Assertions.assertFalse(sameValueDifferentKeyPolicy.checkAuthorized(accessRequest))
     }
 
     @Test
-    fun environmentAttributeMatcher() {
+    fun environmentAttributePolicy() {
         val accessRequest = accessRequest().copy(
                 environment = mapOf(Pair("id", 20))
         )
 
-        val matchingMatcher = EnvironmentAttributeMatcher("id", 20)
-        val sameKeyDifferentValueMatcher = EnvironmentAttributeMatcher("id", 21)
-        val sameValueDifferentKeyMatcher = EnvironmentAttributeMatcher("age", 21)
+        val matchingPolicy = EnvironmentAttributePolicy("id", 20)
+        val sameKeyDifferentValuePolicy = EnvironmentAttributePolicy("id", 21)
+        val sameValueDifferentKeyPolicy = EnvironmentAttributePolicy("age", 21)
 
-        Assertions.assertTrue(matchingMatcher.checkAuthorized(accessRequest))
-        Assertions.assertFalse(sameKeyDifferentValueMatcher.checkAuthorized(accessRequest))
-        Assertions.assertFalse(sameValueDifferentKeyMatcher.checkAuthorized(accessRequest))
+        Assertions.assertTrue(matchingPolicy.checkAuthorized(accessRequest))
+        Assertions.assertFalse(sameKeyDifferentValuePolicy.checkAuthorized(accessRequest))
+        Assertions.assertFalse(sameValueDifferentKeyPolicy.checkAuthorized(accessRequest))
     }
 
     @Test
-    fun actionMatcher() {
+    fun actionPolicy() {
         val accessRequest = accessRequest().copy(
                 action = "READ"
         )
@@ -61,9 +60,105 @@ class BasicMatcherTest {
                 action = "rEAd"
         )
 
-        Assertions.assertTrue(ActionMatcher("read").checkAuthorized(accessRequest))
-        Assertions.assertTrue(ActionMatcher("read").checkAuthorized(accessRequestMixedCase))
-        Assertions.assertFalse(ActionMatcher("write").checkAuthorized(accessRequestMixedCase))
+        Assertions.assertTrue(ActionPolicy("read").checkAuthorized(accessRequest))
+        Assertions.assertTrue(ActionPolicy("read").checkAuthorized(accessRequestMixedCase))
+        Assertions.assertFalse(ActionPolicy("write").checkAuthorized(accessRequestMixedCase))
     }
 
+}
+
+val accessRequest = accessRequest().copy(
+        action = "READ"
+)
+val willAuthorizePolicy = ActionPolicy("READ")
+val willNotAuthorizePolicy = ActionPolicy("WRITE")
+
+class AllOfTest {
+
+    @Test
+    fun checkAuthorized_emptyPolicies() {
+        Assertions.assertFalse(AllOf().checkAuthorized(accessRequest))
+    }
+
+    @Test
+    fun checkAuthorized_onlySomeAuthorized() {
+        Assertions.assertFalse(
+                AllOf(
+                        willAuthorizePolicy,
+                        willAuthorizePolicy,
+                        willNotAuthorizePolicy,
+                        willAuthorizePolicy
+                ).checkAuthorized(accessRequest)
+        )
+    }
+
+    @Test
+    fun checkAuthorized_allAuthorized() {
+        Assertions.assertTrue(
+                AllOf(
+                        willAuthorizePolicy,
+                        willAuthorizePolicy,
+                        willAuthorizePolicy
+                ).checkAuthorized(accessRequest)
+        )
+    }
+
+    @Test
+    fun checkAuthorized_NoneAuthorized(){
+        Assertions.assertFalse(
+                AllOf(
+                        willNotAuthorizePolicy,
+                        willNotAuthorizePolicy,
+                        willNotAuthorizePolicy
+                ).checkAuthorized(accessRequest)
+        )
+    }
+}
+
+class AnyOfTest {
+
+    @Test
+    fun checkAuthorized_emptyPolicies() {
+        Assertions.assertFalse(AnyOf().checkAuthorized(accessRequest))
+    }
+
+    @Test
+    fun checkAuthorized_onlySomeAuthorized() {
+        Assertions.assertTrue(
+                AnyOf(
+                        willAuthorizePolicy,
+                        willAuthorizePolicy,
+                        willNotAuthorizePolicy,
+                        willAuthorizePolicy
+                ).checkAuthorized(accessRequest)
+        )
+    }
+
+    @Test
+    fun checkAuthorized_allAuthorized() {
+        Assertions.assertTrue(
+                AnyOf(
+                        willAuthorizePolicy,
+                        willAuthorizePolicy,
+                        willAuthorizePolicy
+                ).checkAuthorized(accessRequest)
+        )
+    }
+
+    @Test
+    fun checkAuthorized_NoneAuthorized(){
+        Assertions.assertFalse(
+                AnyOf(
+                        willNotAuthorizePolicy,
+                        willNotAuthorizePolicy,
+                        willNotAuthorizePolicy
+                ).checkAuthorized(accessRequest)
+        )
+    }
+}
+
+fun main(args: Array<String>) {
+    val policy = AllOf(
+            Expression().subject("roles").contains().value("MANAGER")
+    )
 }

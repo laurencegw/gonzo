@@ -5,7 +5,7 @@ import com.binarymonks.gonzo.core.users.service.Passwords
 /**
  * Provides non random password hashing and salting for testing.
  */
-class PasswordsStub() : Passwords {
+class PasswordsStub : Passwords {
     var salt = "pepper"
 
     override fun genSalt(logRounds: Int): String {

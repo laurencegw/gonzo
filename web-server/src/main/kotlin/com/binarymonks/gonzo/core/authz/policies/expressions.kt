@@ -2,94 +2,181 @@ package com.binarymonks.gonzo.core.authz.policies
 
 import com.binarymonks.gonzo.core.authz.api.AccessDecider
 import com.binarymonks.gonzo.core.authz.api.AccessRequest
-import kotlin.reflect.KClass
 
-enum class AttributeType{
+/**
+ * A policy for basic expressions between attribute values and provided values.
+ */
+class ExpressionPolicy(
+        val leftOperand: ValueReference,
+        val operatorType: OperatorType,
+        val rightOperand: ValueReference
+) : AccessDecider {
+
+    override fun checkAuthorized(accessRequest: AccessRequest): Boolean {
+        val left = leftOperand.get(accessRequest)
+        val right = rightOperand.get(accessRequest)
+            return when (operatorType) {
+                OperatorType.EQUAL -> left == right
+                OperatorType.GREATER_THAN,
+                OperatorType.GREATER_THAN_EQUAL,
+                OperatorType.LESS_THAN,
+                OperatorType.LESS_THAN_EQUAL -> checkComparable(left, right, operatorType)
+                OperatorType.CONTAINS ->{
+                    @Suppress("UNCHECKED_CAST")
+                    try {
+                        left as Collection<Any>
+                    } catch (e: Exception) {
+                        throw BadExpressionException("Values of $leftOperand is not Collection")
+                    }
+                    left.contains(right)
+                }
+                OperatorType.CONTAINS_ANY,
+                OperatorType.CONTAINS_ALL -> checkCollection(left,right, operatorType)
+            }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun checkComparable(left: Any?, right: Any?, operatorType: OperatorType):Boolean {
+        try {
+            left as Comparable<Any> > right as Comparable<Any>
+        } catch (e: Exception) {
+            throw BadExpressionException("Values of $leftOperand and $rightOperand are not comparable")
+        }
+        return when(operatorType){
+            OperatorType.GREATER_THAN-> left> right
+            OperatorType.GREATER_THAN_EQUAL -> left >= right
+            OperatorType.LESS_THAN -> left < right
+            OperatorType.LESS_THAN_EQUAL -> left <= right
+            else -> throw IncorrectOperator("$operatorType not recognized as a Comparison operator")
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun checkCollection(left: Any?, right: Any?, operatorType: OperatorType):Boolean {
+        try {
+            left as Collection<Any>
+            right as Collection<Any>
+        } catch (e: Exception) {
+            throw BadExpressionException("Values of $leftOperand and $rightOperand are not Collections")
+        }
+        return when(operatorType){
+            OperatorType.CONTAINS_ALL-> left.containsAll(right)
+            OperatorType.CONTAINS_ANY-> right.any { left.contains(it) }
+            else -> throw IncorrectOperator("$operatorType not recognized as a Collection operator")
+        }
+    }
+
+}
+
+class BadExpressionException(message: String) : Exception(message)
+class IncorrectOperator(message: String): Exception(message)
+
+
+enum class AttributeType {
     SUBJECT,
     RESOURCE,
     ENVIRONMENT
 }
 
-enum class ComparisonOperator{
+enum class OperatorType {
     EQUAL,
     GREATER_THAN,
     GREATER_THAN_EQUAL,
     LESS_THAN,
-    LESS_THAN_EQUAL
+    LESS_THAN_EQUAL,
+    CONTAINS,
+    CONTAINS_ALL,
+    CONTAINS_ANY
 }
 
-data class AttributeReference<T:Comparable<T>>(
+interface ValueReference {
+    fun get(accessRequest: AccessRequest): Any?
+}
+
+data class PassThroughReference(val value: Any?) : ValueReference {
+    override fun get(accessRequest: AccessRequest): Any? {
+        return value
+    }
+}
+
+data class AttributeReference(
         val type: AttributeType,
-        val key: String,
-        val valueType: KClass<T>
-):ValueReference<T>{
-    override fun get(accessRequest: AccessRequest): T{
-        val value =  when(type){
+        val key: String
+) : ValueReference {
+    override fun get(accessRequest: AccessRequest): Any? {
+        return when (type) {
             AttributeType.SUBJECT -> accessRequest.subject[key]
-            AttributeType.RESOURCE -> accessRequest.subject[key]
-            AttributeType.ENVIRONMENT -> accessRequest.subject[key]
-        }
-        if(valueType.isInstance(value)){
-            return value as T
-        }
-        else{
-            throw ClassCastException("The attribute value is not of expected type $valueType")
+            AttributeType.RESOURCE -> accessRequest.resource[key]
+            AttributeType.ENVIRONMENT -> accessRequest.environment[key]
         }
     }
 }
 
-interface ValueReference<T:Comparable<T>>{
-    fun get(accessRequest: AccessRequest): T
+/**
+ * Initializing token for an ExpressionPolicy builder.
+ */
+class Expression {
+    fun subject(key: String) = Operator(AttributeType.SUBJECT, key)
+
+    fun resource(key: String) = Operator(AttributeType.RESOURCE, key)
+
+    fun environment(key: String) = Operator(AttributeType.ENVIRONMENT, key)
 }
 
-class Expression<T:Comparable<T>>(
-        val leftOperand: ValueReference<T>,
-        val operator: ComparisonOperator,
-        val rightOperand: ValueReference<T>
-): AccessDecider {
-    
-    
-    override fun checkAuthorized(accessRequest: AccessRequest): Boolean {
-        val left = leftOperand.get(accessRequest)
-        val right = rightOperand.get(accessRequest)
-        return when(operator){
-            ComparisonOperator.EQUAL -> left == right
-            ComparisonOperator.GREATER_THAN -> left > right
-            ComparisonOperator.GREATER_THAN_EQUAL -> left >= right
-            ComparisonOperator.LESS_THAN -> left < right
-            ComparisonOperator.LESS_THAN_EQUAL -> left <= right
-        }
-    }
+class Operator internal constructor(
+        private val leftAttributeType: AttributeType,
+        private val leftKey: String
+) {
 
+    fun equalTo() = secondOperand(OperatorType.EQUAL)
+
+    fun greaterThan() = secondOperand(OperatorType.GREATER_THAN)
+
+    fun greaterThanEqual() = secondOperand(OperatorType.GREATER_THAN_EQUAL)
+
+    fun lessThan() = secondOperand(OperatorType.LESS_THAN)
+
+    fun lessThanEqual() = secondOperand(OperatorType.LESS_THAN_EQUAL)
+
+    fun contains() = secondOperand(OperatorType.CONTAINS)
+
+    fun containsAll() = secondOperand(OperatorType.CONTAINS_ALL)
+
+    fun containsAny() = secondOperand(OperatorType.CONTAINS_ANY)
+
+    private fun secondOperand(operatorType: OperatorType) = SecondOperand(
+            leftAttributeType = leftAttributeType,
+            leftKey = leftKey,
+            operatorType = operatorType
+    )
 }
 
-class FirstOperand{
 
-    fun subject(key: String): Operator{
-        return Operator()
-    }
-}
+/**
+ * Terminating token for an ExpressionPolicy builder.
+ */
+class SecondOperand internal constructor(
+        private val leftAttributeType: AttributeType,
+        private val leftKey: String,
+        private val operatorType: OperatorType
+) {
 
-class Operator{
+    fun value(value: Any) = ExpressionPolicy(
+            leftOperand = AttributeReference(leftAttributeType, leftKey),
+            operatorType = operatorType,
+            rightOperand = PassThroughReference(value)
+    )
 
+    fun resource(key: String) = expression(AttributeType.RESOURCE, key)
 
-    fun greaterThan(): SecondOperand{
-        return SecondOperand()
-    }
-}
+    fun environment(key: String) = expression(AttributeType.ENVIRONMENT, key)
 
-class SecondOperand{
+    fun subject(key: String) = expression(AttributeType.SUBJECT, key)
 
-    fun <T: Comparable<T>> value(value: T){
+    private fun expression(attributeType: AttributeType, key: String) = ExpressionPolicy(
+            leftOperand = AttributeReference(leftAttributeType, leftKey),
+            operatorType = operatorType,
+            rightOperand = AttributeReference(attributeType, key)
+    )
 
-    }
-
-    fun <T: Comparable<T>> resource(key:String, type: KClass<T>){
-
-    }
-}
-
-fun main(args: Array<String>) {
-    FirstOperand().subject("age").greaterThan().value(34)
-    FirstOperand().subject("age").greaterThan().resource("ageLimit", Int::class)
 }

@@ -3,7 +3,10 @@ package com.binarymonks.gonzo.core.authz.policies
 import com.binarymonks.gonzo.core.authz.api.AccessDecider
 import com.binarymonks.gonzo.core.authz.api.AccessRequest
 
-class UserAttributeMatcher(
+/**
+ * Checks if a Subject has a particular attribute value.
+ */
+class SubjectAttributePolicy(
         val key: String,
         val value: Any
 ) : AccessDecider {
@@ -12,7 +15,10 @@ class UserAttributeMatcher(
     }
 }
 
-class ResourceAttributeMatcher(
+/**
+ * Checks if the Resource has a particular attribute value.
+ */
+class ResourceAttributePolicy(
         val key: String,
         val value: Any
 ) : AccessDecider {
@@ -21,7 +27,10 @@ class ResourceAttributeMatcher(
     }
 }
 
-class EnvironmentAttributeMatcher(
+/**
+ * Checks if the Environment has a particular attribute value.
+ */
+class EnvironmentAttributePolicy(
         val key: String,
         val value: Any
 ) : AccessDecider {
@@ -30,11 +39,41 @@ class EnvironmentAttributeMatcher(
     }
 }
 
-class ActionMatcher(
+/**
+ * Checks if the Action matches a particular value.
+ */
+class ActionPolicy(
         val action: String
 ) : AccessDecider {
     override fun checkAuthorized(accessRequest: AccessRequest): Boolean {
         return action.toLowerCase() == accessRequest.action.toLowerCase()
+    }
+}
+
+class AllOf(val policies: List<AccessDecider>) : AccessDecider {
+
+    constructor(vararg policies: AccessDecider) : this(policies.toList())
+
+    override fun checkAuthorized(accessRequest: AccessRequest): Boolean {
+        return if (policies.isEmpty()) {
+            false
+        } else {
+            policies.all { it.checkAuthorized(accessRequest) }
+        }
+    }
+
+}
+
+class AnyOf(val policies: List<AccessDecider>) : AccessDecider {
+
+    constructor(vararg policies: AccessDecider) : this(policies.toList())
+
+    override fun checkAuthorized(accessRequest: AccessRequest): Boolean {
+        return if (policies.isEmpty()) {
+            false
+        } else {
+            policies.any { it.checkAuthorized(accessRequest) }
+        }
     }
 }
 
