@@ -6,10 +6,15 @@ import java.time.ZonedDateTime
 
 interface Users {
     fun createUser(user: UserNew): User
+
+    /**
+     * Intended for users to update their own data.
+     */
     fun updateUser(user: UserUpdate): User
     fun getUserByEmail(email: String): User
     fun requestPasswordResetToken(email: String): ResetToken
     fun resetPassword(passwordReset: PasswordReset)
+    fun setUserRole(userID: Long, role: Role)
 }
 
 interface SignIn {
@@ -28,6 +33,7 @@ data class User @JsonCreator constructor(
         val id: Long,
         val email: String,
         val nickName: String,
+        val role: Role,
         val firstName: String? = null,
         val lastName: String? = null
 ) {
@@ -45,6 +51,12 @@ data class UserUpdate @JsonCreator constructor(
         val firstName: String? = null,
         val lastName: String? = null
 )
+
+enum class Role{
+    AUTHOUR,
+    ADMIN,
+    READER
+}
 
 data class LoginCredentials @JsonCreator constructor(
         val email: String,

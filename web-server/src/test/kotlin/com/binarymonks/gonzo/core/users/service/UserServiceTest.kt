@@ -7,10 +7,12 @@ import com.binarymonks.gonzo.core.common.UniqueConstraintException
 import com.binarymonks.gonzo.core.time.nowUTC
 import com.binarymonks.gonzo.core.users.UsersConfig
 import com.binarymonks.gonzo.core.users.api.PasswordReset
+import com.binarymonks.gonzo.core.users.api.Role
 import com.binarymonks.gonzo.core.users.api.User
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import com.binarymonks.gonzo.userNew
 import com.binarymonks.gonzo.web.GonzoDataConfig
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
@@ -66,7 +68,8 @@ class UserServiceTest {
         val expected = User(
                 id = created.id,
                 nickName = newUser.nickname,
-                email = newUser.email
+                email = newUser.email,
+                role= Role.READER
         )
 
         Assertions.assertEquals(expected, created)
@@ -138,6 +141,7 @@ class UserServiceTest {
                 id = update.id,
                 email = update.email,
                 nickName = created.nickName,
+                role = Role.READER,
                 firstName = update.firstName,
                 lastName = update.lastName
         )
@@ -212,6 +216,19 @@ class UserServiceTest {
                         newPassword = newPassword
                 )
         )
+    }
+
+    @Test
+    fun setUserRole(){
+        val newUser = userNew()
+
+        val created = userService.createUser(newUser)
+        Assertions.assertEquals(Role.READER, created.role)
+
+        userService.setUserRole(created.id, Role.ADMIN)
+
+        val retrieved = userService.getUserByEmail(created.email)
+        Assertions.assertEquals(Role.ADMIN, retrieved.role)
     }
 
 

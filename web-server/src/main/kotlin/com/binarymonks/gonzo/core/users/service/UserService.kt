@@ -97,4 +97,10 @@ class UserService : Users {
         userEntity.spice.pepper = pepper
         userRepo.save(userEntity)
     }
+
+    override fun setUserRole(userID: Long, role: Role) {
+        val userEntity = userRepo.findById(userID).get()
+        userEntity.role = role
+        userRepo.save(userEntity)
+    }
 }

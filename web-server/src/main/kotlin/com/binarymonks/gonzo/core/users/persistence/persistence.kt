@@ -1,5 +1,6 @@
 package com.binarymonks.gonzo.core.users.persistence
 
+import com.binarymonks.gonzo.core.users.api.Role
 import com.binarymonks.gonzo.core.users.api.User
 import org.springframework.data.repository.CrudRepository
 import java.time.ZonedDateTime
@@ -27,6 +28,9 @@ data class UserEntity(
         @Column(nullable = true)
         var lastName: String? = null,
 
+        @Column(nullable = false)
+        var role: Role = Role.READER,
+
         @Column(nullable = true)
         var resetPasswordToken: String? = null,
 
@@ -41,7 +45,8 @@ data class UserEntity(
             email = email,
             nickName = nickName,
             firstName = firstName,
-            lastName = lastName
+            lastName = lastName,
+            role = role
     )
 }
 

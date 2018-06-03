@@ -157,6 +157,8 @@ class AnyOfTest {
     }
 }
 
+
+
 fun main(args: Array<String>) {
     val policy = AllOf(
             Expression().subject("roles").contains().value("MANAGER")
