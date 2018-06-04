@@ -14,13 +14,14 @@ import io.jsonwebtoken.SignatureException
 import io.jsonwebtoken.impl.crypto.MacProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.*
+import java.time.Duration
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 
 
 @Service
 class SignInService : SignIn {
-    var clock: Clock = java.time.Clock.systemUTC()
 
     // TODO: put this in external config
     val key = MacProvider.generateKey()
@@ -40,7 +41,7 @@ class SignInService : SignIn {
         if (passwordAttempt != userEntity.encryptedPassword) {
             throw InvalidCredentials()
         }
-        val expiry= nowUTC(clock).plus(tokenLifeSpan)
+        val expiry= nowUTC().plus(tokenLifeSpan)
         val jwts: JwtBuilder = Jwts.builder()
                 .setExpiration(Date(expiry.toInstant().toEpochMilli()))
                 .setSubject(userEntity.email)
@@ -57,7 +58,7 @@ class SignInService : SignIn {
             val parsedToken = Jwts.parser().setSigningKey(key).parseClaimsJws(token)
             val userEmail: String = parsedToken.getBody().getSubject()
             val expiryDate = parsedToken.getBody().get("exp", Date::class.java)
-            val now = nowUTC(clock)
+            val now = nowUTC()
             if(now.isAfter(ZonedDateTime.ofInstant(expiryDate.toInstant(), ZoneId.of("UTC")))){
                 throw ExpiredToken()
             }

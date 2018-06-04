@@ -3,11 +3,11 @@ package com.binarymonks.gonzo.core.users.service
 import com.binarymonks.gonzo.PasswordsStub
 import com.binarymonks.gonzo.core.common.ExpiredToken
 import com.binarymonks.gonzo.core.common.InvalidCredentials
-import com.binarymonks.gonzo.core.users.UsersConfig
+import com.binarymonks.gonzo.core.test.GonzoTestConfig
+import com.binarymonks.gonzo.core.test.TestDataManager
+import com.binarymonks.gonzo.core.time.clock
 import com.binarymonks.gonzo.core.users.api.LoginCredentials
-import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import com.binarymonks.gonzo.userNew
-import com.binarymonks.gonzo.web.GonzoDataConfig
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
@@ -26,8 +26,7 @@ import java.time.ZonedDateTime
 @RunWith(SpringRunner::class)
 @ContextConfiguration(
         classes = [
-            UsersConfig::class,
-            GonzoDataConfig::class
+            GonzoTestConfig::class
         ],
         loader = AnnotationConfigContextLoader::class
 )
@@ -36,7 +35,7 @@ class SignInServiceTest {
     @Mock
     lateinit var mockClock: Clock
 
-    val passwordStub = PasswordsStub()
+    private val passwordStub = PasswordsStub()
 
     @Autowired
     lateinit var userService: UserService
@@ -45,18 +44,17 @@ class SignInServiceTest {
     lateinit var signInService: SignInService
 
     @Autowired
-    lateinit var userRepo: UserRepo
+    lateinit var testDataManager: TestDataManager
 
     lateinit var currentNow: ZonedDateTime
 
     @Before
     fun setUp() {
-        userService.clock = mockClock
-        signInService.clock = mockClock
+        clock = mockClock
         userService.passwords = passwordStub
         signInService.passwords = passwordStub
         itIsNow()
-        userRepo.deleteAll()
+        testDataManager.clearData()
     }
 
     @Test

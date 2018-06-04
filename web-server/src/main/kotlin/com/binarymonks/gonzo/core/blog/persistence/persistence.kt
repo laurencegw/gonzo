@@ -2,6 +2,7 @@ package com.binarymonks.gonzo.core.blog.persistence
 
 import com.binarymonks.gonzo.core.blog.api.BlogEntry
 import com.binarymonks.gonzo.core.extensions.time.normalise
+import com.binarymonks.gonzo.core.users.persistence.UserEntity
 import org.springframework.data.repository.CrudRepository
 import java.time.ZonedDateTime
 import javax.persistence.*
@@ -19,6 +20,9 @@ data class BlogEntryEntity(
         @Column(nullable = false)
         var content: String = "",
 
+        @ManyToOne(fetch = FetchType.EAGER)
+        var author: UserEntity? = null,
+
         @Column(nullable = false)
         var published: Boolean = false,
 
@@ -35,6 +39,7 @@ data class BlogEntryEntity(
             id = id!!,
             title = title,
             content = content,
+            author = author!!.toUser().toPublicHeader(),
             published = published,
             publishedOn = firstPublished?.normalise(),
             created = created!!.normalise(),

@@ -16,3 +16,4 @@ class PasswordsStub : Passwords {
         return "$password hashed with $salt"
     }
 }
+

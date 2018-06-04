@@ -5,8 +5,8 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
+var clock: Clock = java.time.Clock.systemUTC()
 
-
-fun nowUTC(clock: Clock):ZonedDateTime{
+fun nowUTC():ZonedDateTime{
     return Instant.ofEpochMilli(clock.instant().toEpochMilli()).atZone(ZoneId.of("UTC"))
 }

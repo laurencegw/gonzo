@@ -1,12 +1,16 @@
 package com.binarymonks.gonzo.core.blog.service
 
 import com.binarymonks.gonzo.blogEntryNew
-import com.binarymonks.gonzo.core.blog.BlogConfig
 import com.binarymonks.gonzo.core.blog.api.BlogEntry
 import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
 import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
 import com.binarymonks.gonzo.core.blog.api.BlogEntryUpdate
-import com.binarymonks.gonzo.web.GonzoDataConfig
+import com.binarymonks.gonzo.core.test.GonzoTestConfig
+import com.binarymonks.gonzo.core.test.TestDataManager
+import com.binarymonks.gonzo.core.time.clock
+import com.binarymonks.gonzo.core.users.api.User
+import com.binarymonks.gonzo.core.users.service.UserService
+import com.binarymonks.gonzo.userNew
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
@@ -25,8 +29,7 @@ import java.time.ZonedDateTime
 @RunWith(SpringRunner::class)
 @ContextConfiguration(
         classes = [
-            BlogConfig::class,
-            GonzoDataConfig::class
+            GonzoTestConfig::class
         ],
         loader = AnnotationConfigContextLoader::class
 )
@@ -36,11 +39,19 @@ class BlogServiceTest {
 
     @Autowired
     lateinit var blogService: BlogService
+    @Autowired
+    lateinit var userService: UserService
+    @Autowired
+    lateinit var testDataManager: TestDataManager
+
+    lateinit var user: User
 
     @Before
     fun setUp() {
+        testDataManager.clearData()
         mockClock = Mockito.mock(Clock::class.java)
-        blogService.clock = mockClock
+        clock = mockClock
+        user = userService.createUser(userNew())
         itIsNow()
     }
 
@@ -51,7 +62,8 @@ class BlogServiceTest {
         val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
-                published = true
+                published = true,
+                authorID = user.id
         )
 
 
@@ -61,6 +73,7 @@ class BlogServiceTest {
                 id = created.id,
                 title = newBlogEntry.title,
                 content = newBlogEntry.content,
+                author = user.toPublicHeader(),
                 published = newBlogEntry.published,
                 publishedOn = now,
                 updated = now,
@@ -82,7 +95,8 @@ class BlogServiceTest {
         val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
-                published = false
+                published = false,
+                authorID = user.id
         )
 
 
@@ -92,6 +106,7 @@ class BlogServiceTest {
                 id = created.id,
                 title = newBlogEntry.title,
                 content = newBlogEntry.content,
+                author = user.toPublicHeader(),
                 published = newBlogEntry.published,
                 publishedOn = null,
                 updated = now,
@@ -121,7 +136,8 @@ class BlogServiceTest {
         val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
-                published = false
+                published = false,
+                authorID = user.id
         )
 
         val created = blogService.createBlogEntry(newBlogEntry)
@@ -145,7 +161,8 @@ class BlogServiceTest {
         val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
-                published = true
+                published = true,
+                authorID = user.id
         )
 
         val created = blogService.createBlogEntry(newBlogEntry)
@@ -169,7 +186,8 @@ class BlogServiceTest {
         val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
-                published = true
+                published = true,
+                authorID = user.id
         )
 
         val created = blogService.createBlogEntry(newBlogEntry)
@@ -200,8 +218,14 @@ class BlogServiceTest {
     @Test
     fun getBlogEntryHeaders() {
         val created: List<BlogEntryHeader> = listOf(
-                blogService.createBlogEntry(blogEntryNew().copy(title = "Entry1")).toHeader(),
-                blogService.createBlogEntry(blogEntryNew().copy(title = "Entry2")).toHeader()
+                blogService.createBlogEntry(blogEntryNew().copy(
+                        title = "Entry1",
+                        authorID = user.id
+                )).toHeader(),
+                blogService.createBlogEntry(blogEntryNew().copy(
+                        title = "Entry2",
+                        authorID = user.id
+                )).toHeader()
         )
         val actual = blogService.getBlogEntryHeaders()
         for (header in created) {

@@ -4,15 +4,14 @@ import com.binarymonks.gonzo.core.common.ExpiredToken
 import com.binarymonks.gonzo.core.common.InvalidCredentials
 import com.binarymonks.gonzo.core.users.api.User
 import com.binarymonks.gonzo.core.users.service.SignInService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import org.springframework.security.core.context.SecurityContextHolder
 
 
 const val AUTH_HEADER = "Authorization"
@@ -68,7 +67,7 @@ class JWTAuthenticationFilter(
         return try {
             val user = signInService.getUserFromToken(token)
             JWTAuthentication(
-                    user.nickName,
+                    user.handle,
                     user,
                     token
             )

@@ -25,25 +25,42 @@ interface SignIn {
 
 data class UserNew @JsonCreator constructor(
         val email: String,
-        val nickname: String,
+        val handle: String,
         val password: String
 )
 
 data class User @JsonCreator constructor(
         val id: Long,
         val email: String,
-        val nickName: String,
+        val handle: String,
         val role: Role,
         val firstName: String? = null,
         val lastName: String? = null
 ) {
-    fun toUpdate(): UserUpdate = UserUpdate(
+    fun toUpdate() = UserUpdate(
             id = id,
             email = email,
             firstName = firstName,
             lastName = lastName
     )
+
+    fun toPublicHeader() = UserPublicHeader(
+            id = id,
+            handle = handle,
+            firstName = firstName,
+            lastName = lastName
+    )
 }
+
+/**
+ * Public information for a user
+ */
+data class UserPublicHeader @JsonCreator constructor(
+        val id: Long,
+        val handle: String,
+        val firstName: String? = null,
+        val lastName: String? = null
+)
 
 data class UserUpdate @JsonCreator constructor(
         val id: Long,
@@ -53,7 +70,7 @@ data class UserUpdate @JsonCreator constructor(
 )
 
 enum class Role{
-    AUTHOUR,
+    AUTHOR,
     ADMIN,
     READER
 }

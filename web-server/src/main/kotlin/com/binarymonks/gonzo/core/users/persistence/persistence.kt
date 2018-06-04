@@ -43,7 +43,7 @@ data class UserEntity(
     fun toUser(): User = User(
             id = id!!,
             email = email,
-            nickName = nickName,
+            handle = nickName,
             firstName = firstName,
             lastName = lastName,
             role = role

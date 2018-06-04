@@ -4,15 +4,14 @@ import com.binarymonks.gonzo.PasswordsStub
 import com.binarymonks.gonzo.core.common.ExpiredToken
 import com.binarymonks.gonzo.core.common.InvalidCredentials
 import com.binarymonks.gonzo.core.common.UniqueConstraintException
+import com.binarymonks.gonzo.core.test.GonzoTestConfig
+import com.binarymonks.gonzo.core.time.clock
 import com.binarymonks.gonzo.core.time.nowUTC
-import com.binarymonks.gonzo.core.users.UsersConfig
 import com.binarymonks.gonzo.core.users.api.PasswordReset
 import com.binarymonks.gonzo.core.users.api.Role
 import com.binarymonks.gonzo.core.users.api.User
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import com.binarymonks.gonzo.userNew
-import com.binarymonks.gonzo.web.GonzoDataConfig
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
@@ -31,8 +30,7 @@ import java.time.ZonedDateTime
 @RunWith(SpringRunner::class)
 @ContextConfiguration(
         classes = [
-            UsersConfig::class,
-            GonzoDataConfig::class
+            GonzoTestConfig::class
         ],
         loader = AnnotationConfigContextLoader::class
 )
@@ -53,7 +51,7 @@ class UserServiceTest {
 
     @Before
     fun setUp() {
-        userService.clock = mockClock
+        clock = mockClock
         userService.passwords = passwordStub
         itIsNow()
         userRepo.deleteAll()
@@ -67,7 +65,7 @@ class UserServiceTest {
 
         val expected = User(
                 id = created.id,
-                nickName = newUser.nickname,
+                handle = newUser.handle,
                 email = newUser.email,
                 role= Role.READER
         )
@@ -86,7 +84,7 @@ class UserServiceTest {
                 email = "2${newUser1.email}"
         )
         val duplicateEmailUser = newUser1.copy(
-                nickname = "2${newUser1.nickname}"
+                handle = "2${newUser1.handle}"
         )
         userService.createUser(newUser1)
 
@@ -94,7 +92,7 @@ class UserServiceTest {
             userService.createUser(duplicateNickNameUser)
             Assertions.fail<String>("Should be an error")
         } catch (e: UniqueConstraintException) {
-            Assertions.assertEquals(e.attributeName.toLowerCase(),"nickname")
+            Assertions.assertEquals(e.attributeName.toLowerCase(),"handle")
         }
 
         try {
@@ -110,7 +108,7 @@ class UserServiceTest {
         val newUser1 = userNew()
         val newUser2 = newUser1.copy(
                 email = "2${newUser1.email}",
-                nickname = "2${newUser1.nickname}"
+                handle = "2${newUser1.handle}"
         )
         userService.createUser(newUser1)
         val user2 = userService.createUser(newUser2)
@@ -140,7 +138,7 @@ class UserServiceTest {
         val expected = User(
                 id = update.id,
                 email = update.email,
-                nickName = created.nickName,
+                handle = created.handle,
                 role = Role.READER,
                 firstName = update.firstName,
                 lastName = update.lastName
@@ -157,7 +155,7 @@ class UserServiceTest {
         passwordStub.salt = "pepper2"
 
         val resetRequestToken = userService.requestPasswordResetToken(created.email)
-        val expectedExpiryDate = nowUTC(mockClock).plus(userService.resetPasswordWindow)
+        val expectedExpiryDate = nowUTC().plus(userService.resetPasswordWindow)
         Assertions.assertEquals(expectedExpiryDate, resetRequestToken.expiry)
 
         val newPassword = "newpassword"
@@ -182,7 +180,7 @@ class UserServiceTest {
         passwordStub.salt = "pepper2"
 
         val resetRequestToken = userService.requestPasswordResetToken(created.email)
-        val expectedExpiryDate = nowUTC(mockClock).plus(userService.resetPasswordWindow)
+        val expectedExpiryDate = nowUTC().plus(userService.resetPasswordWindow)
         Assertions.assertEquals(expectedExpiryDate, resetRequestToken.expiry)
 
         val newPassword = "newpassword"

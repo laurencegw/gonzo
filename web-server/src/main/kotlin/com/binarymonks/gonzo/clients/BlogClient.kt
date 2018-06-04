@@ -3,13 +3,10 @@ package com.binarymonks.gonzo.clients
 import com.binarymonks.gonzo.core.blog.api.*
 import com.binarymonks.gonzo.core.users.api.LoginCredentials
 import com.binarymonks.gonzo.web.Routes
-import org.apache.commons.codec.binary.Base64
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
-import org.springframework.http.HttpMethod
-import org.springframework.web.client.RestTemplate
 import org.springframework.http.HttpHeaders
-import java.nio.charset.Charset
+import org.springframework.http.HttpMethod
 
 
 class BlogClient(private val baseURL: String) : Blog {
@@ -19,20 +16,18 @@ class BlogClient(private val baseURL: String) : Blog {
     fun createHeaders(): HttpHeaders {
         return object : HttpHeaders() {
             init {
-                val encodedAuth = Base64.encodeBase64(
-                        token.toByteArray(Charset.forName("US-ASCII")))
                 val authHeader = "Bearer " + token
                 set("Authorization", authHeader)
             }
         }
     }
 
-    fun signIn(email: String, password: String){
+    fun signIn(email: String, password: String) {
         val response = restTemplate.exchange(
                 "$baseURL/${Routes.LOGIN}",
                 HttpMethod.POST,
                 HttpEntity(LoginCredentials(
-                        email=email,
+                        email = email,
                         password = password
                 )),
                 object : ParameterizedTypeReference<String>() {}

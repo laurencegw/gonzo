@@ -11,12 +11,10 @@ import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.time.Clock
 import java.time.Duration
 
 @Service
 class UserService : Users {
-    var clock: Clock = java.time.Clock.systemUTC()
 
     @Autowired
     lateinit var userRepo: UserRepo
@@ -29,8 +27,8 @@ class UserService : Users {
     var pwdLogRounds: Int = 10
 
     override fun createUser(user: UserNew): User {
-        if (userRepo.findByNickName(user.nickname).isPresent) {
-            throw UniqueConstraintException("nickname")
+        if (userRepo.findByNickName(user.handle).isPresent) {
+            throw UniqueConstraintException("handle")
         }
         if (userRepo.findByEmail(user.email).isPresent) {
             throw UniqueConstraintException("email")
@@ -40,7 +38,7 @@ class UserService : Users {
         val encryptedPassword = passwords.hashPassword(password, pepper)
         val userEntity = UserEntity(
                 email = user.email,
-                nickName = user.nickname,
+                nickName = user.handle,
                 encryptedPassword = encryptedPassword,
                 spice = Spice(pepper = pepper)
         )
@@ -68,13 +66,13 @@ class UserService : Users {
     override fun requestPasswordResetToken(email: String): ResetToken {
         val user = userRepo.findByEmail(email).get()
         val resetToken = generateToken(user.email)
-        val expiry = nowUTC(clock).plus(resetPasswordWindow)
+        val expiry = nowUTC().plus(resetPasswordWindow)
         user.resetPasswordToken = resetToken
         user.resetPasswordExpiry = expiry
         userRepo.save(user)
         return ResetToken(
                 token = resetToken,
-                expiry = nowUTC(clock).plus(resetPasswordWindow)
+                expiry = nowUTC().plus(resetPasswordWindow)
         )
     }
 
@@ -87,7 +85,7 @@ class UserService : Users {
         if (passwordReset.token != userEntity.resetPasswordToken) {
             throw InvalidCredentials()
         }
-        if (nowUTC(clock).isAfter(userEntity.resetPasswordExpiry)) {
+        if (nowUTC().isAfter(userEntity.resetPasswordExpiry)) {
             throw ExpiredToken()
         }
         val password = passwordReset.newPassword

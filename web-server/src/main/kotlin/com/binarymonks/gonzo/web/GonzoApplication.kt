@@ -1,15 +1,13 @@
 package com.binarymonks.gonzo.web
 
-import com.binarymonks.gonzo.core.blog.BlogConfig
-import com.binarymonks.gonzo.core.users.UsersConfig
+import com.binarymonks.gonzo.core.GonzoCoreConfig
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Import
 
 @SpringBootApplication
 @Import(
-        BlogConfig::class,
-        UsersConfig::class,
+        GonzoCoreConfig::class,
         GonzoDataConfig::class,
         GonzoSecurityConfig::class
 )

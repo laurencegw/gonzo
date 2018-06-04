@@ -1,5 +1,6 @@
 package com.binarymonks.gonzo.core.blog.api
 
+import com.binarymonks.gonzo.core.users.api.UserPublicHeader
 import com.fasterxml.jackson.annotation.JsonCreator
 import java.time.ZonedDateTime
 
@@ -13,7 +14,8 @@ interface Blog {
 data class BlogEntryNew @JsonCreator constructor(
         val title: String,
         val content: String,
-        val published: Boolean
+        val published: Boolean,
+        val authorID: Long
 )
 
 data class BlogEntryUpdate @JsonCreator constructor(
@@ -24,13 +26,14 @@ data class BlogEntryUpdate @JsonCreator constructor(
 )
 
 data class BlogEntry @JsonCreator constructor(
-        var id: Long,
-        var title: String,
-        var content: String,
-        var published: Boolean,
-        var created: ZonedDateTime,
-        var updated: ZonedDateTime,
-        var publishedOn: ZonedDateTime?
+        val id: Long,
+        val title: String,
+        val content: String,
+        val author: UserPublicHeader,
+        val published: Boolean,
+        val created: ZonedDateTime,
+        val updated: ZonedDateTime,
+        val publishedOn: ZonedDateTime?
 ) {
 
     fun toUpdate(): BlogEntryUpdate = BlogEntryUpdate(
@@ -44,6 +47,7 @@ data class BlogEntry @JsonCreator constructor(
             id = id,
             title = title,
             published = published,
+            author = author,
             updated = updated,
             created = created,
             publishedOn = publishedOn
@@ -54,6 +58,7 @@ data class BlogEntryHeader @JsonCreator constructor(
         val id: Long,
         val title: String,
         val published: Boolean,
+        val author: UserPublicHeader,
         val created: ZonedDateTime,
         val updated: ZonedDateTime,
         val publishedOn: ZonedDateTime?

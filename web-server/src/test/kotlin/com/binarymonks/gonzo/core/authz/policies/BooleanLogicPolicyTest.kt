@@ -104,7 +104,7 @@ class AllOfTest {
     }
 
     @Test
-    fun checkAuthorized_NoneAuthorized(){
+    fun checkAuthorized_NoneAuthorized() {
         Assertions.assertFalse(
                 AllOf(
                         willNotAuthorizePolicy,
@@ -146,7 +146,7 @@ class AnyOfTest {
     }
 
     @Test
-    fun checkAuthorized_NoneAuthorized(){
+    fun checkAuthorized_NoneAuthorized() {
         Assertions.assertFalse(
                 AnyOf(
                         willNotAuthorizePolicy,
@@ -155,12 +155,4 @@ class AnyOfTest {
                 ).checkAuthorized(accessRequest)
         )
     }
-}
-
-
-
-fun main(args: Array<String>) {
-    val policy = AllOf(
-            Expression().subject("roles").contains().value("MANAGER")
-    )
 }
