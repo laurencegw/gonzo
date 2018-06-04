@@ -17,7 +17,7 @@ data class UserEntity(
         var email: String = "",
 
         @Column(nullable = false, unique = true)
-        var nickName: String = "",
+        var handle: String = "",
 
         @Column(nullable = false)
         var encryptedPassword: String = "",
@@ -43,7 +43,7 @@ data class UserEntity(
     fun toUser(): User = User(
             id = id!!,
             email = email,
-            handle = nickName,
+            handle = handle,
             firstName = firstName,
             lastName = lastName,
             role = role

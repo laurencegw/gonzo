@@ -38,7 +38,7 @@ class UserService : Users {
         val encryptedPassword = passwords.hashPassword(password, pepper)
         val userEntity = UserEntity(
                 email = user.email,
-                nickName = user.handle,
+                handle = user.handle,
                 encryptedPassword = encryptedPassword,
                 spice = Spice(pepper = pepper)
         )
