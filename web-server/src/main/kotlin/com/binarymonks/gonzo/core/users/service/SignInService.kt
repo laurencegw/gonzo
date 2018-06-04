@@ -56,8 +56,8 @@ class SignInService : SignIn {
     override fun getUserFromToken(token: String): User {
         try {
             val parsedToken = Jwts.parser().setSigningKey(key).parseClaimsJws(token)
-            val userEmail: String = parsedToken.getBody().getSubject()
-            val expiryDate = parsedToken.getBody().get("exp", Date::class.java)
+            val userEmail: String = parsedToken.body.subject
+            val expiryDate = parsedToken.body.get("exp", Date::class.java)
             val now = nowUTC()
             if(now.isAfter(ZonedDateTime.ofInstant(expiryDate.toInstant(), ZoneId.of("UTC")))){
                 throw ExpiredToken()
