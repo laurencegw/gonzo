@@ -3,6 +3,8 @@ package com.binarymonks.gonzo.core.users.service
 import com.binarymonks.gonzo.core.common.ExpiredToken
 import com.binarymonks.gonzo.core.common.InvalidCredentials
 import com.binarymonks.gonzo.core.common.UniqueConstraintException
+import com.binarymonks.gonzo.core.email.api.Emails
+import com.binarymonks.gonzo.core.email.api.ResetPasswordEmail
 import com.binarymonks.gonzo.core.time.nowUTC
 import com.binarymonks.gonzo.core.users.api.*
 import com.binarymonks.gonzo.core.users.persistence.Spice
@@ -20,6 +22,8 @@ class UserService : Users {
     lateinit var userRepo: UserRepo
     @Autowired
     lateinit var passwords: Passwords
+    @Autowired
+    lateinit var emails: Emails
 
     var resetPasswordWindow: Duration = Duration.ofHours(1)
 
@@ -27,7 +31,7 @@ class UserService : Users {
     var pwdLogRounds: Int = 10
 
     override fun createUser(user: UserNew): User {
-        if (userRepo.findByNickName(user.handle).isPresent) {
+        if (userRepo.findByHandle(user.handle).isPresent) {
             throw UniqueConstraintException("handle")
         }
         if (userRepo.findByEmail(user.email).isPresent) {
@@ -63,8 +67,7 @@ class UserService : Users {
         return userRepo.findByEmail(email).get().toUser()
     }
 
-    override fun requestPasswordResetToken(email: String): ResetToken {
-        val user = userRepo.findByEmail(email).get()
+    private fun requestPasswordResetToken(user: UserEntity): ResetToken {
         val resetToken = generateToken(user.email)
         val expiry = nowUTC().plus(resetPasswordWindow)
         user.resetPasswordToken = resetToken
@@ -74,6 +77,19 @@ class UserService : Users {
                 token = resetToken,
                 expiry = nowUTC().plus(resetPasswordWindow)
         )
+    }
+
+    override fun requestPasswordResetEmail(email: String) {
+        val userRecord = userRepo.findByEmail(email)
+        if (userRecord.isPresent) {
+            val token = requestPasswordResetToken(userRecord.get())
+            emails.sendResetPassword(ResetPasswordEmail(
+                    emailAddress = email,
+                    resetToken = token
+            ))
+        } else {
+            emails.sendUnknownUserPasswordReset(email)
+        }
     }
 
     private fun generateToken(content: String): String {

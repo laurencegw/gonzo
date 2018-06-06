@@ -62,5 +62,5 @@ class Spice(
 
 interface UserRepo : CrudRepository<UserEntity, Long> {
     fun findByEmail(email: String): Optional<UserEntity>
-    fun findByNickName(nickName: String): Optional<UserEntity>
+    fun findByHandle(nickName: String): Optional<UserEntity>
 }

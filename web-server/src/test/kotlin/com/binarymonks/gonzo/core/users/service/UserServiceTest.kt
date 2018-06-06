@@ -4,7 +4,9 @@ import com.binarymonks.gonzo.PasswordsStub
 import com.binarymonks.gonzo.core.common.ExpiredToken
 import com.binarymonks.gonzo.core.common.InvalidCredentials
 import com.binarymonks.gonzo.core.common.UniqueConstraintException
+import com.binarymonks.gonzo.core.email.api.Emails
 import com.binarymonks.gonzo.core.test.GonzoTestConfig
+import com.binarymonks.gonzo.core.test.StubEmailService
 import com.binarymonks.gonzo.core.time.clock
 import com.binarymonks.gonzo.core.time.nowUTC
 import com.binarymonks.gonzo.core.users.api.PasswordReset
@@ -47,6 +49,9 @@ class UserServiceTest {
     @Autowired
     lateinit var userRepo: UserRepo
 
+    @Autowired
+    lateinit var emailService: StubEmailService
+
     lateinit var currentNow: ZonedDateTime
 
     @Before
@@ -55,6 +60,7 @@ class UserServiceTest {
         userService.passwords = passwordStub
         itIsNow()
         userRepo.deleteAll()
+        emailService.clearInbox()
     }
 
     @Test
@@ -149,14 +155,18 @@ class UserServiceTest {
     }
 
     @Test
-    fun requestResetPasswordTokenAndReset() {
+    fun requestResetPasswordEmailAndReset() {
         val newUser = userNew().copy(password = "oldpassword")
         val created = userService.createUser(newUser)
         passwordStub.salt = "pepper2"
 
-        val resetRequestToken = userService.requestPasswordResetToken(created.email)
+        userService.requestPasswordResetEmail(created.email)
+
+        val resetEmail = emailService.resetPasswordInbox[0]
+        val resetRequestToken = resetEmail.resetToken
         val expectedExpiryDate = nowUTC().plus(userService.resetPasswordWindow)
         Assertions.assertEquals(expectedExpiryDate, resetRequestToken.expiry)
+        Assertions.assertEquals(created.email, resetEmail.emailAddress)
 
         val newPassword = "newpassword"
 
@@ -174,14 +184,13 @@ class UserServiceTest {
     }
 
     @Test(expected = InvalidCredentials::class)
-    fun requestResetPasswordTokenAndReset_wrongToken() {
+    fun requestResetPasswordEmailAndReset_wrongToken() {
         val newUser = userNew().copy(password = "oldpassword")
         val created = userService.createUser(newUser)
         passwordStub.salt = "pepper2"
 
-        val resetRequestToken = userService.requestPasswordResetToken(created.email)
-        val expectedExpiryDate = nowUTC().plus(userService.resetPasswordWindow)
-        Assertions.assertEquals(expectedExpiryDate, resetRequestToken.expiry)
+        userService.requestPasswordResetEmail(created.email)
+
 
         val newPassword = "newpassword"
 
@@ -195,13 +204,16 @@ class UserServiceTest {
     }
 
     @Test(expected = ExpiredToken::class)
-    fun requestResetPasswordTokenAndReset_expiredToken() {
+    fun requestResetPasswordEmailAndReset_expiredToken() {
         val newUser = userNew().copy(password = "oldpassword")
         val created = userService.createUser(newUser)
         passwordStub.salt = "pepper2"
 
 
-        val resetRequestToken = userService.requestPasswordResetToken(created.email)
+        userService.requestPasswordResetEmail(created.email)
+
+        val resetEmail = emailService.resetPasswordInbox[0]
+        val resetRequestToken = resetEmail.resetToken
 
         itIsNow(currentNow.plus(userService.resetPasswordWindow).plusMinutes(1))
 
@@ -214,6 +226,16 @@ class UserServiceTest {
                         newPassword = newPassword
                 )
         )
+    }
+
+    @Test
+    fun requestResetPasswordEmailAndReset_unknownUser() {
+        val unknownEmail = "not.gonzo.coder@elsewhere.com"
+
+        userService.requestPasswordResetEmail(unknownEmail)
+
+        Assertions.assertTrue(emailService.resetPasswordInbox.isEmpty())
+        Assertions.assertTrue(emailService.resetUnknownInbox.contains(unknownEmail))
     }
 
     @Test
@@ -234,7 +256,6 @@ class UserServiceTest {
      * TODO: Password reset considerations:
      *
      *  - Do not expose email address in token
-     *  - email layer should send an email regardless of the user existing or not
      *  - captchas
      *  - logging failed attempts
      *  - Personal questions before reset sent

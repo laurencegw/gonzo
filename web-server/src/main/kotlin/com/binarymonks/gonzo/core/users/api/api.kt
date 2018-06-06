@@ -12,7 +12,7 @@ interface Users {
      */
     fun updateUser(user: UserUpdate): User
     fun getUserByEmail(email: String): User
-    fun requestPasswordResetToken(email: String): ResetToken
+    fun requestPasswordResetEmail(email: String)
     fun resetPassword(passwordReset: PasswordReset)
     fun setUserRole(userID: Long, role: Role)
 }
