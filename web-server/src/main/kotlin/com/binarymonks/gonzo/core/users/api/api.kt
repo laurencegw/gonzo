@@ -6,7 +6,6 @@ import java.time.ZonedDateTime
 
 interface Users {
     fun createUser(user: UserNew): User
-
     /**
      * Intended for users to update their own data.
      */
