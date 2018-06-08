@@ -156,3 +156,16 @@ class AnyOfTest {
         )
     }
 }
+
+class NotTest {
+
+    @Test
+    fun checkAuthorized_isWhenInnerIsNot(){
+        Assertions.assertTrue(Not(willNotAuthorizePolicy).checkAuthorized(accessRequest))
+    }
+
+    @Test
+    fun checkAuthorized_isNotWhenInnerIs(){
+        Assertions.assertFalse(Not(willAuthorizePolicy).checkAuthorized(accessRequest))
+    }
+}

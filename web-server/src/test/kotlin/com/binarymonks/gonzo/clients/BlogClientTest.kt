@@ -8,7 +8,6 @@ import com.binarymonks.gonzo.core.users.service.UserService
 import com.binarymonks.gonzo.web.GonzoApplication
 import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
@@ -72,8 +71,9 @@ class BlogClientTest {
     }
 
     @Test
-    @Ignore("Need an api to sign in with first")
     fun updateBlogEntry() {
+        login()
+
         val blogEntryUpdate = blogEntryUpdate()
         val expectedBlogEntry = blogEntry()
         Mockito.`when`(blogServiceMock.updateBlogEntry(blogEntryUpdate)).thenReturn(expectedBlogEntry)

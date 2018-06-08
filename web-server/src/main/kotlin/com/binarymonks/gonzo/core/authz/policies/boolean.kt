@@ -50,9 +50,11 @@ class ActionPolicy(
     }
 }
 
-class AllOf(val policies: List<AccessDecider>) : AccessDecider {
+class AllOf(policies: MutableList<AccessDecider>) : AccessDecider, CollectionBasedPolicy(policies) {
 
-    constructor(vararg policies: AccessDecider) : this(policies.toList())
+    constructor(builder: CollectionBasedPolicy.()->Unit):this(mutableListOf())
+
+    constructor(vararg policies: AccessDecider) : this(policies.toMutableList())
 
     override fun checkAuthorized(accessRequest: AccessRequest): Boolean {
         return if (policies.isEmpty()) {
@@ -64,9 +66,11 @@ class AllOf(val policies: List<AccessDecider>) : AccessDecider {
 
 }
 
-class AnyOf(val policies: List<AccessDecider>) : AccessDecider {
+class AnyOf(policies: MutableList<AccessDecider>) : AccessDecider, CollectionBasedPolicy(policies) {
 
-    constructor(vararg policies: AccessDecider) : this(policies.toList())
+    constructor(builder: CollectionBasedPolicy.()->Unit):this(mutableListOf())
+
+    constructor(vararg policies: AccessDecider) : this(policies.toMutableList())
 
     override fun checkAuthorized(accessRequest: AccessRequest): Boolean {
         return if (policies.isEmpty()) {
@@ -77,6 +81,114 @@ class AnyOf(val policies: List<AccessDecider>) : AccessDecider {
     }
 }
 
+
+class Not(val policy: AccessDecider) : AccessDecider {
+
+    override fun checkAuthorized(accessRequest: AccessRequest): Boolean {
+        return !policy.checkAuthorized(accessRequest)
+    }
+
+}
+
+open class CollectionBasedPolicy(val policies: MutableList<AccessDecider>) {
+
+    fun add(policy: AccessDecider){
+        policies.add(policy)
+    }
+}
+
+fun CollectionBasedPolicy.subject(key: String) = PolicyCollectionOperator(this, AttributeType.SUBJECT, key)
+
+fun CollectionBasedPolicy.resource(key: String) = PolicyCollectionOperator(this, AttributeType.RESOURCE, key)
+
+fun CollectionBasedPolicy.environment(key: String) = PolicyCollectionOperator(this, AttributeType.ENVIRONMENT, key)
+
+fun CollectionBasedPolicy.anyOf(builder: CollectionBasedPolicy.()->Unit){
+    val anyOf = AnyOf()
+    anyOf.builder()
+    this.add(anyOf)
+}
+
+fun CollectionBasedPolicy.allOf(builder: CollectionBasedPolicy.()->Unit){
+    val allOf = AllOf()
+    allOf.builder()
+    this.add(allOf)
+}
+
+fun CollectionBasedPolicy.notAllOf(builder: CollectionBasedPolicy.()->Unit){
+    val allOf = AllOf()
+    allOf.builder()
+    this.add(Not(allOf))
+}
+
+fun CollectionBasedPolicy.notAnyOf(builder: CollectionBasedPolicy.()->Unit){
+    val anyOf = AnyOf()
+    anyOf.builder()
+    this.add(Not(anyOf))
+}
+
+class PolicyCollectionOperator internal constructor(
+        private val collectionBasedPolicy: CollectionBasedPolicy,
+        private val leftAttributeType: AttributeType,
+        private val leftKey: String
+) {
+
+    fun equalTo() = secondOperand(OperatorType.EQUAL)
+
+    fun greaterThan() = secondOperand(OperatorType.GREATER_THAN)
+
+    fun greaterThanEqual() = secondOperand(OperatorType.GREATER_THAN_EQUAL)
+
+    fun lessThan() = secondOperand(OperatorType.LESS_THAN)
+
+    fun lessThanEqual() = secondOperand(OperatorType.LESS_THAN_EQUAL)
+
+    fun contains() = secondOperand(OperatorType.CONTAINS)
+
+    fun containsAll() = secondOperand(OperatorType.CONTAINS_ALL)
+
+    fun containsAny() = secondOperand(OperatorType.CONTAINS_ANY)
+
+    private fun secondOperand(operatorType: OperatorType) = PolicyCollectionSecondOperand(
+            collectionBasedPolicy = collectionBasedPolicy,
+            leftAttributeType = leftAttributeType,
+            leftKey = leftKey,
+            operatorType = operatorType
+    )
+}
+
+class PolicyCollectionSecondOperand internal constructor(
+        private val collectionBasedPolicy: CollectionBasedPolicy,
+        private val leftAttributeType: AttributeType,
+        private val leftKey: String,
+        private val operatorType: OperatorType
+) {
+
+    fun value(value: Any) {
+        val policy = ExpressionPolicy(
+                leftOperand = AttributeReference(leftAttributeType, leftKey),
+                operatorType = operatorType,
+                rightOperand = PassThroughReference(value)
+        )
+        collectionBasedPolicy.add(policy)
+    }
+
+    fun resource(key: String) = expression(AttributeType.RESOURCE, key)
+
+    fun environment(key: String) = expression(AttributeType.ENVIRONMENT, key)
+
+    fun subject(key: String) = expression(AttributeType.SUBJECT, key)
+
+    private fun expression(attributeType: AttributeType, key: String) {
+        val policy = ExpressionPolicy(
+                leftOperand = AttributeReference(leftAttributeType, leftKey),
+                operatorType = operatorType,
+                rightOperand = AttributeReference(attributeType, key)
+        )
+        collectionBasedPolicy.add(policy)
+    }
+
+}
 
 
 
