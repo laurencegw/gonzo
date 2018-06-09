@@ -1,8 +1,8 @@
 package com.binarymonks.gonzo.core.authz.service
 
 import com.binarymonks.gonzo.core.authz.api.AccessRequest
-import org.junit.Test
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class AccessDecisionServiceTest {
 

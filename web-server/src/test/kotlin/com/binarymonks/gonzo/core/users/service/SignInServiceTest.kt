@@ -8,22 +8,22 @@ import com.binarymonks.gonzo.core.test.TestDataManager
 import com.binarymonks.gonzo.core.time.clock
 import com.binarymonks.gonzo.core.users.api.LoginCredentials
 import com.binarymonks.gonzo.userNew
-import org.junit.Before
-import org.junit.Test
 import org.junit.jupiter.api.Assertions
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.support.AnnotationConfigContextLoader
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @ContextConfiguration(
         classes = [
             GonzoTestConfig::class
@@ -48,7 +48,7 @@ class SignInServiceTest {
 
     lateinit var currentNow: ZonedDateTime
 
-    @Before
+    @BeforeEach
     fun setUp() {
         clock = mockClock
         userService.passwords = passwordStub
@@ -71,14 +71,16 @@ class SignInServiceTest {
         Assertions.assertEquals(expectedUser, signInService.getUserFromToken(token))
     }
 
-    @Test(expected = InvalidCredentials::class)
+    @Test()
     fun loginWrongPassword() {
         val newUser = userNew()
         userService.createUser(userNew())
-        signInService.login(LoginCredentials(
-                email = newUser.email,
-                password = newUser.password + "1"
-        ))
+        Assertions.assertThrows(InvalidCredentials::class.java, {
+            signInService.login(LoginCredentials(
+                    email = newUser.email,
+                    password = newUser.password + "1"
+            ))
+        })
     }
 
     @Test
@@ -93,11 +95,13 @@ class SignInServiceTest {
         try {
             signInService.assertLoggedIn(token + "k")
             Assertions.fail<String>("Should have had an error")
-        }catch(e:InvalidCredentials){}
-        try{
-            signInService.getUserFromToken(token+"g")
+        } catch (e: InvalidCredentials) {
+        }
+        try {
+            signInService.getUserFromToken(token + "g")
             Assertions.fail<String>("Should have had an error")
-        }catch (e:InvalidCredentials){}
+        } catch (e: InvalidCredentials) {
+        }
     }
 
     @Test
@@ -116,11 +120,13 @@ class SignInServiceTest {
         try {
             signInService.assertLoggedIn(token)
             Assertions.fail<String>("Should have had an error")
-        }catch(e:ExpiredToken){}
-        try{
+        } catch (e: ExpiredToken) {
+        }
+        try {
             signInService.getUserFromToken(token)
             Assertions.fail<String>("Should have had an error")
-        }catch (e:ExpiredToken){}
+        } catch (e: ExpiredToken) {
+        }
     }
 
     /**

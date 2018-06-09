@@ -21,12 +21,21 @@ class ExpressionPolicy(
                 OperatorType.GREATER_THAN_EQUAL,
                 OperatorType.LESS_THAN,
                 OperatorType.LESS_THAN_EQUAL -> checkComparable(left, right, operatorType)
+                OperatorType.IS_IN -> {
+                    @Suppress("UNCHECKED_CAST")
+                    try {
+                        right as Collection<Any>
+                    } catch (e: Exception) {
+                        throw BadExpressionException("Value of $rightOperand is not Collection")
+                    }
+                    right.contains(left)
+                }
                 OperatorType.CONTAINS ->{
                     @Suppress("UNCHECKED_CAST")
                     try {
                         left as Collection<Any>
                     } catch (e: Exception) {
-                        throw BadExpressionException("Values of $leftOperand is not Collection")
+                        throw BadExpressionException("Value of $leftOperand is not Collection")
                     }
                     left.contains(right)
                 }
@@ -86,7 +95,8 @@ enum class OperatorType {
     LESS_THAN_EQUAL,
     CONTAINS,
     CONTAINS_ALL,
-    CONTAINS_ANY
+    CONTAINS_ANY,
+    IS_IN
 }
 
 interface ValueReference {
@@ -112,20 +122,27 @@ data class AttributeReference(
     }
 }
 
+class ActionReference: ValueReference{
+    override fun get(accessRequest: AccessRequest): Any? {
+        return accessRequest.action
+    }
+}
+
 /**
  * Initializing token for an ExpressionPolicy builder.
  */
 class Expression {
-    fun subject(key: String) = Operator(AttributeType.SUBJECT, key)
+    fun subject(key: String) = Operator(AttributeReference(AttributeType.SUBJECT, key))
 
-    fun resource(key: String) = Operator(AttributeType.RESOURCE, key)
+    fun action() = Operator(ActionReference())
 
-    fun environment(key: String) = Operator(AttributeType.ENVIRONMENT, key)
+    fun resource(key: String) = Operator(AttributeReference(AttributeType.RESOURCE, key))
+
+    fun environment(key: String) =  Operator(AttributeReference(AttributeType.ENVIRONMENT, key))
 }
 
 class Operator internal constructor(
-        private val leftAttributeType: AttributeType,
-        private val leftKey: String
+        private val leftValueReference: ValueReference
 ) {
 
     fun equalTo() = secondOperand(OperatorType.EQUAL)
@@ -144,9 +161,10 @@ class Operator internal constructor(
 
     fun containsAny() = secondOperand(OperatorType.CONTAINS_ANY)
 
+    fun isIn() = secondOperand(OperatorType.IS_IN)
+
     private fun secondOperand(operatorType: OperatorType) = SecondOperand(
-            leftAttributeType = leftAttributeType,
-            leftKey = leftKey,
+            leftValueReference = leftValueReference,
             operatorType = operatorType
     )
 }
@@ -156,13 +174,12 @@ class Operator internal constructor(
  * Terminating token for an ExpressionPolicy builder.
  */
 class SecondOperand internal constructor(
-        private val leftAttributeType: AttributeType,
-        private val leftKey: String,
+        private val leftValueReference: ValueReference,
         private val operatorType: OperatorType
 ) {
 
     fun value(value: Any) = ExpressionPolicy(
-            leftOperand = AttributeReference(leftAttributeType, leftKey),
+            leftOperand = leftValueReference,
             operatorType = operatorType,
             rightOperand = PassThroughReference(value)
     )
@@ -174,7 +191,7 @@ class SecondOperand internal constructor(
     fun subject(key: String) = expression(AttributeType.SUBJECT, key)
 
     private fun expression(attributeType: AttributeType, key: String) = ExpressionPolicy(
-            leftOperand = AttributeReference(leftAttributeType, leftKey),
+            leftOperand = leftValueReference,
             operatorType = operatorType,
             rightOperand = AttributeReference(attributeType, key)
     )

@@ -1,8 +1,8 @@
 package com.binarymonks.gonzo.core.authz.policies
 
 import com.binarymonks.gonzo.accessRequest
-import org.junit.Test
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
 
@@ -98,6 +98,23 @@ class ExpressionPolicyComparisonTest {
         Assertions.assertTrue(subjectMustBeOnTheirSitePolicy.checkAuthorized(onSite))
     }
 
+    @Test
+    fun compareActionToSubject() {
+        val hasReadPermission = accessRequest().copy(
+                subject = mapOf(Pair("permission", "READ")),
+                action = "READ"
+        )
+        val noReadPermission = accessRequest().copy(
+                subject = mapOf(Pair("permission", "NONE")),
+                action = "READ"
+        )
+
+        val userMustHaveActionPermission = Expression().action().equalTo().subject("permission")
+
+        Assertions.assertFalse(userMustHaveActionPermission.checkAuthorized(noReadPermission))
+        Assertions.assertTrue(userMustHaveActionPermission.checkAuthorized(hasReadPermission))
+    }
+
 }
 
 class ExpressionPolicyCollectionOperatorsTest {
@@ -139,7 +156,7 @@ class ExpressionPolicyCollectionOperatorsTest {
     }
 
     @Test
-    fun checkAttributeContains(){
+    fun checkAttributeContains() {
         val managerRequest = accessRequest().copy(
                 subject = mapOf(Pair("roles", listOf("USER", "ACCOUNT_MANAGER")))
         )
@@ -150,5 +167,23 @@ class ExpressionPolicyCollectionOperatorsTest {
 
         Assertions.assertTrue(managerPolicy.checkAuthorized(managerRequest))
         Assertions.assertFalse(managerPolicy.checkAuthorized(supervisorRequest))
+    }
+
+    @Test
+    fun checkAttributeIsIn() {
+        val managerRequest = accessRequest().copy(
+                subject = mapOf(Pair("role", "ACCOUNT_MANAGER"))
+        )
+        val supervisorRequest = accessRequest().copy(
+                subject = mapOf(Pair("role", "SUPERVISOR"))
+        )
+        val engineerRequest = accessRequest().copy(
+                subject = mapOf(Pair("role", "ENGINEER"))
+        )
+        val managerPolicy = Expression().subject("role").isIn().value(listOf("ACCOUNT_MANAGER", "SUPERVISOR"))
+
+        Assertions.assertTrue(managerPolicy.checkAuthorized(managerRequest))
+        Assertions.assertTrue(managerPolicy.checkAuthorized(supervisorRequest))
+        Assertions.assertFalse(managerPolicy.checkAuthorized(engineerRequest))
     }
 }

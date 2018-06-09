@@ -5,18 +5,17 @@ import com.binarymonks.gonzo.web.Routes
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
+import org.springframework.web.client.getForObject
 
 
 class BlogClient(baseURL: String) : Blog, AuthClient(baseURL) {
 
     override fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntry {
-        val response = restTemplate.exchange(
+        return restTemplate.postForObject(
                 "$baseURL/${Routes.BLOGS}",
-                HttpMethod.POST,
                 HttpEntity(blogEntryNew, createHeaders()),
-                object : ParameterizedTypeReference<BlogEntry>() {}
-        )
-        return checkNotNull(response.body)
+                BlogEntry::class.java
+        )!!
     }
 
     override fun updateBlogEntry(update: BlogEntryUpdate): BlogEntry {
@@ -40,12 +39,16 @@ class BlogClient(baseURL: String) : Blog, AuthClient(baseURL) {
     }
 
     override fun getBlogEntryById(id: Long): BlogEntry {
-        val response = restTemplate.exchange(
+        return restTemplate.getForObject(
                 "$baseURL/${Routes.BLOGS}/$id",
-                HttpMethod.GET,
-                null,
-                object : ParameterizedTypeReference<BlogEntry>() {}
-        )
-        return checkNotNull(response.body)
+                BlogEntry::class.java
+        )!!
+//        val response = restTemplate.exchange(
+//                "$baseURL/${Routes.BLOGS}/$id",
+//                HttpMethod.GET,
+//                null,
+//                object : ParameterizedTypeReference<BlogEntry>() {}
+//        )
+//        return checkNotNull(response.body)
     }
 }

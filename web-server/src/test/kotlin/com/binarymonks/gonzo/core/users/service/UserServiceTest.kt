@@ -4,7 +4,6 @@ import com.binarymonks.gonzo.PasswordsStub
 import com.binarymonks.gonzo.core.common.ExpiredToken
 import com.binarymonks.gonzo.core.common.InvalidCredentials
 import com.binarymonks.gonzo.core.common.UniqueConstraintException
-import com.binarymonks.gonzo.core.email.api.Emails
 import com.binarymonks.gonzo.core.test.GonzoTestConfig
 import com.binarymonks.gonzo.core.test.StubEmailService
 import com.binarymonks.gonzo.core.time.clock
@@ -14,22 +13,22 @@ import com.binarymonks.gonzo.core.users.api.Role
 import com.binarymonks.gonzo.core.users.api.User
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import com.binarymonks.gonzo.userNew
-import org.junit.Before
-import org.junit.Test
 import org.junit.jupiter.api.Assertions
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.support.AnnotationConfigContextLoader
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @ContextConfiguration(
         classes = [
             GonzoTestConfig::class
@@ -54,7 +53,7 @@ class UserServiceTest {
 
     lateinit var currentNow: ZonedDateTime
 
-    @Before
+    @BeforeEach
     fun setUp() {
         clock = mockClock
         userService.passwords = passwordStub
@@ -73,7 +72,7 @@ class UserServiceTest {
                 id = created.id,
                 handle = newUser.handle,
                 email = newUser.email,
-                role= Role.READER
+                role = Role.READER
         )
 
         Assertions.assertEquals(expected, created)
@@ -98,14 +97,14 @@ class UserServiceTest {
             userService.createUser(duplicateNickNameUser)
             Assertions.fail<String>("Should be an error")
         } catch (e: UniqueConstraintException) {
-            Assertions.assertEquals(e.attributeName.toLowerCase(),"handle")
+            Assertions.assertEquals(e.attributeName.toLowerCase(), "handle")
         }
 
         try {
             userService.createUser(duplicateEmailUser)
             Assertions.fail<String>("Should be an error")
         } catch (e: UniqueConstraintException) {
-            Assertions.assertEquals(e.attributeName.toLowerCase(),"email")
+            Assertions.assertEquals(e.attributeName.toLowerCase(), "email")
         }
     }
 
@@ -125,7 +124,7 @@ class UserServiceTest {
             ))
             Assertions.fail<String>("Should be an error")
         } catch (e: UniqueConstraintException) {
-            Assertions.assertEquals(e.attributeName.toLowerCase(),"email")
+            Assertions.assertEquals(e.attributeName.toLowerCase(), "email")
         }
     }
 
@@ -183,7 +182,7 @@ class UserServiceTest {
         Assertions.assertEquals(passwordStub.salt, userEntity.spice.pepper)
     }
 
-    @Test(expected = InvalidCredentials::class)
+    @Test
     fun requestResetPasswordEmailAndReset_wrongToken() {
         val newUser = userNew().copy(password = "oldpassword")
         val created = userService.createUser(newUser)
@@ -194,16 +193,19 @@ class UserServiceTest {
 
         val newPassword = "newpassword"
 
-        userService.resetPassword(
-                PasswordReset(
-                        userID = created.id,
-                        token = "some other token",
-                        newPassword = newPassword
-                )
-        )
+        Assertions.assertThrows(InvalidCredentials::class.java, {
+            userService.resetPassword(
+                    PasswordReset(
+                            userID = created.id,
+                            token = "some other token",
+                            newPassword = newPassword
+                    )
+            )
+        })
+
     }
 
-    @Test(expected = ExpiredToken::class)
+    @Test()
     fun requestResetPasswordEmailAndReset_expiredToken() {
         val newUser = userNew().copy(password = "oldpassword")
         val created = userService.createUser(newUser)
@@ -219,13 +221,17 @@ class UserServiceTest {
 
         val newPassword = "newpassword"
 
-        userService.resetPassword(
-                PasswordReset(
-                        userID = created.id,
-                        token = resetRequestToken.token,
-                        newPassword = newPassword
-                )
-        )
+        Assertions.assertThrows(ExpiredToken::class.java, {
+            userService.resetPassword(
+                    PasswordReset(
+                            userID = created.id,
+                            token = resetRequestToken.token,
+                            newPassword = newPassword
+                    )
+            )
+        })
+
+
     }
 
     @Test
@@ -239,7 +245,7 @@ class UserServiceTest {
     }
 
     @Test
-    fun setUserRole(){
+    fun setUserRole() {
         val newUser = userNew()
 
         val created = userService.createUser(newUser)

@@ -52,7 +52,9 @@ class ActionPolicy(
 
 class AllOf(policies: MutableList<AccessDecider>) : AccessDecider, CollectionBasedPolicy(policies) {
 
-    constructor(builder: CollectionBasedPolicy.()->Unit):this(mutableListOf())
+    constructor(builder: CollectionBasedPolicy.()->Unit):this(mutableListOf()){
+        this.builder()
+    }
 
     constructor(vararg policies: AccessDecider) : this(policies.toMutableList())
 
@@ -66,9 +68,13 @@ class AllOf(policies: MutableList<AccessDecider>) : AccessDecider, CollectionBas
 
 }
 
+fun allOf(builder: CollectionBasedPolicy.()->Unit) = AllOf(builder)
+
 class AnyOf(policies: MutableList<AccessDecider>) : AccessDecider, CollectionBasedPolicy(policies) {
 
-    constructor(builder: CollectionBasedPolicy.()->Unit):this(mutableListOf())
+    constructor(builder: CollectionBasedPolicy.()->Unit):this(mutableListOf()){
+        this.builder()
+    }
 
     constructor(vararg policies: AccessDecider) : this(policies.toMutableList())
 
@@ -80,6 +86,8 @@ class AnyOf(policies: MutableList<AccessDecider>) : AccessDecider, CollectionBas
         }
     }
 }
+
+fun anyOf(builder: CollectionBasedPolicy.()->Unit) = AnyOf(builder)
 
 
 class Not(val policy: AccessDecider) : AccessDecider {
@@ -97,11 +105,13 @@ open class CollectionBasedPolicy(val policies: MutableList<AccessDecider>) {
     }
 }
 
-fun CollectionBasedPolicy.subject(key: String) = PolicyCollectionOperator(this, AttributeType.SUBJECT, key)
+fun CollectionBasedPolicy.subject(key: String) = PolicyCollectionOperator(this, AttributeReference(AttributeType.SUBJECT, key))
 
-fun CollectionBasedPolicy.resource(key: String) = PolicyCollectionOperator(this, AttributeType.RESOURCE, key)
+fun CollectionBasedPolicy.action() = PolicyCollectionOperator(this, ActionReference())
 
-fun CollectionBasedPolicy.environment(key: String) = PolicyCollectionOperator(this, AttributeType.ENVIRONMENT, key)
+fun CollectionBasedPolicy.resource(key: String) = PolicyCollectionOperator(this, AttributeReference(AttributeType.RESOURCE, key))
+
+fun CollectionBasedPolicy.environment(key: String) = PolicyCollectionOperator(this, AttributeReference(AttributeType.ENVIRONMENT, key))
 
 fun CollectionBasedPolicy.anyOf(builder: CollectionBasedPolicy.()->Unit){
     val anyOf = AnyOf()
@@ -129,8 +139,7 @@ fun CollectionBasedPolicy.notAnyOf(builder: CollectionBasedPolicy.()->Unit){
 
 class PolicyCollectionOperator internal constructor(
         private val collectionBasedPolicy: CollectionBasedPolicy,
-        private val leftAttributeType: AttributeType,
-        private val leftKey: String
+        private val leftValueReference: ValueReference
 ) {
 
     fun equalTo() = secondOperand(OperatorType.EQUAL)
@@ -149,24 +158,24 @@ class PolicyCollectionOperator internal constructor(
 
     fun containsAny() = secondOperand(OperatorType.CONTAINS_ANY)
 
+    fun isIn() = secondOperand(OperatorType.IS_IN)
+
     private fun secondOperand(operatorType: OperatorType) = PolicyCollectionSecondOperand(
             collectionBasedPolicy = collectionBasedPolicy,
-            leftAttributeType = leftAttributeType,
-            leftKey = leftKey,
+            leftValueReference = leftValueReference,
             operatorType = operatorType
     )
 }
 
 class PolicyCollectionSecondOperand internal constructor(
         private val collectionBasedPolicy: CollectionBasedPolicy,
-        private val leftAttributeType: AttributeType,
-        private val leftKey: String,
+        private val leftValueReference: ValueReference,
         private val operatorType: OperatorType
 ) {
 
     fun value(value: Any) {
         val policy = ExpressionPolicy(
-                leftOperand = AttributeReference(leftAttributeType, leftKey),
+                leftOperand = leftValueReference,
                 operatorType = operatorType,
                 rightOperand = PassThroughReference(value)
         )
@@ -181,7 +190,7 @@ class PolicyCollectionSecondOperand internal constructor(
 
     private fun expression(attributeType: AttributeType, key: String) {
         val policy = ExpressionPolicy(
-                leftOperand = AttributeReference(leftAttributeType, leftKey),
+                leftOperand = leftValueReference,
                 operatorType = operatorType,
                 rightOperand = AttributeReference(attributeType, key)
         )

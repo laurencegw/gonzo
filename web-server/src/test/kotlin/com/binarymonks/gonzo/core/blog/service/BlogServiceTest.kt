@@ -11,28 +11,28 @@ import com.binarymonks.gonzo.core.time.clock
 import com.binarymonks.gonzo.core.users.api.User
 import com.binarymonks.gonzo.core.users.service.UserService
 import com.binarymonks.gonzo.userNew
-import org.junit.Before
-import org.junit.Test
 import org.junit.jupiter.api.Assertions
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.support.AnnotationConfigContextLoader
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @ContextConfiguration(
         classes = [
             GonzoTestConfig::class
         ],
         loader = AnnotationConfigContextLoader::class
 )
+
 class BlogServiceTest {
 
     lateinit var mockClock: Clock
@@ -46,7 +46,7 @@ class BlogServiceTest {
 
     lateinit var user: User
 
-    @Before
+    @BeforeEach
     fun setUp() {
         testDataManager.clearData()
         mockClock = Mockito.mock(Clock::class.java)

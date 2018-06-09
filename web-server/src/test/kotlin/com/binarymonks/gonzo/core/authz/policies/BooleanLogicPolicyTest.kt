@@ -1,8 +1,8 @@
 package com.binarymonks.gonzo.core.authz.policies
 
 import com.binarymonks.gonzo.accessRequest
-import org.junit.Test
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 
 class BasicPolicyTest {

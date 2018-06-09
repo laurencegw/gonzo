@@ -4,7 +4,9 @@ import com.binarymonks.gonzo.core.users.api.LoginCredentials
 import com.binarymonks.gonzo.core.users.service.SignInService
 import com.binarymonks.gonzo.web.Routes
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
 
 
 @RestController

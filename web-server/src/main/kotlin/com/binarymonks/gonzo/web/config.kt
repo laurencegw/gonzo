@@ -1,10 +1,9 @@
 package com.binarymonks.gonzo.web
 
-import com.binarymonks.gonzo.core.users.service.SignInService
 import com.binarymonks.gonzo.web.filters.JWTAuthenticationFilter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint
+//import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.PropertySource
@@ -17,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.AuthenticationEntryPoint
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -72,8 +72,8 @@ class GonzoSecurityConfig: WebSecurityConfigurerAdapter() {
                 ))
         http?.cors()?.and()?.csrf()?.disable()
         http?.sessionManagement()?.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        http?.exceptionHandling()?.authenticationEntryPoint(
-                Http401AuthenticationEntryPoint("Bearer realm=\"gonzocode.com\"")
-        )
+//        http?.exceptionHandling()?.authenticationEntryPoint(
+//                Http403ForbiddenEntryPoint()
+//        )
     }
 }
