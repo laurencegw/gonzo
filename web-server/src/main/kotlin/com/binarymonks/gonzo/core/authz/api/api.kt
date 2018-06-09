@@ -1,14 +1,13 @@
 package com.binarymonks.gonzo.core.authz.api
 
-interface AccessDecider{
-    fun checkAuthorized(accessRequest:AccessRequest): Boolean
+interface AccessDecider {
+    fun checkAuthorized(accessRequest: AccessRequest): Boolean
 }
 
-class NotAuthorized:Exception()
 
 data class AccessRequest(
-        val subject: Map<String, Any>,
+        val subject: Map<String, Any?>,
         val action: String,
-        val resource: Map<String, Any>,
-        val environment: Map<String,Any> = emptyMap()
+        val resource: Map<String, Any?>,
+        val environment: Map<String, Any?> = emptyMap()
 )

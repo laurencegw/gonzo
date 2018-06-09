@@ -1,5 +1,8 @@
 package com.binarymonks.gonzo.core.users.api
 
+import com.binarymonks.gonzo.core.common.Credentials
+import com.binarymonks.gonzo.core.common.Resource
+import com.binarymonks.gonzo.core.common.Types
 import com.fasterxml.jackson.annotation.JsonCreator
 import java.time.ZonedDateTime
 
@@ -16,17 +19,28 @@ interface Users {
     fun setUserRole(userID: Long, role: Role)
 }
 
+interface UsersAuth{
+    fun createUser(credentials: Credentials, user: UserNew): User
+    fun updateUser(credentials: Credentials, user: UserUpdate): User
+    fun getUserByEmail(credentials: Credentials, email: String): User
+    fun requestPasswordResetEmail(credentials: Credentials, email: String)
+    fun resetPassword(credentials: Credentials, passwordReset: PasswordReset)
+    fun setUserRole(credentials: Credentials, userID: Long, role: Role)
+}
+
 interface SignIn {
     fun login(credentials: LoginCredentials): String
     fun assertLoggedIn(token:String)
     fun getUserFromToken(token:String): User
 }
 
+open class UserResource:Resource(Types.USER)
+
 data class UserNew @JsonCreator constructor(
         val email: String,
         val handle: String,
         val password: String
-)
+):UserResource()
 
 data class User @JsonCreator constructor(
         val id: Long,
@@ -35,7 +49,7 @@ data class User @JsonCreator constructor(
         val role: Role,
         val firstName: String? = null,
         val lastName: String? = null
-) {
+):UserResource() {
     fun toUpdate() = UserUpdate(
             id = id,
             email = email,
@@ -59,7 +73,7 @@ data class UserPublicHeader @JsonCreator constructor(
         val handle: String,
         val firstName: String? = null,
         val lastName: String? = null
-)
+):UserResource()
 
 data class UserUpdate @JsonCreator constructor(
         val id: Long,

@@ -58,28 +58,16 @@ class Correct4XXEntryPoint : AuthenticationEntryPoint {
 @EnableWebSecurity
 class GonzoSecurityConfig: WebSecurityConfigurerAdapter() {
 
-    @Autowired
-    lateinit var signInService:SignInService
-
     override fun configure(http: HttpSecurity?) {
         http?.authorizeRequests()
                 ?.antMatchers(HttpMethod.POST,Routes.LOGIN)
                 ?.permitAll()
                 ?.and()
                 ?.authorizeRequests()
-                ?.antMatchers(HttpMethod.GET,"${Routes.API}/**")
-                ?.permitAll()
-                ?.and()
-                ?.authorizeRequests()
-                ?.antMatchers(HttpMethod.POST,"${Routes.API}/**")
-                ?.authenticated()
-                ?.and()
-                ?.authorizeRequests()
-                ?.antMatchers(HttpMethod.PUT,"${Routes.API}/**")
+                ?.antMatchers("${Routes.API}/**")
                 ?.authenticated()
                 ?.and()
                 ?.addFilter(JWTAuthenticationFilter(
-                        signInService,
                         authenticationManager()
                 ))
         http?.cors()?.and()?.csrf()?.disable()

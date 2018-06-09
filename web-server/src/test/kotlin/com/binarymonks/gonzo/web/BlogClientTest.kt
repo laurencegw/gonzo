@@ -1,11 +1,11 @@
-package com.binarymonks.gonzo.clients
+package com.binarymonks.gonzo.web
 
 import com.binarymonks.gonzo.*
+import com.binarymonks.gonzo.clients.BlogClient
 import com.binarymonks.gonzo.core.blog.service.BlogService
 import com.binarymonks.gonzo.core.common.NotAuthentic
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import com.binarymonks.gonzo.core.users.service.UserService
-import com.binarymonks.gonzo.web.GonzoApplication
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test

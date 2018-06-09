@@ -1,7 +1,8 @@
 package com.binarymonks.gonzo.web.filters
 
-import com.binarymonks.gonzo.core.common.ExpiredToken
-import com.binarymonks.gonzo.core.common.InvalidCredentials
+import com.binarymonks.gonzo.core.common.AnonymousCredentials
+import com.binarymonks.gonzo.core.common.Credentials
+import com.binarymonks.gonzo.core.common.TokenCredentials
 import com.binarymonks.gonzo.core.users.api.User
 import com.binarymonks.gonzo.core.users.service.SignInService
 import org.springframework.security.authentication.AuthenticationManager
@@ -18,21 +19,21 @@ const val AUTH_HEADER = "Authorization"
 const val SECURITY_TYPE_PREFIX = "Bearer "
 
 data class JWTAuthentication(
-        private val name: String,
-        private val user: User,
-        private val token: String,
-        private val authorities : MutableCollection<out GrantedAuthority> = mutableListOf(),
+        private val credentials: Credentials,
+        private val name: String? = null, // Do this in the application layer
+        private val user: User? = null, // Do this in the application layer
+        private val authorities: MutableCollection<out GrantedAuthority> = mutableListOf(),
         private val authenticated: Boolean = true
-):Authentication{
+) : Authentication {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = authorities
 
     override fun setAuthenticated(isAuthenticated: Boolean) {}
 
-    override fun getName(): String = name
+    override fun getName(): String? = name
 
-    override fun getCredentials(): Any = token
+    override fun getCredentials(): Any = credentials
 
-    override fun getPrincipal(): Any = user
+    override fun getPrincipal(): Any? = user
 
     override fun getDetails(): Any? = null
 
@@ -45,36 +46,22 @@ data class JWTAuthentication(
  * Cool article explaining this stuff here: https://auth0.com/blog/implementing-jwt-authentication-on-spring-boot/
  */
 class JWTAuthenticationFilter(
-        var signInService: SignInService,
-        authManager:AuthenticationManager
-): BasicAuthenticationFilter(authManager) {
+        authManager: AuthenticationManager
+) : BasicAuthenticationFilter(authManager) {
 
 
     override fun doFilterInternal(request: HttpServletRequest?, response: HttpServletResponse?, chain: FilterChain?) {
         val header: String? = request?.getHeader(AUTH_HEADER)
-        if (header == null || !header.startsWith(SECURITY_TYPE_PREFIX)) {
-            chain?.doFilter(request, response)
-            return
-        }
-
-        val authentication = getAuthentication(header.substringAfter(SECURITY_TYPE_PREFIX))
-
-        SecurityContextHolder.getContext().authentication = authentication
-        chain?.doFilter(request, response)
-    }
-
-    private fun getAuthentication(token:String): JWTAuthentication? {
-        return try {
-            val user = signInService.getUserFromToken(token)
-            JWTAuthentication(
-                    user.handle,
-                    user,
-                    token
+        if (header != null && header.startsWith(SECURITY_TYPE_PREFIX)) {
+            val token = header.substringAfter(SECURITY_TYPE_PREFIX)
+            SecurityContextHolder.getContext().authentication = JWTAuthentication(
+                    TokenCredentials(token)
             )
-        }catch(e: InvalidCredentials){
-            null
-        }catch(e: ExpiredToken){
-            null
+        } else {
+            SecurityContextHolder.getContext().authentication = JWTAuthentication(
+                    AnonymousCredentials()
+            )
         }
+        chain?.doFilter(request, response)
     }
 }
