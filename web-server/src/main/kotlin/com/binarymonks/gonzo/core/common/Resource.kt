@@ -5,6 +5,7 @@ import kotlin.reflect.full.declaredMemberProperties
 class Types{
     companion object {
         const val USER = "USER"
+        const val USER_ROLES = "USER_ROLES"
     }
 }
 

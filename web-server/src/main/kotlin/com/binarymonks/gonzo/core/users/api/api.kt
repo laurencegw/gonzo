@@ -16,7 +16,7 @@ interface Users {
     fun getUserByEmail(email: String): User
     fun requestPasswordResetEmail(email: String)
     fun resetPassword(passwordReset: PasswordReset)
-    fun setUserRole(userID: Long, role: Role)
+    fun setUserRole(userRoleUpdate: UserRoleUpdate)
 }
 
 interface UsersAuth{
@@ -25,7 +25,7 @@ interface UsersAuth{
     fun getUserByEmail(credentials: Credentials, email: String): User
     fun requestPasswordResetEmail(credentials: Credentials, email: String)
     fun resetPassword(credentials: Credentials, passwordReset: PasswordReset)
-    fun setUserRole(credentials: Credentials, userID: Long, role: Role)
+    fun setUserRole(credentials: Credentials, userRoleUpdate: UserRoleUpdate)
 }
 
 interface SignIn {
@@ -81,6 +81,11 @@ data class UserUpdate @JsonCreator constructor(
         val firstName: String? = null,
         val lastName: String? = null
 )
+
+data class UserRoleUpdate @JsonCreator constructor(
+        val id: Long,
+        val role: Role
+): Resource(type=Types.USER_ROLES)
 
 enum class Role{
     AUTHOR,

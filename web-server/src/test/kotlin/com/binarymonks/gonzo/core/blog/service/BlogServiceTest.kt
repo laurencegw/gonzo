@@ -6,7 +6,7 @@ import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
 import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
 import com.binarymonks.gonzo.core.blog.api.BlogEntryUpdate
 import com.binarymonks.gonzo.core.test.GonzoTestConfig
-import com.binarymonks.gonzo.core.test.TestDataManager
+import com.binarymonks.gonzo.core.test.harness.TestDataManager
 import com.binarymonks.gonzo.core.time.clock
 import com.binarymonks.gonzo.core.users.api.User
 import com.binarymonks.gonzo.core.users.service.UserService

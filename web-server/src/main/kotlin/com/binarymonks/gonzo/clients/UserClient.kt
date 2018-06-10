@@ -34,7 +34,10 @@ class UserClient(baseURL: String) : Users, AuthClient(baseURL) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun setUserRole(userID: Long, role: Role) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun setUserRole(userRoleUpdate: UserRoleUpdate) {
+        restTemplate.put(
+                "$baseURL/${Routes.userRoles(userRoleUpdate.id)}",
+                HttpEntity(userRoleUpdate, createHeaders())
+        )
     }
 }

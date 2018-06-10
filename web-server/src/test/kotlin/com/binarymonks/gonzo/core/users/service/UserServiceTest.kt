@@ -5,12 +5,13 @@ import com.binarymonks.gonzo.core.common.ExpiredToken
 import com.binarymonks.gonzo.core.common.InvalidCredentials
 import com.binarymonks.gonzo.core.common.UniqueConstraintException
 import com.binarymonks.gonzo.core.test.GonzoTestConfig
-import com.binarymonks.gonzo.core.test.StubEmailService
+import com.binarymonks.gonzo.core.test.stubs.StubEmailService
 import com.binarymonks.gonzo.core.time.clock
 import com.binarymonks.gonzo.core.time.nowUTC
 import com.binarymonks.gonzo.core.users.api.PasswordReset
 import com.binarymonks.gonzo.core.users.api.Role
 import com.binarymonks.gonzo.core.users.api.User
+import com.binarymonks.gonzo.core.users.api.UserRoleUpdate
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import com.binarymonks.gonzo.userNew
 import org.junit.jupiter.api.Assertions
@@ -251,7 +252,7 @@ class UserServiceTest {
         val created = userService.createUser(newUser)
         Assertions.assertEquals(Role.READER, created.role)
 
-        userService.setUserRole(created.id, Role.ADMIN)
+        userService.setUserRole(UserRoleUpdate(created.id, Role.ADMIN))
 
         val retrieved = userService.getUserByEmail(created.email)
         Assertions.assertEquals(Role.ADMIN, retrieved.role)

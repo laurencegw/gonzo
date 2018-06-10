@@ -1,4 +1,4 @@
-package com.binarymonks.gonzo.core.test
+package com.binarymonks.gonzo.core.test.stubs
 
 import com.binarymonks.gonzo.core.email.api.Emails
 import com.binarymonks.gonzo.core.email.api.ResetPasswordEmail

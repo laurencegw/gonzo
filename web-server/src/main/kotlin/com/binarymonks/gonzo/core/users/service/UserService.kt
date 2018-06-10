@@ -112,9 +112,9 @@ class UserService : Users {
         userRepo.save(userEntity)
     }
 
-    override fun setUserRole(userID: Long, role: Role) {
-        val userEntity = userRepo.findById(userID).get()
-        userEntity.role = role
+    override fun setUserRole(userRoleUpdate: UserRoleUpdate) {
+        val userEntity = userRepo.findById(userRoleUpdate.id).get()
+        userEntity.role = userRoleUpdate.role
         userRepo.save(userEntity)
     }
 }

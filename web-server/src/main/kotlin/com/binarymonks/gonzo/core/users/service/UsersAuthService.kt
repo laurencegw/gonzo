@@ -38,8 +38,9 @@ class UsersAuthService(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun setUserRole(credentials: Credentials, userID: Long, role: Role) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun setUserRole(credentials: Credentials, userRoleUpdate: UserRoleUpdate) {
+        checkAuth(credentials,Actions.MODIFY,userRoleUpdate.attributes())
+        userService.setUserRole(userRoleUpdate)
     }
 
 }

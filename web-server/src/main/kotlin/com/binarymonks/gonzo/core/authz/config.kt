@@ -19,8 +19,16 @@ class AuthorizationConfig {
                             subject("role").equalTo().value(Role.ADMIN)
                             anyOf {
                                 allOf {
-                                    action().isIn().value(listOf(Actions.CREATE))
+                                    action().isIn().value(listOf(
+                                            Actions.CREATE
+                                    ))
                                     resource("type").isIn().value(listOf(Types.USER))
+                                }
+                                allOf {
+                                    action().isIn().value(listOf(
+                                            Actions.MODIFY
+                                    ))
+                                    resource("type").isIn().value(listOf(Types.USER_ROLES))
                                 }
                             }
                         }

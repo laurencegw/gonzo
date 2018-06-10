@@ -4,7 +4,7 @@ import com.binarymonks.gonzo.PasswordsStub
 import com.binarymonks.gonzo.core.common.ExpiredToken
 import com.binarymonks.gonzo.core.common.InvalidCredentials
 import com.binarymonks.gonzo.core.test.GonzoTestConfig
-import com.binarymonks.gonzo.core.test.TestDataManager
+import com.binarymonks.gonzo.core.test.harness.TestDataManager
 import com.binarymonks.gonzo.core.time.clock
 import com.binarymonks.gonzo.core.users.api.LoginCredentials
 import com.binarymonks.gonzo.userNew
