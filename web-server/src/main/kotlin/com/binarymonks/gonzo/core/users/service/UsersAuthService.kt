@@ -23,11 +23,8 @@ class UsersAuthService(
     }
 
     override fun updateUser(credentials: Credentials, user: UserUpdate): User {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getUserByEmail(credentials: Credentials, email: String): User {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        checkAuth(credentials, Actions.MODIFY, user.attributes())
+        return userService.updateUser(user)
     }
 
     override fun requestPasswordResetEmail(credentials: Credentials, email: String) {

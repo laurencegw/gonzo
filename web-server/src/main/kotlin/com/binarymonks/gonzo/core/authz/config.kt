@@ -28,6 +28,12 @@ class AuthorizationConfig {
                                     resource("type").equalTo().value(Types.USER_ROLES)
                                 }
                             }
+                        },
+                        // UPDATE USER DATA
+                        allOf{
+                            resource("type").equalTo().value(Types.USER)
+                            action().equalTo().value(Actions.MODIFY)
+                            subject("id").equalTo().resource("id")
                         }
                 )
         )

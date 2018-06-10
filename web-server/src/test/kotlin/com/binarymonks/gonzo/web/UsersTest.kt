@@ -24,7 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         classes = [GonzoApplication::class, GonzoTestHarnessConfig::class]
 )
 @ExtendWith(SpringExtension::class)
-class UsersAuthorizedTest {
+class UsersAuthorizedPermissionsTest {
 
     @LocalServerPort
     var port: Int = -1
@@ -40,13 +40,13 @@ class UsersAuthorizedTest {
     }
 
     @TestFactory
-    fun createUserPermissions(): List<DynamicTest> {
+    fun createUser(): List<DynamicTest> {
         return listOf(
                 arrayOf("Reader cannot create user", Role.READER, false),
                 arrayOf("Author cannot create user", Role.AUTHOR, false),
                 arrayOf("Admin can create user", Role.ADMIN, true)
         ).map {
-            dynamicTest(it[0] as String,{
+            dynamicTest(it[0] as String, {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
                 val allowed: Boolean = it[2] as Boolean
@@ -75,13 +75,13 @@ class UsersAuthorizedTest {
     }
 
     @TestFactory
-    fun setUserRolePermissions(): List<DynamicTest>{
+    fun setUserRole(): List<DynamicTest> {
         return listOf(
                 arrayOf("Reader set roles", Role.READER, false),
                 arrayOf("Author set roles", Role.AUTHOR, false),
                 arrayOf("Admin can set roles", Role.ADMIN, true)
         ).map {
-            dynamicTest(it[0] as String,{
+            dynamicTest(it[0] as String, {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
                 val allowed: Boolean = it[2] as Boolean
@@ -100,14 +100,79 @@ class UsersAuthorizedTest {
                 if (allowed) {
                     userClient.setUserRole(UserRoleUpdate(targetUser.id, newRole))
                 } else {
-                    try {
+                    Assertions.assertThrows(NotAuthorized::class.java, {
                         userClient.setUserRole(UserRoleUpdate(targetUser.id, newRole))
-                        Assertions.fail<String>("Should not be allowed")
-                    } catch (e: NotAuthorized) {
-                    }
+                    })
                 }
             })
         }.toList()
     }
 
+    @TestFactory
+    fun updateOtherUser(): List<DynamicTest> {
+        return listOf(
+                arrayOf("Reader update another user", Role.READER, false),
+                arrayOf("Author update another user", Role.AUTHOR, false),
+                arrayOf("Admin update another user", Role.ADMIN, false)
+        ).map {
+            dynamicTest(it[0] as String, {
+                testDataManager.clearData()
+                val userRole: Role = it[1] as Role
+                val allowed: Boolean = it[2] as Boolean
+                val requestingUser = userNew()
+                testDataManager.forceCreateUser(requestingUser, userRole)
+                userClient.signIn(requestingUser.email, requestingUser.password)
+
+
+                val targetUser = testDataManager.forceCreateUser(userNew().copy(
+                        email = "another.blah.com",
+                        handle = "another"
+                ))
+
+                if (allowed) {
+                    userClient.updateUser(targetUser.toUpdate().copy(
+                            email = "changed" + targetUser.email
+                    ))
+                } else {
+                    Assertions.assertThrows(NotAuthorized::class.java, {
+                        userClient.updateUser(targetUser.toUpdate().copy(
+                                email = "changed" + targetUser.email
+                        ))
+                    })
+                }
+            })
+        }.toList()
+    }
+
+
+    @TestFactory
+    fun updateOwnUser(): List<DynamicTest> {
+        return listOf(
+                arrayOf("Reader update own user", Role.READER, true),
+                arrayOf("Author update own user", Role.AUTHOR, true),
+                arrayOf("Admin update own user", Role.ADMIN, true)
+        ).map {
+            dynamicTest(it[0] as String, {
+                testDataManager.clearData()
+                val userRole: Role = it[1] as Role
+                val allowed: Boolean = it[2] as Boolean
+                val requestingUser = userNew()
+                val user = testDataManager.forceCreateUser(requestingUser, userRole)
+                userClient.signIn(requestingUser.email, requestingUser.password)
+
+
+                if (allowed) {
+                    userClient.updateUser(user.toUpdate().copy(
+                            email = "changed" + user.email
+                    ))
+                } else {
+                    Assertions.assertThrows(NotAuthorized::class.java, {
+                        userClient.updateUser(user.toUpdate().copy(
+                                email = "changed" + user.email
+                        ))
+                    })
+                }
+            })
+        }.toList()
+    }
 }

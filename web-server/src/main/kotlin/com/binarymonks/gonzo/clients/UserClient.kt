@@ -5,6 +5,7 @@ import com.binarymonks.gonzo.web.Routes
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
+import org.springframework.web.client.exchange
 
 
 class UserClient(baseURL: String) : Users, AuthClient(baseURL) {
@@ -19,7 +20,13 @@ class UserClient(baseURL: String) : Users, AuthClient(baseURL) {
     }
 
     override fun updateUser(user: UserUpdate): User {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val response = restTemplate.exchange(
+                "$baseURL/${Routes.user(user.id)}",
+                HttpMethod.PUT,
+                HttpEntity(user, createHeaders()),
+                object : ParameterizedTypeReference<User>() {}
+        )
+        return checkNotNull(response.body)
     }
 
     override fun getUserByEmail(email: String): User {

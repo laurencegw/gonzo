@@ -23,7 +23,7 @@ class TestDataManager {
     @Autowired
     lateinit var blogRepo: BlogRepo
 
-    fun forceCreateUser(newUser:UserNew, role: Role): User {
+    fun forceCreateUser(newUser:UserNew, role: Role = Role.READER): User {
         val user = userService.createUser(newUser)
         userService.setUserRole(UserRoleUpdate(user.id, role))
         return user

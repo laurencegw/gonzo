@@ -17,9 +17,11 @@ class UsersController {
             getCredentials(), user
     )
 
-    fun updateUser(@RequestBody user: UserUpdate): User {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    @PutMapping("${Routes.USERS}/{id}")
+    fun updateUser(@PathVariable id: Long, @RequestBody user: UserUpdate): User {
+       return userServiceAuth.updateUser(getCredentials(),user.copy(id=id))
     }
+
 
     fun getUserByEmail(email: String): User {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -35,6 +37,6 @@ class UsersController {
 
     @PutMapping("${Routes.USERS}/{id}/roles")
     fun setUserRole(@PathVariable id: Long, @RequestBody userRoleUpdate: UserRoleUpdate) {
-        userServiceAuth.setUserRole(getCredentials(),userRoleUpdate)
+        userServiceAuth.setUserRole(getCredentials(),userRoleUpdate.copy(id=id))
     }
 }

@@ -22,7 +22,6 @@ interface Users {
 interface UsersAuth{
     fun createUser(credentials: Credentials, user: UserNew): User
     fun updateUser(credentials: Credentials, user: UserUpdate): User
-    fun getUserByEmail(credentials: Credentials, email: String): User
     fun requestPasswordResetEmail(credentials: Credentials, email: String)
     fun resetPassword(credentials: Credentials, passwordReset: PasswordReset)
     fun setUserRole(credentials: Credentials, userRoleUpdate: UserRoleUpdate)
@@ -80,7 +79,7 @@ data class UserUpdate @JsonCreator constructor(
         val email: String,
         val firstName: String? = null,
         val lastName: String? = null
-)
+): UserResource()
 
 data class UserRoleUpdate @JsonCreator constructor(
         val id: Long,
