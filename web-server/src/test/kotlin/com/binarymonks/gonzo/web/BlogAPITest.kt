@@ -23,7 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         classes = [GonzoApplication::class]
 )
 @ExtendWith(SpringExtension::class)
-class BlogClientTest {
+class BlogAPITest {
 
     @LocalServerPort
     var port: Int = -1
@@ -68,7 +68,7 @@ class BlogClientTest {
     }
 
     private fun login() {
-        val newUser = userNew()
+        val newUser = newUser()
         userService.createUser(newUser)
         blogClient.signIn(newUser.email, newUser.password)
     }

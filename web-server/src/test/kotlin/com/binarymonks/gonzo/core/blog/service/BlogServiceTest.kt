@@ -10,7 +10,7 @@ import com.binarymonks.gonzo.core.test.harness.TestDataManager
 import com.binarymonks.gonzo.core.time.clock
 import com.binarymonks.gonzo.core.users.api.User
 import com.binarymonks.gonzo.core.users.service.UserService
-import com.binarymonks.gonzo.userNew
+import com.binarymonks.gonzo.newUser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -51,7 +51,7 @@ class BlogServiceTest {
         testDataManager.clearData()
         mockClock = Mockito.mock(Clock::class.java)
         clock = mockClock
-        user = userService.createUser(userNew())
+        user = userService.createUser(newUser())
         itIsNow()
     }
 

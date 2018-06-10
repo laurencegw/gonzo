@@ -13,30 +13,26 @@ class UsersController {
     lateinit var userServiceAuth: UsersAuthService
 
     @PostMapping("${Routes.USERS}")
-    fun createUser(@RequestBody user: UserNew)=userServiceAuth.createUser(
+    fun createUser(@RequestBody user: UserNew) = userServiceAuth.createUser(
             getCredentials(), user
     )
 
     @PutMapping("${Routes.USERS}/{id}")
     fun updateUser(@PathVariable id: Long, @RequestBody user: UserUpdate): User {
-       return userServiceAuth.updateUser(getCredentials(),user.copy(id=id))
+        return userServiceAuth.updateUser(getCredentials(), user.copy(id = id))
     }
 
-
-    fun getUserByEmail(email: String): User {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     fun requestPasswordResetEmail(email: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        userServiceAuth.requestPasswordResetEmail(getCredentials(), email)
     }
 
     fun resetPassword(@RequestBody passwordReset: PasswordReset) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        userServiceAuth.resetPassword(getCredentials(), passwordReset)
     }
 
     @PutMapping("${Routes.USERS}/{id}/roles")
     fun setUserRole(@PathVariable id: Long, @RequestBody userRoleUpdate: UserRoleUpdate) {
-        userServiceAuth.setUserRole(getCredentials(),userRoleUpdate.copy(id=id))
+        userServiceAuth.setUserRole(getCredentials(), userRoleUpdate.copy(id = id))
     }
 }

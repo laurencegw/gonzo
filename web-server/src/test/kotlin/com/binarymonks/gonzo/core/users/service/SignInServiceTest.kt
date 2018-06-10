@@ -7,7 +7,7 @@ import com.binarymonks.gonzo.core.test.GonzoTestConfig
 import com.binarymonks.gonzo.core.test.harness.TestDataManager
 import com.binarymonks.gonzo.core.time.clock
 import com.binarymonks.gonzo.core.users.api.LoginCredentials
-import com.binarymonks.gonzo.userNew
+import com.binarymonks.gonzo.newUser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -59,8 +59,8 @@ class SignInServiceTest {
 
     @Test
     fun loginAndCheckLoggedIn() {
-        val newUser = userNew()
-        val expectedUser = userService.createUser(userNew())
+        val newUser = newUser()
+        val expectedUser = userService.createUser(newUser())
 
         val token = signInService.login(LoginCredentials(
                 email = newUser.email,
@@ -73,8 +73,8 @@ class SignInServiceTest {
 
     @Test()
     fun loginWrongPassword() {
-        val newUser = userNew()
-        userService.createUser(userNew())
+        val newUser = newUser()
+        userService.createUser(newUser())
         Assertions.assertThrows(InvalidCredentials::class.java, {
             signInService.login(LoginCredentials(
                     email = newUser.email,
@@ -85,8 +85,8 @@ class SignInServiceTest {
 
     @Test
     fun loginCheckLoggedIn_BadToken() {
-        val newUser = userNew()
-        userService.createUser(userNew())
+        val newUser = newUser()
+        userService.createUser(newUser())
 
         val token = signInService.login(LoginCredentials(
                 email = newUser.email,
@@ -106,8 +106,8 @@ class SignInServiceTest {
 
     @Test
     fun loginCheckLoggedIn_Expired() {
-        val newUser = userNew()
-        userService.createUser(userNew())
+        val newUser = newUser()
+        userService.createUser(newUser())
 
         val token = signInService.login(LoginCredentials(
                 email = newUser.email,

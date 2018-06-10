@@ -7,6 +7,7 @@ object Routes {
       const val BLOGS = "$API/blogs"
 
       const val USERS = "$API/users"
+      const val ME = "$USERS/me"
       fun user(userID: Long) = "$USERS/$userID"
       fun userRoles(userID: Long) = "${user(userID)}/roles"
 

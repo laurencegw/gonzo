@@ -5,7 +5,6 @@ import com.binarymonks.gonzo.web.Routes
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
-import org.springframework.web.client.exchange
 
 
 class UserClient(baseURL: String) : Users, AuthClient(baseURL) {
@@ -46,5 +45,15 @@ class UserClient(baseURL: String) : Users, AuthClient(baseURL) {
                 "$baseURL/${Routes.userRoles(userRoleUpdate.id)}",
                 HttpEntity(userRoleUpdate, createHeaders())
         )
+    }
+
+    fun getUser(): User {
+        val response = restTemplate.exchange(
+                "$baseURL/${Routes.ME}",
+                HttpMethod.GET,
+                HttpEntity(null, createHeaders()),
+                object : ParameterizedTypeReference<User>() {}
+        )
+        return checkNotNull(response.body)
     }
 }

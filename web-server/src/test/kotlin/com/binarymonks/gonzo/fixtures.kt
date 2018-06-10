@@ -55,7 +55,7 @@ fun blogEntryHeader(): BlogEntryHeader {
     )
 }
 
-fun userNew(): UserNew {
+fun newUser(): UserNew {
     return UserNew(
             email = "jane@somewhere.com",
             handle = "Jane",

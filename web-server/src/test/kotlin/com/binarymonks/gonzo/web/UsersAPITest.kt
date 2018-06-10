@@ -6,12 +6,9 @@ import com.binarymonks.gonzo.core.test.GonzoTestHarnessConfig
 import com.binarymonks.gonzo.core.test.harness.TestDataManager
 import com.binarymonks.gonzo.core.users.api.Role
 import com.binarymonks.gonzo.core.users.api.UserRoleUpdate
-import com.binarymonks.gonzo.userNew
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DynamicTest
+import com.binarymonks.gonzo.newUser
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.DynamicTest.dynamicTest
-import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -51,18 +48,18 @@ class UsersAuthorizedPermissionsTest {
                 val userRole: Role = it[1] as Role
                 val allowed: Boolean = it[2] as Boolean
 
-                val requestUser = userNew()
+                val requestUser = newUser()
                 testDataManager.forceCreateUser(requestUser, userRole)
                 userClient.signIn(requestUser.email, requestUser.password)
 
                 if (allowed) {
-                    userClient.createUser(userNew().copy(
+                    userClient.createUser(newUser().copy(
                             email = "another@blah.com",
                             handle = "Mike"
                     ))
                 } else {
                     try {
-                        userClient.createUser(userNew().copy(
+                        userClient.createUser(newUser().copy(
                                 email = "another@blah.com",
                                 handle = "Mike"
                         ))
@@ -85,14 +82,14 @@ class UsersAuthorizedPermissionsTest {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
                 val allowed: Boolean = it[2] as Boolean
-                val requestingUser = userNew()
+                val requestingUser = newUser()
                 testDataManager.forceCreateUser(requestingUser, userRole)
                 userClient.signIn(requestingUser.email, requestingUser.password)
 
                 val originalRole = Role.READER
                 val newRole = Role.ADMIN
 
-                val targetUser = testDataManager.forceCreateUser(userNew().copy(
+                val targetUser = testDataManager.forceCreateUser(newUser().copy(
                         email = "another.blah.com",
                         handle = "another"
                 ), originalRole)
@@ -119,12 +116,12 @@ class UsersAuthorizedPermissionsTest {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
                 val allowed: Boolean = it[2] as Boolean
-                val requestingUser = userNew()
+                val requestingUser = newUser()
                 testDataManager.forceCreateUser(requestingUser, userRole)
                 userClient.signIn(requestingUser.email, requestingUser.password)
 
 
-                val targetUser = testDataManager.forceCreateUser(userNew().copy(
+                val targetUser = testDataManager.forceCreateUser(newUser().copy(
                         email = "another.blah.com",
                         handle = "another"
                 ))
@@ -156,7 +153,7 @@ class UsersAuthorizedPermissionsTest {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
                 val allowed: Boolean = it[2] as Boolean
-                val requestingUser = userNew()
+                val requestingUser = newUser()
                 val user = testDataManager.forceCreateUser(requestingUser, userRole)
                 userClient.signIn(requestingUser.email, requestingUser.password)
 
@@ -176,3 +173,47 @@ class UsersAuthorizedPermissionsTest {
         }.toList()
     }
 }
+
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        classes = [GonzoApplication::class, GonzoTestHarnessConfig::class]
+)
+@ExtendWith(SpringExtension::class)
+class TestUsers {
+
+    @LocalServerPort
+    var port: Int = -1
+
+    @Autowired
+    lateinit var testDataManager: TestDataManager
+
+    lateinit var userClient: UserClient
+
+    @BeforeEach
+    fun setUp() {
+        userClient = UserClient("http://localhost:$port")
+        testDataManager.clearData()
+    }
+
+    @Test
+    fun getUserWithCredentials() {
+        val newUser = newUser()
+
+        val expected = testDataManager.forceCreateUser(com.binarymonks.gonzo.newUser())
+
+        userClient.signIn(newUser.email, newUser.password)
+
+        val actual = userClient.getUser()
+
+        Assertions.assertEquals(expected, actual)
+    }
+
+    @Test
+    @Disabled("Need To do more work here")
+    fun requestResetEmailAndReset(){
+
+    }
+
+
+}
+

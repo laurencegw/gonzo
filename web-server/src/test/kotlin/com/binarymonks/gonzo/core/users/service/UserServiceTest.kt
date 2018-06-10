@@ -13,7 +13,7 @@ import com.binarymonks.gonzo.core.users.api.Role
 import com.binarymonks.gonzo.core.users.api.User
 import com.binarymonks.gonzo.core.users.api.UserRoleUpdate
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
-import com.binarymonks.gonzo.userNew
+import com.binarymonks.gonzo.newUser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -65,7 +65,7 @@ class UserServiceTest {
 
     @Test
     fun createUserAndGetUser() {
-        val newUser = userNew()
+        val newUser = newUser()
 
         val created = userService.createUser(newUser)
 
@@ -85,7 +85,7 @@ class UserServiceTest {
 
     @Test
     fun createUser_UniqueConstraints() {
-        val newUser1 = userNew()
+        val newUser1 = newUser()
         val duplicateNickNameUser = newUser1.copy(
                 email = "2${newUser1.email}"
         )
@@ -111,7 +111,7 @@ class UserServiceTest {
 
     @Test
     fun updateUser_UniqueConstraints() {
-        val newUser1 = userNew()
+        val newUser1 = newUser()
         val newUser2 = newUser1.copy(
                 email = "2${newUser1.email}",
                 handle = "2${newUser1.handle}"
@@ -131,7 +131,7 @@ class UserServiceTest {
 
     @Test
     fun updateUser() {
-        val newUser = userNew()
+        val newUser = newUser()
 
         val created = userService.createUser(newUser)
 
@@ -156,7 +156,7 @@ class UserServiceTest {
 
     @Test
     fun requestResetPasswordEmailAndReset() {
-        val newUser = userNew().copy(password = "oldpassword")
+        val newUser = newUser().copy(password = "oldpassword")
         val created = userService.createUser(newUser)
         passwordStub.salt = "pepper2"
 
@@ -185,7 +185,7 @@ class UserServiceTest {
 
     @Test
     fun requestResetPasswordEmailAndReset_wrongToken() {
-        val newUser = userNew().copy(password = "oldpassword")
+        val newUser = newUser().copy(password = "oldpassword")
         val created = userService.createUser(newUser)
         passwordStub.salt = "pepper2"
 
@@ -208,7 +208,7 @@ class UserServiceTest {
 
     @Test()
     fun requestResetPasswordEmailAndReset_expiredToken() {
-        val newUser = userNew().copy(password = "oldpassword")
+        val newUser = newUser().copy(password = "oldpassword")
         val created = userService.createUser(newUser)
         passwordStub.salt = "pepper2"
 
@@ -247,7 +247,7 @@ class UserServiceTest {
 
     @Test
     fun setUserRole() {
-        val newUser = userNew()
+        val newUser = newUser()
 
         val created = userService.createUser(newUser)
         Assertions.assertEquals(Role.READER, created.role)
