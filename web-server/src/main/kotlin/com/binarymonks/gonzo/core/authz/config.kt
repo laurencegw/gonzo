@@ -15,20 +15,17 @@ class AuthorizationConfig {
     fun accessDecisionService(): AccessDecisionService {
         return AccessDecisionService(
                 listOf(
+                        // ADMIN ROLE PERMISSIONS
                         allOf {
                             subject("role").equalTo().value(Role.ADMIN)
                             anyOf {
                                 allOf {
-                                    action().isIn().value(listOf(
-                                            Actions.CREATE
-                                    ))
-                                    resource("type").isIn().value(listOf(Types.USER))
+                                    action().equalTo().value(Actions.CREATE)
+                                    resource("type").equalTo().value(Types.USER)
                                 }
                                 allOf {
-                                    action().isIn().value(listOf(
-                                            Actions.MODIFY
-                                    ))
-                                    resource("type").isIn().value(listOf(Types.USER_ROLES))
+                                    action().equalTo().value(Actions.MODIFY)
+                                    resource("type").equalTo().value(Types.USER_ROLES)
                                 }
                             }
                         }
