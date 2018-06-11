@@ -56,13 +56,12 @@ class BlogServiceTest {
     }
 
     @Test
-    fun createAndGetBlogEntry_Published() {
+    fun createAndGetBlogEntry() {
         val now = itIsNow()
 
         val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
-                published = true,
                 authorID = user.id
         )
 
@@ -74,7 +73,7 @@ class BlogServiceTest {
                 title = newBlogEntry.title,
                 content = newBlogEntry.content,
                 author = user.toPublicHeader(),
-                published = newBlogEntry.published,
+                published = false,
                 publishedOn = now,
                 updated = now,
                 created = now
@@ -89,40 +88,6 @@ class BlogServiceTest {
     }
 
     @Test
-    fun createAndGetBlogEntry_NotPublished() {
-        val now = itIsNow()
-
-        val newBlogEntry = BlogEntryNew(
-                title = "Some Blog Entry",
-                content = "A bit of content",
-                published = false,
-                authorID = user.id
-        )
-
-
-        val created = blogService.createBlogEntry(newBlogEntry)
-
-        val expectedBlogEntry = BlogEntry(
-                id = created.id,
-                title = newBlogEntry.title,
-                content = newBlogEntry.content,
-                author = user.toPublicHeader(),
-                published = newBlogEntry.published,
-                publishedOn = null,
-                updated = now,
-                created = now
-        )
-
-        Assertions.assertEquals(expectedBlogEntry, created)
-
-        val retrieved = blogService.getBlogEntryById(created.id)
-
-        Assertions.assertEquals(expectedBlogEntry, retrieved)
-
-    }
-
-
-    @Test
     fun getById_DoesNotExist() {
         Assertions.assertThrows(NoSuchElementException::class.java, {
             blogService.getBlogEntryById(-1)
@@ -130,28 +95,26 @@ class BlogServiceTest {
     }
 
     @Test
-    fun update_UnPublishedToPublished() {
+    fun publishBlogEntry() {
         val createdTime = itIsNow()
 
         val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
-                published = false,
                 authorID = user.id
         )
 
         val created = blogService.createBlogEntry(newBlogEntry)
 
-        val updatedTime = itIsNow(createdTime.plusDays(1))
+        val publishedTime = itIsNow(createdTime.plusDays(1))
 
-        val update = created.copy(title = "Changed Title", published = true)
+        blogService.publishBlogEntry(created.id)
 
-        val expected = update.copy(publishedOn = updatedTime, updated = updatedTime)
+        val expected = created.copy(publishedOn = publishedTime)
 
-        val updated = blogService.updateBlogEntry(update.toUpdate())
+        val actual = blogService.getBlogEntryById(created.id)
 
-        Assertions.assertEquals(expected, updated)
-        Assertions.assertEquals(expected, blogService.getBlogEntryById(created.id))
+        Assertions.assertEquals(expected, actual)
     }
 
     @Test
@@ -161,7 +124,6 @@ class BlogServiceTest {
         val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
-                published = true,
                 authorID = user.id
         )
 
@@ -180,29 +142,28 @@ class BlogServiceTest {
     }
 
     @Test
-    fun update_PublishedToUnPublished_keepLastPublished() {
+    fun updatePublished_keepLastPublishedDate() {
         val createdTime = itIsNow()
 
         val newBlogEntry = BlogEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
-                published = true,
                 authorID = user.id
         )
 
         val created = blogService.createBlogEntry(newBlogEntry)
+        blogService.publishBlogEntry(created.id)
 
         val updatedTime = itIsNow(createdTime.plusDays(1))
 
-        val update = created.copy(
+        val update = created.toUpdate().copy(
                 title = "Changed Title",
-                content = "New Content",
-                published = false
+                content = "New Content"
         )
 
-        val expected = update.copy(updated = updatedTime)
+        val expected = created.copy(updated = updatedTime)
 
-        val updated = blogService.updateBlogEntry(update.toUpdate())
+        val updated = blogService.updateBlogEntry(update)
 
         Assertions.assertEquals(expected, updated)
         Assertions.assertEquals(expected, blogService.getBlogEntryById(created.id))
@@ -211,7 +172,7 @@ class BlogServiceTest {
     @Test
     fun update_DoesNotExist() {
         Assertions.assertThrows(NoSuchElementException::class.java, {
-            blogService.updateBlogEntry(BlogEntryUpdate(-1, "", "", true))
+            blogService.updateBlogEntry(BlogEntryUpdate(-1, "", ""))
         })
     }
 

@@ -7,6 +7,7 @@ import java.time.ZonedDateTime
 interface Blog {
     fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntry
     fun updateBlogEntry(update: BlogEntryUpdate): BlogEntry
+    fun publishBlogEntry(blogID:Long)
     fun getBlogEntryHeaders(): List<BlogEntryHeader>
     fun getBlogEntryById(id: Long): BlogEntry
 }
@@ -14,15 +15,13 @@ interface Blog {
 data class BlogEntryNew @JsonCreator constructor(
         val title: String,
         val content: String,
-        val published: Boolean,
         val authorID: Long
 )
 
 data class BlogEntryUpdate @JsonCreator constructor(
         val id: Long = -1,
         val title: String,
-        val content: String,
-        val published: Boolean
+        val content: String
 )
 
 data class BlogEntry @JsonCreator constructor(
@@ -39,8 +38,7 @@ data class BlogEntry @JsonCreator constructor(
     fun toUpdate(): BlogEntryUpdate = BlogEntryUpdate(
             id = id,
             title = title,
-            content = content,
-            published = published
+            content = content
     )
 
     fun toHeader(): BlogEntryHeader = BlogEntryHeader(

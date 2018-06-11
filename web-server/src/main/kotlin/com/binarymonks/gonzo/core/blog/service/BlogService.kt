@@ -23,8 +23,8 @@ class BlogService : Blog {
                 title = blogEntryNew.title,
                 content = blogEntryNew.content,
                 author = userRepo.findById(blogEntryNew.authorID).get(),
-                published = blogEntryNew.published,
-                firstPublished = if (blogEntryNew.published) nowUTC() else null,
+                published = false,
+                firstPublished = null,
                 created = nowUTC(),
                 updated = nowUTC()
         )).toBlogEntry()
@@ -35,13 +35,13 @@ class BlogService : Blog {
         val entity = blogRepo.findById(update.id).get()
         entity.title = update.title
         entity.content = update.content
-        if (!entity.published && update.published) {
-            entity.firstPublished = nowUTC()
-        }
-        entity.published = update.published
         entity.updated = nowUTC()
         blogRepo.save(entity)
         return entity.toBlogEntry()
+    }
+
+    override fun publishBlogEntry(blogID: Long) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun getBlogEntryHeaders(): List<BlogEntryHeader> = blogRepo.findAll().map { it.toBlogEntry().toHeader() }

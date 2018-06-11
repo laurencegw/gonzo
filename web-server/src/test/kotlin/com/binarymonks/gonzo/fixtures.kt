@@ -16,7 +16,6 @@ fun blogEntryNew(): BlogEntryNew {
     return BlogEntryNew(
             title = "Some Blog Entry",
             content = "A bit of content",
-            published = true,
             authorID = 1
     )
 }
@@ -38,8 +37,7 @@ fun blogEntryUpdate(): BlogEntryUpdate {
     return BlogEntryUpdate(
             id = 3,
             title = "Some Blog Entry Update",
-            content = "A bit of content Updated",
-            published = false
+            content = "A bit of content Updated"
     )
 }
 

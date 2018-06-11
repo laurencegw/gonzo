@@ -28,6 +28,10 @@ class BlogClient(baseURL: String) : Blog, AuthClient(baseURL) {
         return checkNotNull(response.body)
     }
 
+    override fun publishBlogEntry(blogID: Long) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun getBlogEntryHeaders(): List<BlogEntryHeader> {
         val response = restTemplate.exchange(
                 "$baseURL/${Routes.BLOGS}",
@@ -43,12 +47,5 @@ class BlogClient(baseURL: String) : Blog, AuthClient(baseURL) {
                 "$baseURL/${Routes.BLOGS}/$id",
                 BlogEntry::class.java
         )!!
-//        val response = restTemplate.exchange(
-//                "$baseURL/${Routes.BLOGS}/$id",
-//                HttpMethod.GET,
-//                null,
-//                object : ParameterizedTypeReference<BlogEntry>() {}
-//        )
-//        return checkNotNull(response.body)
     }
 }
