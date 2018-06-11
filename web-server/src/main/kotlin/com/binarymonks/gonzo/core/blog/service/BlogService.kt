@@ -41,7 +41,10 @@ class BlogService : Blog {
     }
 
     override fun publishBlogEntry(blogID: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val entity = blogRepo.findById(blogID).get()
+        entity.published = true
+        entity.firstPublished = nowUTC()
+        blogRepo.save(entity)
     }
 
     override fun getBlogEntryHeaders(): List<BlogEntryHeader> = blogRepo.findAll().map { it.toBlogEntry().toHeader() }

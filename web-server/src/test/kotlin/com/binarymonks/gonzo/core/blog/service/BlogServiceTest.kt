@@ -74,7 +74,7 @@ class BlogServiceTest {
                 content = newBlogEntry.content,
                 author = user.toPublicHeader(),
                 published = false,
-                publishedOn = now,
+                publishedOn = null,
                 updated = now,
                 created = now
         )
@@ -110,7 +110,7 @@ class BlogServiceTest {
 
         blogService.publishBlogEntry(created.id)
 
-        val expected = created.copy(publishedOn = publishedTime)
+        val expected = created.copy(publishedOn = publishedTime, published = true)
 
         val actual = blogService.getBlogEntryById(created.id)
 
@@ -153,15 +153,20 @@ class BlogServiceTest {
 
         val created = blogService.createBlogEntry(newBlogEntry)
         blogService.publishBlogEntry(created.id)
+        val current = blogService.getBlogEntryById(created.id)
 
         val updatedTime = itIsNow(createdTime.plusDays(1))
 
-        val update = created.toUpdate().copy(
+        val update = current.toUpdate().copy(
                 title = "Changed Title",
                 content = "New Content"
         )
 
-        val expected = created.copy(updated = updatedTime)
+        val expected = current.copy(
+                title = update.title,
+                content = update.content,
+                updated = updatedTime
+        )
 
         val updated = blogService.updateBlogEntry(update)
 
