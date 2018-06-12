@@ -1,7 +1,8 @@
 package com.binarymonks.gonzo.core.blog.service
 
-import com.binarymonks.gonzo.blogEntryNew
-import com.binarymonks.gonzo.core.blog.api.*
+import com.binarymonks.gonzo.core.blog.api.BlogEntry
+import com.binarymonks.gonzo.core.blog.api.BlogEntryDraft
+import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
 import com.binarymonks.gonzo.core.common.NotFound
 import com.binarymonks.gonzo.core.test.GonzoTestConfig
 import com.binarymonks.gonzo.core.test.harness.TestDataManager
@@ -63,7 +64,6 @@ class BlogServiceTest {
                 authorID = user.id
         )
 
-
         val created = blogService.createBlogEntry(newBlogEntry)
 
         val expectedBlogEntry = BlogEntryDraft(
@@ -82,7 +82,6 @@ class BlogServiceTest {
         val retrieved = blogService.getBlogEntryDraftByID(created.id)
 
         Assertions.assertEquals(expectedBlogEntry, retrieved)
-
     }
 
     @Test
@@ -95,16 +94,163 @@ class BlogServiceTest {
 
         val created = blogService.createBlogEntry(newBlogEntry)
 
-        Assertions.assertThrows(NotFound::class.java,{
+        Assertions.assertThrows(NotFound::class.java, {
             blogService.getBlogEntryById(created.id)
         })
     }
 
     @Test
-    fun updateBlogEntry_Unpublished(){
+    fun updateBlogEntry_Unpublished() {
+        val now = itIsNow()
+
+        val newBlogEntry = BlogEntryNew(
+                title = "Some Blog Entry",
+                content = "A bit of content",
+                authorID = user.id
+        )
+
+        val createdDraft = blogService.createBlogEntry(newBlogEntry)
+
+        val later = itIsNow(now.plusDays(1))
+
+        val update = createdDraft.toUpdate().copy(
+                title = "changed${createdDraft.title}",
+                content = "changed${createdDraft.content}"
+        )
+
+        val expected = createdDraft.copy(
+                title = update.title,
+                content = update.content,
+                updated = later
+        )
+
+        val updated = blogService.updateBlogEntry(update)
+
+        Assertions.assertEquals(expected, updated)
+        Assertions.assertEquals(expected, blogService.getBlogEntryDraftByID(createdDraft.id))
+    }
+
+    @Test
+    fun publishBlogEntry() {
+        val createdTime = itIsNow()
+
+        val newBlogEntry = BlogEntryNew(
+                title = "Some Blog Entry",
+                content = "A bit of content",
+                authorID = user.id
+        )
+
+        val createdDraft = blogService.createBlogEntry(newBlogEntry)
+
+        val publishTime = itIsNow(createdTime.plusDays(1))
+
+        blogService.publishBlogEntry(createdDraft.id)
+
+        val expectedDraft = createdDraft.copy(
+                published = true,
+                unpublishedChanges = false
+        )
+        val expectedBlogEntry = BlogEntry(
+                id = createdDraft.id,
+                title = createdDraft.title,
+                content = createdDraft.content,
+                author = createdDraft.author,
+                publishedOn = publishTime,
+                lastEdited = publishTime
+        )
+
+        Assertions.assertEquals(expectedDraft, blogService.getBlogEntryDraftByID(createdDraft.id))
+        Assertions.assertEquals(expectedBlogEntry, blogService.getBlogEntryById(createdDraft.id))
 
     }
 
+    @Test
+    fun updateBlogEntry_realChanges_AlreadyPublished() {
+        val createdTime = itIsNow()
+
+        val newBlogEntry = BlogEntryNew(
+                title = "Some Blog Entry",
+                content = "A bit of content",
+                authorID = user.id
+        )
+
+        val createdDraft = blogService.createBlogEntry(newBlogEntry)
+
+        val publishTime = itIsNow(createdTime.plusDays(1))
+
+        blogService.publishBlogEntry(createdDraft.id)
+
+        val updateTime = itIsNow(publishTime.plusDays(1))
+
+        val update = createdDraft.toUpdate().copy(
+                title = "changed${createdDraft.title}",
+                content = "changed${createdDraft.content}"
+        )
+
+        val expectedBlogDraft = createdDraft.copy(
+                title = update.title,
+                content = update.content,
+                updated = updateTime,
+                published = true,
+                unpublishedChanges = true
+        )
+        val expectedBlogEntry = BlogEntry(
+                id = createdDraft.id,
+                title = createdDraft.title,
+                content = createdDraft.content,
+                author = createdDraft.author,
+                publishedOn = publishTime,
+                lastEdited = publishTime
+        )
+
+        val updated = blogService.updateBlogEntry(update)
+
+        Assertions.assertEquals(expectedBlogDraft, updated)
+        Assertions.assertEquals(expectedBlogEntry, blogService.getBlogEntryById(createdDraft.id))
+
+    }
+
+    @Test
+    fun updateBlogEntry_noChange_AlreadyPublished() {
+        val createdTime = itIsNow()
+
+        val newBlogEntry = BlogEntryNew(
+                title = "Some Blog Entry",
+                content = "A bit of content",
+                authorID = user.id
+        )
+
+        val createdDraft = blogService.createBlogEntry(newBlogEntry)
+
+        val publishTime = itIsNow(createdTime.plusDays(1))
+
+        blogService.publishBlogEntry(createdDraft.id)
+
+        itIsNow(publishTime.plusDays(1))
+
+        val update = createdDraft.toUpdate().copy()
+
+        val expectedBlogDraft = createdDraft.copy(
+                title = update.title,
+                content = update.content,
+                published = true,
+                unpublishedChanges = false
+        )
+        val expectedBlogEntry = BlogEntry(
+                id = createdDraft.id,
+                title = createdDraft.title,
+                content = createdDraft.content,
+                author = createdDraft.author,
+                publishedOn = publishTime,
+                lastEdited = publishTime
+        )
+
+        val updated = blogService.updateBlogEntry(update)
+
+        Assertions.assertEquals(expectedBlogDraft, updated)
+        Assertions.assertEquals(expectedBlogEntry, blogService.getBlogEntryById(createdDraft.id))
+
+    }
 
 
 //    @Test

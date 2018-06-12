@@ -55,30 +55,41 @@ data class BlogEntryDraftEntity(
         var updated: ZonedDateTime? = null,
 
         @OneToOne(cascade = [CascadeType.ALL])
-        var publishedBlog: BlogEntryPublished? = null
-) {
+        var publishedBlog: BlogEntryPublished? = null,
+
+        @Column(nullable = false)
+        var unpublishedChanges: Boolean = true
+
+        ) {
     fun toBlogEntryDraft() = BlogEntryDraft(
             id = id!!,
             title = title,
             content = content,
             author = author!!.toUser().toPublicHeader(),
-            published = false,
-            unpublishedChanges = true,
+            published = publishedBlog != null,
+            unpublishedChanges = unpublishedChanges,
             created = checkNotNull(created).normalise(),
             updated = updated!!.normalise()
     )
 
     fun toBlogEntry(): BlogEntry {
-       if(publishedBlog==null){
-           throw NotFound()
-       }
+        if (publishedBlog == null) {
+            throw NotFound()
+        }
         return BlogEntry(
                 id = id!!,
                 title = publishedBlog!!.title,
                 content = publishedBlog!!.content,
                 author = author!!.toUser().toPublicHeader(),
-                lastEdited = publishedBlog!!.updated!!,
-                publishedOn = publishedBlog!!.created!!
+                lastEdited = publishedBlog!!.updated!!.normalise(),
+                publishedOn = publishedBlog!!.created!!.normalise()
+        )
+    }
+
+    fun toBlogEntryPublished(): BlogEntryPublished {
+        return BlogEntryPublished(
+                title = title,
+                content=content
         )
     }
 }
