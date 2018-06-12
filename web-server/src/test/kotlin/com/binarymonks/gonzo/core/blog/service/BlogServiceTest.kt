@@ -1,7 +1,9 @@
 package com.binarymonks.gonzo.core.blog.service
 
+import com.binarymonks.gonzo.blogEntryNew
 import com.binarymonks.gonzo.core.blog.api.BlogEntry
 import com.binarymonks.gonzo.core.blog.api.BlogEntryDraft
+import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
 import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
 import com.binarymonks.gonzo.core.common.NotFound
 import com.binarymonks.gonzo.core.test.GonzoTestConfig
@@ -252,118 +254,85 @@ class BlogServiceTest {
 
     }
 
+    @Test
+    fun publishBlogEntry_withChanges_AlreadyPublished(){
+        val createdTime = itIsNow()
 
-//    @Test
-//    fun getById_DoesNotExist() {
-//        Assertions.assertThrows(NoSuchElementException::class.java, {
-//            blogService.getBlogEntryById(-1)
-//        })
-//    }
-//
-//    @Test
-//    fun publishBlogEntry() {
-//        val createdTime = itIsNow()
-//
-//        val newBlogEntry = BlogEntryNew(
-//                title = "Some Blog Entry",
-//                content = "A bit of content",
-//                authorID = user.id
-//        )
-//
-//        val created = blogService.createBlogEntry(newBlogEntry)
-//
-//        val publishedTime = itIsNow(createdTime.plusDays(1))
-//
-//        blogService.publishBlogEntry(created.id)
-//
-//        val expected = created.copy(created = publishedTime, published = true)
-//
-//        val actual = blogService.getBlogEntryById(created.id)
-//
-//        Assertions.assertEquals(expected, actual)
-//    }
-//
-//    @Test
-//    fun update_PublishedStaysPublished() {
-//        val createdTime = itIsNow()
-//
-//        val newBlogEntry = BlogEntryNew(
-//                title = "Some Blog Entry",
-//                content = "A bit of content",
-//                authorID = user.id
-//        )
-//
-//        val created = blogService.createBlogEntry(newBlogEntry)
-//
-//        val updatedTime = itIsNow(createdTime.plusDays(1))
-//
-//        val update = created.copy(title = "Changed Title", content = "New Content")
-//
-//        val expected = update.copy(lastEdited = updatedTime)
-//
-//        val updated = blogService.updateBlogEntry(update.toUpdate())
-//
-//        Assertions.assertEquals(expected, updated)
-//        Assertions.assertEquals(expected, blogService.getBlogEntryById(created.id))
-//    }
-//
-//    @Test
-//    fun updatePublished_keepLastPublishedDate() {
-//        val createdTime = itIsNow()
-//
-//        val newBlogEntry = BlogEntryNew(
-//                title = "Some Blog Entry",
-//                content = "A bit of content",
-//                authorID = user.id
-//        )
-//
-//        val created = blogService.createBlogEntry(newBlogEntry)
-//        blogService.publishBlogEntry(created.id)
-//        val current = blogService.getBlogEntryById(created.id)
-//
-//        val updatedTime = itIsNow(createdTime.plusDays(1))
-//
-//        val update = current.toUpdate().copy(
-//                title = "Changed Title",
-//                content = "New Content"
-//        )
-//
-//        val expected = current.copy(
-//                title = update.title,
-//                content = update.content,
-//                lastEdited = updatedTime
-//        )
-//
-//        val updated = blogService.updateBlogEntry(update)
-//
-//        Assertions.assertEquals(expected, updated)
-//        Assertions.assertEquals(expected, blogService.getBlogEntryById(created.id))
-//    }
-//
-//    @Test
-//    fun update_DoesNotExist() {
-//        Assertions.assertThrows(NoSuchElementException::class.java, {
-//            blogService.updateBlogEntry(BlogEntryUpdate(-1, "", ""))
-//        })
-//    }
-//
-//    @Test
-//    fun getBlogEntryHeaders() {
-//        val created: List<BlogEntryHeader> = listOf(
-//                blogService.createBlogEntry(blogEntryNew().copy(
-//                        title = "Entry1",
-//                        authorID = user.id
-//                )).toHeader(),
-//                blogService.createBlogEntry(blogEntryNew().copy(
-//                        title = "Entry2",
-//                        authorID = user.id
-//                )).toHeader()
-//        )
-//        val actual = blogService.getBlogEntryHeaders()
-//        for (header in created) {
-//            Assertions.assertTrue(actual.contains(header))
-//        }
-//    }
+        val newBlogEntry = BlogEntryNew(
+                title = "Some Blog Entry",
+                content = "A bit of content",
+                authorID = user.id
+        )
+
+        val createdDraft = blogService.createBlogEntry(newBlogEntry)
+
+        val publishTime = itIsNow(createdTime.plusDays(1))
+
+        blogService.publishBlogEntry(createdDraft.id)
+
+        val updateTime = itIsNow(publishTime.plusDays(1))
+
+        val update = createdDraft.toUpdate().copy(
+                title = "changed${createdDraft.title}",
+                content = "changed${createdDraft.content}"
+        )
+
+        val updated = blogService.updateBlogEntry(update)
+
+        val publishedAgainTime = itIsNow(updateTime.plusDays(1))
+
+        blogService.publishBlogEntry(createdDraft.id)
+
+        val expectedBlogDraft = createdDraft.copy(
+                title = update.title,
+                content = update.content,
+                updated = updateTime,
+                published = true,
+                unpublishedChanges = false
+        )
+        val expectedBlogEntry = BlogEntry(
+                id = createdDraft.id,
+                title = updated.title,
+                content = updated.content,
+                author = createdDraft.author,
+                publishedOn = publishTime,
+                lastEdited = publishedAgainTime
+        )
+
+        Assertions.assertEquals(expectedBlogDraft, blogService.getBlogEntryDraftByID(createdDraft.id))
+        Assertions.assertEquals(expectedBlogEntry, blogService.getBlogEntryById(createdDraft.id))
+    }
+
+
+    @Test
+    fun getBlogEntryHeaders_allUsers_onlyPublished() {
+        blogService.createBlogEntry(blogEntryNew().copy(
+                title = "Entry1",
+                authorID = user.id
+        )).toHeader() // Not published, should not see this one
+
+        val blogEntryUser1_Published = blogService.createBlogEntry(blogEntryNew().copy(
+                title = "Entry2",
+                authorID = user.id
+        )).toHeader()
+        blogService.publishBlogEntry(blogEntryUser1_Published.id)
+
+        val user2 = userService.createUser(newUser().copy("another@blah.com", "another"))
+        val blogEntryUser2_Published = blogService.createBlogEntry(blogEntryNew().copy(
+                title = "Entry3",
+                authorID = user2.id
+        )).toHeader()
+        blogService.publishBlogEntry(blogEntryUser2_Published.id)
+
+        val expectedHeaders = listOf(blogEntryUser1_Published, blogEntryUser2_Published)
+
+
+        val actual = blogService.getBlogEntryHeaders()
+        Assertions.assertEquals(actual.size, expectedHeaders.size)
+        for (header in expectedHeaders) {
+            Assertions.assertTrue(actual.contains(header))
+        }
+    }
 
     /**
      * Helper for setting the mock time.

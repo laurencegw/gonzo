@@ -40,7 +40,7 @@ class BlogService : Blog {
         if (changed) {
             entry.title = update.title
             entry.content = update.content
-            entry.unpublishedChanges=true
+            entry.unpublishedChanges = true
             entry.updated = nowUTC()
         }
         return blogRepo.save(entry).toBlogEntryDraft()
@@ -55,18 +55,26 @@ class BlogService : Blog {
     override fun publishBlogEntry(blogID: Long) {
         val now = nowUTC()
         val entity = blogRepo.findById(blogID).get()
-        entity.publishedBlog = BlogEntryPublished(
-                blogEntryDraftID = entity.id!!,
-                title = entity.title,
-                content = entity.content,
-                created = now,
-                updated = now
-        )
+        if (entity.publishedBlog != null) {
+            entity.publishedBlog!!.content = entity.content
+            entity.publishedBlog!!.title = entity.title
+            entity.publishedBlog!!.updated = now
+        } else {
+            entity.publishedBlog = BlogEntryPublished(
+                    blogEntryDraftID = entity.id!!,
+                    title = entity.title,
+                    content = entity.content,
+                    created = now,
+                    updated = now
+            )
+        }
         entity.unpublishedChanges = false
         blogRepo.save(entity)
     }
 
-    override fun getBlogEntryHeaders(): List<BlogEntryHeader> = blogRepo.findAll().map { it.toBlogEntryDraft().toHeader() }
+    override fun getBlogEntryHeaders(): List<BlogEntryHeader> = blogRepo.findAll().filter {
+        it.publishedBlog!=null }.map {
+        it.toBlogEntryDraft().toHeader() }
 
     override fun getBlogEntryById(id: Long): BlogEntry = blogRepo.findById(id).get().toBlogEntry()
 
