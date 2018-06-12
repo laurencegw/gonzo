@@ -48,7 +48,7 @@ class BlogAPITest {
     @Disabled("Not authorizing yet")
     fun createBlogEntry_notSignedIn() {
         val newBlogEntry = blogEntryNew()
-        Mockito.`when`(blogServiceMock.createBlogEntry(newBlogEntry)).thenReturn(blogEntry())
+        Mockito.`when`(blogServiceMock.createBlogEntry(newBlogEntry)).thenReturn(blogEntryDraft())
         Assertions.assertThrows(NotAuthentic::class.java, { blogClient.createBlogEntry(newBlogEntry) })
 
     }
@@ -58,7 +58,7 @@ class BlogAPITest {
         login()
 
         val newBlogEntry = blogEntryNew()
-        val expectedBlogEntry = blogEntry()
+        val expectedBlogEntry = blogEntryDraft()
         Mockito.`when`(blogServiceMock.createBlogEntry(newBlogEntry)).thenReturn(expectedBlogEntry)
 
         val actual = blogClient.createBlogEntry(newBlogEntry)
@@ -78,7 +78,7 @@ class BlogAPITest {
         login()
 
         val blogEntryUpdate = blogEntryUpdate()
-        val expectedBlogEntry = blogEntry()
+        val expectedBlogEntry = blogEntryDraft()
         Mockito.`when`(blogServiceMock.updateBlogEntry(blogEntryUpdate)).thenReturn(expectedBlogEntry)
 
         val actual = blogClient.updateBlogEntry(blogEntryUpdate)
@@ -91,7 +91,7 @@ class BlogAPITest {
     @Disabled("Does not go through authentication yet")
     fun updateBlogEntry_notSignedIn() {
         val blogEntryUpdate = blogEntryUpdate()
-        Mockito.`when`(blogServiceMock.updateBlogEntry(blogEntryUpdate)).thenReturn(blogEntry())
+        Mockito.`when`(blogServiceMock.updateBlogEntry(blogEntryUpdate)).thenReturn(blogEntryDraft())
 
         Assertions.assertThrows(NotAuthentic::class.java, {
             blogClient.updateBlogEntry(blogEntryUpdate)

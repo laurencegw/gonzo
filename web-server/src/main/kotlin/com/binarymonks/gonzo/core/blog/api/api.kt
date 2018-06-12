@@ -5,11 +5,13 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import java.time.ZonedDateTime
 
 interface Blog {
-    fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntry
-    fun updateBlogEntry(update: BlogEntryUpdate): BlogEntry
-    fun publishBlogEntry(blogID:Long)
-    fun getBlogEntryHeaders(): List<BlogEntryHeader>
+    fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntryDraft
+    fun updateBlogEntry(update: BlogEntryUpdate): BlogEntryDraft
+    fun getBlogEntryDraftByID(blogID: Long): BlogEntryDraft
+    fun publishBlogEntry(blogID: Long)
     fun getBlogEntryById(id: Long): BlogEntry
+    fun getBlogEntryHeaders(): List<BlogEntryHeader>
+    fun getBlogEntryDraftHeaders(publisherID:Long): List<BlogEntryHeader>
 }
 
 data class BlogEntryNew @JsonCreator constructor(
@@ -19,20 +21,21 @@ data class BlogEntryNew @JsonCreator constructor(
 )
 
 data class BlogEntryUpdate @JsonCreator constructor(
-        val id: Long = -1,
+        val id: Long,
         val title: String,
         val content: String
 )
 
+/**
+ * Publicly viewable info for a  published blog
+ */
 data class BlogEntry @JsonCreator constructor(
         val id: Long,
         val title: String,
         val content: String,
         val author: UserPublicHeader,
-        val published: Boolean,
-        val created: ZonedDateTime,
-        val updated: ZonedDateTime,
-        val publishedOn: ZonedDateTime?
+        val lastEdited: ZonedDateTime,
+        val publishedOn: ZonedDateTime
 ) {
 
     fun toUpdate(): BlogEntryUpdate = BlogEntryUpdate(
@@ -44,20 +47,49 @@ data class BlogEntry @JsonCreator constructor(
     fun toHeader(): BlogEntryHeader = BlogEntryHeader(
             id = id,
             title = title,
-            published = published,
             author = author,
-            updated = updated,
-            created = created,
-            publishedOn = publishedOn
+            updated = lastEdited,
+            created = publishedOn
     )
 }
 
+/**
+ * The initially created draft blog
+ */
+data class BlogEntryDraft(
+        val id: Long,
+        val title: String,
+        val content: String,
+        val author: UserPublicHeader,
+        val published: Boolean,
+        val unpublishedChanges: Boolean,
+        val created: ZonedDateTime,
+        val updated: ZonedDateTime
+) {
+
+    fun toUpdate(): BlogEntryUpdate = BlogEntryUpdate(
+            id = id,
+            title = title,
+            content = content
+    )
+
+
+    fun toHeader(): BlogEntryHeader = BlogEntryHeader(
+            id = id,
+            title = title,
+            author = author,
+            updated = updated,
+            created = created
+    )
+}
+
+/**
+ * Publicly viewable header for a published blog.
+ */
 data class BlogEntryHeader @JsonCreator constructor(
         val id: Long,
         val title: String,
-        val published: Boolean,
         val author: UserPublicHeader,
-        val created: ZonedDateTime,
         val updated: ZonedDateTime,
-        val publishedOn: ZonedDateTime?
+        val created: ZonedDateTime
 )

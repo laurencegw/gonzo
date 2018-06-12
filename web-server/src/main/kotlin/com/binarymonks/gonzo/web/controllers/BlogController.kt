@@ -1,9 +1,6 @@
 package com.binarymonks.gonzo.web.controllers
 
-import com.binarymonks.gonzo.core.blog.api.BlogEntry
-import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
-import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
-import com.binarymonks.gonzo.core.blog.api.BlogEntryUpdate
+import com.binarymonks.gonzo.core.blog.api.*
 import com.binarymonks.gonzo.core.blog.service.BlogService
 import com.binarymonks.gonzo.web.Routes
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,12 +13,12 @@ class BlogController {
     lateinit var blogService: BlogService
 
     @PostMapping("${Routes.BLOGS}")
-    fun createBlogEntry(@RequestBody newBlogEntry: BlogEntryNew): BlogEntry {
+    fun createBlogEntry(@RequestBody newBlogEntry: BlogEntryNew): BlogEntryDraft {
         return blogService.createBlogEntry(newBlogEntry)
     }
 
     @PutMapping("${Routes.BLOGS}/{id}")
-    fun updateBlogEntry(@PathVariable id: Long, @RequestBody update: BlogEntryUpdate): BlogEntry {
+    fun updateBlogEntry(@PathVariable id: Long, @RequestBody update: BlogEntryUpdate): BlogEntryDraft {
         val updateWithPathID = update.copy(id = id)
         return blogService.updateBlogEntry(updateWithPathID)
     }

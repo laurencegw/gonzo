@@ -10,25 +10,33 @@ import org.springframework.web.client.getForObject
 
 class BlogClient(baseURL: String) : Blog, AuthClient(baseURL) {
 
-    override fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntry {
+    override fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntryDraft {
         return restTemplate.postForObject(
                 "$baseURL/${Routes.BLOGS}",
                 HttpEntity(blogEntryNew, createHeaders()),
-                BlogEntry::class.java
+                BlogEntryDraft::class.java
         )!!
     }
 
-    override fun updateBlogEntry(update: BlogEntryUpdate): BlogEntry {
+    override fun updateBlogEntry(update: BlogEntryUpdate): BlogEntryDraft {
         val response = restTemplate.exchange(
                 "$baseURL/${Routes.BLOGS}/${update.id}",
                 HttpMethod.PUT,
                 HttpEntity(update, createHeaders()),
-                object : ParameterizedTypeReference<BlogEntry>() {}
+                object : ParameterizedTypeReference<BlogEntryDraft>() {}
         )
         return checkNotNull(response.body)
     }
 
     override fun publishBlogEntry(blogID: Long) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getBlogEntryDraftByID(blogID: Long): BlogEntryDraft {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getBlogEntryDraftHeaders(publisherID: Long): List<BlogEntryHeader> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
