@@ -14,8 +14,8 @@ import javax.persistence.*
 data class BlogEntryPublished(
 
         @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
-        var blogEntryDraftID: Long = -1,
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        var id: Long = -1,
 
         @Column(nullable = false)
         var title: String = "",
@@ -55,6 +55,7 @@ data class BlogEntryDraftEntity(
         var updated: ZonedDateTime? = null,
 
         @OneToOne(cascade = [CascadeType.ALL])
+        @JoinColumn(name="BlogEntryPublishedID")
         var publishedBlog: BlogEntryPublished? = null,
 
         @Column(nullable = false)
@@ -83,13 +84,6 @@ data class BlogEntryDraftEntity(
                 author = author!!.toUser().toPublicHeader(),
                 lastEdited = publishedBlog!!.updated!!.normalise(),
                 publishedOn = publishedBlog!!.created!!.normalise()
-        )
-    }
-
-    fun toBlogEntryPublished(): BlogEntryPublished {
-        return BlogEntryPublished(
-                title = title,
-                content=content
         )
     }
 }

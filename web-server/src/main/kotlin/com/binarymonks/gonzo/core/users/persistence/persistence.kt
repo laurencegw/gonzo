@@ -38,6 +38,7 @@ data class UserEntity(
         var resetPasswordExpiry: ZonedDateTime? = null,
 
         @OneToOne(cascade = [CascadeType.ALL])
+        @JoinColumn(name="spiceID")
         var spice: Spice = Spice()
 ) {
     fun toUser(): User = User(
@@ -54,7 +55,7 @@ data class UserEntity(
 class Spice(
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
-        var userID: Long = -1,
+        var id: Long = -1,
 
         @Column(nullable = false)
         var pepper: String = ""

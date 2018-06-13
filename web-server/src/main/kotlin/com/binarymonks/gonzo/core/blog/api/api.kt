@@ -75,12 +75,6 @@ data class BlogEntry @JsonCreator constructor(
         val publishedOn: ZonedDateTime
 ) {
 
-    fun toUpdate(): BlogEntryUpdate = BlogEntryUpdate(
-            id = id,
-            title = title,
-            content = content
-    )
-
     fun toHeader(): BlogEntryHeader = BlogEntryHeader(
             id = id,
             title = title,

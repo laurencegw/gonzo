@@ -55,9 +55,10 @@ class BlogService : Blog {
 
     override fun getBlogEntryHeadersByAuthor(authorID: Long): List<BlogEntryHeader> {
         val userEntity = userRepo.findById(authorID).get()
-        return blogRepo.findAllByAuthor(userEntity).filter {
-            it.publishedBlog!=null }.map {
-            it.toBlogEntryDraft().toHeader() }
+        val userBlogEntries = blogRepo.findAllByAuthor(userEntity).filter {
+            it.publishedBlog!=null }
+        val userHeaders = userBlogEntries.map { it.toBlogEntry().toHeader() }
+        return userHeaders
     }
 
     override fun publishBlogEntry(blogID: Long) {
@@ -69,7 +70,7 @@ class BlogService : Blog {
             entity.publishedBlog!!.updated = now
         } else {
             entity.publishedBlog = BlogEntryPublished(
-                    blogEntryDraftID = entity.id!!,
+//                    blogEntryDraftID = entity.id!!,
                     title = entity.title,
                     content = entity.content,
                     created = now,
@@ -82,7 +83,7 @@ class BlogService : Blog {
 
     override fun getBlogEntryHeaders(): List<BlogEntryHeader> = blogRepo.findAll().filter {
         it.publishedBlog!=null }.map {
-        it.toBlogEntryDraft().toHeader() }
+        it.toBlogEntry().toHeader() }
 
     override fun getBlogEntryById(id: Long): BlogEntry = blogRepo.findById(id).get().toBlogEntry()
 

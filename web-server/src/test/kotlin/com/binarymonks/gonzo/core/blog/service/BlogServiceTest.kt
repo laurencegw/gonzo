@@ -3,7 +3,6 @@ package com.binarymonks.gonzo.core.blog.service
 import com.binarymonks.gonzo.blogEntryNew
 import com.binarymonks.gonzo.core.blog.api.BlogEntry
 import com.binarymonks.gonzo.core.blog.api.BlogEntryDraft
-import com.binarymonks.gonzo.core.blog.api.BlogEntryHeader
 import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
 import com.binarymonks.gonzo.core.common.NotFound
 import com.binarymonks.gonzo.core.test.GonzoTestConfig
@@ -341,21 +340,21 @@ class BlogServiceTest {
                 authorID = user.id
         )).toHeader() // Not published, should not see this one
 
-        val blogEntryUser1_Published = blogService.createBlogEntry(blogEntryNew().copy(
-                title = "Entry2",
+        val draftUser1Published = blogService.createBlogEntry(blogEntryNew().copy(
+                title = "User1Published",
                 authorID = user.id
         )).toHeader()
-        blogService.publishBlogEntry(blogEntryUser1_Published.id)
+        blogService.publishBlogEntry(draftUser1Published.id)
+        val user1PublishedHeader = blogService.getBlogEntryById(draftUser1Published.id).toHeader()
 
         val user2 = userService.createUser(newUser().copy("another@blah.com", "another"))
-        val blogEntryUser2_Published = blogService.createBlogEntry(blogEntryNew().copy(
-                title = "Entry3",
+        val draftUser2Created = blogService.createBlogEntry(blogEntryNew().copy(
+                title = "User2Published",
                 authorID = user2.id
-        )).toHeader() // Not right author, should not see this one
-        blogService.publishBlogEntry(blogEntryUser2_Published.id)
+        )) // Not right author, should not see this one
+        blogService.publishBlogEntry(draftUser2Created.id)
 
-        val expectedHeaders = listOf(blogEntryUser1_Published)
-
+        val expectedHeaders = listOf(user1PublishedHeader)
 
         val actual = blogService.getBlogEntryHeadersByAuthor(user.id)
         Assertions.assertEquals(actual.size, expectedHeaders.size)
