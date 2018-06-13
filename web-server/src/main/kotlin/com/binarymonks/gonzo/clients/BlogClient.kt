@@ -36,7 +36,11 @@ class BlogClient(baseURL: String) : Blog, AuthClient(baseURL) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getBlogEntryDraftHeaders(publisherID: Long): List<BlogEntryHeader> {
+    override fun getBlogEntryHeadersByAuthor(authorID: Long): List<BlogEntryHeader> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getBlogEntryDraftHeaders(authorID: Long): List<BlogEntryHeader> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

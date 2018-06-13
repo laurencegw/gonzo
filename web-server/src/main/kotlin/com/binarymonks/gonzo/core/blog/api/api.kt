@@ -5,13 +5,50 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import java.time.ZonedDateTime
 
 interface Blog {
+
+    /**
+     * Creates a new blog that is not initially published.
+     */
     fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntryDraft
+
+    /**
+     * Updates the draft state of a blog. Changes will still need to be published.
+     */
     fun updateBlogEntry(update: BlogEntryUpdate): BlogEntryDraft
+
+    /**
+     * Retrieves the draft state of a blog.
+     */
     fun getBlogEntryDraftByID(blogID: Long): BlogEntryDraft
+
+    /**
+     * Publishes any unpublished changes in the draft state of the blog.
+     */
     fun publishBlogEntry(blogID: Long)
+
+    /**
+     * Get the published state of a blog.
+     */
     fun getBlogEntryById(id: Long): BlogEntry
+
+    /**
+     * Retrieves headers for published blogs
+     */
     fun getBlogEntryHeaders(): List<BlogEntryHeader>
-    fun getBlogEntryDraftHeaders(publisherID:Long): List<BlogEntryHeader>
+
+    /**
+     * Retrieves headers for an authors published blogs
+     *
+     * @param authorID: [com.binarymonks.gonzo.core.users.api.User.id]
+     */
+    fun getBlogEntryHeadersByAuthor(authorID: Long): List<BlogEntryHeader>
+
+    /**
+     * Retrieves headers for all of an Authors blogs (published/unpublished).
+     *
+     * @param authorID: [com.binarymonks.gonzo.core.users.api.User.id]
+     */
+    fun getBlogEntryDraftHeaders(authorID:Long): List<BlogEntryHeader>
 }
 
 data class BlogEntryNew @JsonCreator constructor(
@@ -54,7 +91,7 @@ data class BlogEntry @JsonCreator constructor(
 }
 
 /**
- * The initially created draft blog
+ * Representation of a blog for the Author.
  */
 data class BlogEntryDraft(
         val id: Long,
@@ -83,9 +120,7 @@ data class BlogEntryDraft(
     )
 }
 
-/**
- * Publicly viewable header for a published blog.
- */
+
 data class BlogEntryHeader @JsonCreator constructor(
         val id: Long,
         val title: String,

@@ -334,6 +334,68 @@ class BlogServiceTest {
         }
     }
 
+    @Test
+    fun getBlogEntryHeadersByAuthor_onlyAuthor_onlyPublished() {
+        blogService.createBlogEntry(blogEntryNew().copy(
+                title = "Entry1",
+                authorID = user.id
+        )).toHeader() // Not published, should not see this one
+
+        val blogEntryUser1_Published = blogService.createBlogEntry(blogEntryNew().copy(
+                title = "Entry2",
+                authorID = user.id
+        )).toHeader()
+        blogService.publishBlogEntry(blogEntryUser1_Published.id)
+
+        val user2 = userService.createUser(newUser().copy("another@blah.com", "another"))
+        val blogEntryUser2_Published = blogService.createBlogEntry(blogEntryNew().copy(
+                title = "Entry3",
+                authorID = user2.id
+        )).toHeader() // Not right author, should not see this one
+        blogService.publishBlogEntry(blogEntryUser2_Published.id)
+
+        val expectedHeaders = listOf(blogEntryUser1_Published)
+
+
+        val actual = blogService.getBlogEntryHeadersByAuthor(user.id)
+        Assertions.assertEquals(actual.size, expectedHeaders.size)
+        for (header in expectedHeaders) {
+            Assertions.assertTrue(actual.contains(header))
+        }
+    }
+
+    @Test
+    fun getBlogEntryDraftHeaders_allAuthorsBlogs() {
+        val blogEntryUser1_UnPublished = blogService.createBlogEntry(blogEntryNew().copy(
+                title = "Entry1",
+                authorID = user.id
+        )).toHeader()
+
+        val blogEntryUser1_Published = blogService.createBlogEntry(blogEntryNew().copy(
+                title = "Entry2",
+                authorID = user.id
+        )).toHeader()
+        blogService.publishBlogEntry(blogEntryUser1_Published.id)
+
+        val user2 = userService.createUser(newUser().copy("another@blah.com", "another"))
+        val blogEntryUser2_Published = blogService.createBlogEntry(blogEntryNew().copy(
+                title = "Entry3",
+                authorID = user2.id
+        )).toHeader() // Not right author, should not see this one
+        blogService.publishBlogEntry(blogEntryUser2_Published.id)
+
+        val expectedHeaders = listOf(blogEntryUser1_Published, blogEntryUser1_UnPublished)
+
+
+        val actual = blogService.getBlogEntryDraftHeaders(user.id)
+        Assertions.assertEquals(actual.size, expectedHeaders.size)
+        for (header in expectedHeaders) {
+            Assertions.assertTrue(actual.contains(header))
+        }
+    }
+
+
+
     /**
      * Helper for setting the mock time.
      */

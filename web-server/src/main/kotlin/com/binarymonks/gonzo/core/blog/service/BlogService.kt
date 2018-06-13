@@ -48,8 +48,16 @@ class BlogService : Blog {
 
     override fun getBlogEntryDraftByID(blogID: Long) = blogRepo.findById(blogID).get().toBlogEntryDraft()
 
-    override fun getBlogEntryDraftHeaders(publisherID: Long): List<BlogEntryHeader> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getBlogEntryDraftHeaders(authorID: Long): List<BlogEntryHeader> {
+        val userEntity = userRepo.findById(authorID).get()
+        return blogRepo.findAllByAuthor(userEntity).map { it.toBlogEntryDraft().toHeader() }
+    }
+
+    override fun getBlogEntryHeadersByAuthor(authorID: Long): List<BlogEntryHeader> {
+        val userEntity = userRepo.findById(authorID).get()
+        return blogRepo.findAllByAuthor(userEntity).filter {
+            it.publishedBlog!=null }.map {
+            it.toBlogEntryDraft().toHeader() }
     }
 
     override fun publishBlogEntry(blogID: Long) {

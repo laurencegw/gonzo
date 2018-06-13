@@ -94,4 +94,6 @@ data class BlogEntryDraftEntity(
     }
 }
 
-interface BlogRepo : CrudRepository<BlogEntryDraftEntity, Long>
+interface BlogRepo : CrudRepository<BlogEntryDraftEntity, Long>{
+    fun findAllByAuthor(user: UserEntity): Iterable<BlogEntryDraftEntity>
+}
