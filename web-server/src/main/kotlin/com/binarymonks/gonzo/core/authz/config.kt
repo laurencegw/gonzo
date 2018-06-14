@@ -8,34 +8,47 @@ import com.binarymonks.gonzo.core.users.api.Role
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+
+val USER_POLICIES = listOf(
+        // ADMIN ROLE PERMISSIONS
+        allOf {
+            subject("role").equalTo().value(Role.ADMIN)
+            anyOf {
+                allOf {
+                    action().equalTo().value(Actions.CREATE)
+                    resource("type").equalTo().value(Types.USER)
+                }
+                allOf {
+                    action().equalTo().value(Actions.MODIFY)
+                    resource("type").equalTo().value(Types.USER_ROLES)
+                }
+            }
+        },
+        // UPDATE USER DATA
+        allOf {
+            resource("type").equalTo().value(Types.USER)
+            action().equalTo().value(Actions.MODIFY)
+            subject("id").equalTo().resource("id")
+        }
+)
+
+val BLOG_POLICIES = listOf(
+        // CREATE OWN
+        allOf {
+            subject("role").isIn().value(listOf(Role.ADMIN, Role.AUTHOR))
+            subject("id").equalTo().resource("authorID")
+            action().equalTo().value(Actions.CREATE)
+        }
+)
+
+
 @Configuration
 class AuthorizationConfig {
 
     @Bean
     fun accessDecisionService(): AccessDecisionService {
         return AccessDecisionService(
-                listOf(
-                        // ADMIN ROLE PERMISSIONS
-                        allOf {
-                            subject("role").equalTo().value(Role.ADMIN)
-                            anyOf {
-                                allOf {
-                                    action().equalTo().value(Actions.CREATE)
-                                    resource("type").equalTo().value(Types.USER)
-                                }
-                                allOf {
-                                    action().equalTo().value(Actions.MODIFY)
-                                    resource("type").equalTo().value(Types.USER_ROLES)
-                                }
-                            }
-                        },
-                        // UPDATE USER DATA
-                        allOf{
-                            resource("type").equalTo().value(Types.USER)
-                            action().equalTo().value(Actions.MODIFY)
-                            subject("id").equalTo().resource("id")
-                        }
-                )
+            USER_POLICIES + BLOG_POLICIES
         )
     }
 }

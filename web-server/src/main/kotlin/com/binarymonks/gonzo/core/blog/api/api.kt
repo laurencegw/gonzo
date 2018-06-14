@@ -1,5 +1,8 @@
 package com.binarymonks.gonzo.core.blog.api
 
+import com.binarymonks.gonzo.core.common.Credentials
+import com.binarymonks.gonzo.core.common.Resource
+import com.binarymonks.gonzo.core.common.Types
 import com.binarymonks.gonzo.core.users.api.UserPublicHeader
 import com.fasterxml.jackson.annotation.JsonCreator
 import java.time.ZonedDateTime
@@ -48,14 +51,34 @@ interface Blog {
      *
      * @param authorID: [com.binarymonks.gonzo.core.users.api.User.id]
      */
-    fun getBlogEntryDraftHeaders(authorID:Long): List<BlogEntryHeader>
+    fun getBlogEntryDraftHeaders(authorID: Long): List<BlogEntryHeader>
 }
+
+interface BlogAuth {
+    fun createBlogEntry(credentials: Credentials, blogEntryNew: BlogEntryNew): BlogEntryDraft
+
+    fun updateBlogEntry(credentials: Credentials,update: BlogEntryUpdate): BlogEntryDraft
+
+    fun getBlogEntryDraftByID(credentials: Credentials,blogID: Long): BlogEntryDraft
+
+    fun publishBlogEntry(credentials: Credentials,blogID: Long)
+
+    fun getBlogEntryById(credentials: Credentials,id: Long): BlogEntry
+
+    fun getBlogEntryHeaders(credentials: Credentials): List<BlogEntryHeader>
+
+    fun getBlogEntryHeadersByAuthor(credentials: Credentials, authorID: Long): List<BlogEntryHeader>
+
+    fun getBlogEntryDraftHeaders(credentials: Credentials,authorID: Long): List<BlogEntryHeader>
+}
+
+open class BlogResource: Resource(type = Types.BLOG)
 
 data class BlogEntryNew @JsonCreator constructor(
         val title: String,
         val content: String,
         val authorID: Long
-)
+) : BlogResource()
 
 data class BlogEntryUpdate @JsonCreator constructor(
         val id: Long,

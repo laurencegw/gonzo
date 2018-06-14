@@ -6,6 +6,7 @@ class Types{
     companion object {
         const val USER = "USER"
         const val USER_ROLES = "USER_ROLES"
+        const val BLOG = "BLOG"
     }
 }
 
