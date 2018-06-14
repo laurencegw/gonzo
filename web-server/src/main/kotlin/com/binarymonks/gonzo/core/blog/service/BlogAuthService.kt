@@ -24,7 +24,9 @@ class BlogAuthService(
     }
 
     override fun updateBlogEntry(credentials: Credentials, update: BlogEntryUpdate): BlogEntryDraft {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val blogToUpdate = blogService.getBlogEntryDraftByID(update.id)
+        checkAuth(credentials, Actions.MODIFY, blogToUpdate.attributes())
+        return blogService.updateBlogEntry(update)
     }
 
     override fun getBlogEntryDraftByID(credentials: Credentials, blogID: Long): BlogEntryDraft {

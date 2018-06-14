@@ -12,15 +12,13 @@ class Types{
 
 open class Resource(val type: String) {
 
-    fun attributes(): Map<String, Any?> {
+    open fun attributes(): Map<String, Any?> {
         val map: MutableMap<String, Any?> = mutableMapOf(Pair("type", type))
-        if(hasProperty("id")){
-            map["id"] = getProperty("id")
-        }
+        map.putAll(allProps())
         return map
     }
 
-    private fun hasProperty(name: String):Boolean{
+    protected fun hasProperty(name: String):Boolean{
         val clazz = this::class
         for (prop in clazz.declaredMemberProperties){
             if (prop.name == name){
@@ -30,7 +28,16 @@ open class Resource(val type: String) {
         return false
     }
 
-    private fun getProperty(name:String): Any?{
+    private fun allProps(): Map<String,Any?>{
+        val atts: MutableMap<String, Any?> = mutableMapOf()
+        for (prop in this::class.declaredMemberProperties){
+            val value = prop.getter.call(this)
+            atts.put(prop.name, value)
+        }
+        return atts
+    }
+
+    protected fun getProperty(name:String): Any?{
         val clazz = this::class
         @Suppress("UNCHECKED_CAST")
         return clazz.declaredMemberProperties.first { it.name == name }.getter.call(this)

@@ -35,9 +35,16 @@ val USER_POLICIES = listOf(
 val BLOG_POLICIES = listOf(
         // CREATE OWN
         allOf {
+            resource("type").equalTo().value(Types.BLOG)
             subject("role").isIn().value(listOf(Role.ADMIN, Role.AUTHOR))
             subject("id").equalTo().resource("authorID")
             action().equalTo().value(Actions.CREATE)
+        },
+        // Modify Own
+        allOf {
+            resource("type").equalTo().value(Types.BLOG)
+            subject("id").equalTo().resource("authorID")
+            action().equalTo().value(Actions.MODIFY)
         }
 )
 

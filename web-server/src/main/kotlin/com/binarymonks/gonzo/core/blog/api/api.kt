@@ -72,7 +72,15 @@ interface BlogAuth {
     fun getBlogEntryDraftHeaders(credentials: Credentials,authorID: Long): List<BlogEntryHeader>
 }
 
-open class BlogResource: Resource(type = Types.BLOG)
+open class BlogResource: Resource(type = Types.BLOG){
+    override fun attributes(): Map<String, Any?> {
+        val atts = super.attributes().toMutableMap()
+        if(this.hasProperty("author")){
+            atts["authorID"]=(atts["author"] as UserPublicHeader).id
+        }
+        return atts
+    }
+}
 
 data class BlogEntryNew @JsonCreator constructor(
         val title: String,
@@ -84,7 +92,7 @@ data class BlogEntryUpdate @JsonCreator constructor(
         val id: Long,
         val title: String,
         val content: String
-)
+): BlogResource()
 
 /**
  * Publicly viewable info for a  published blog
@@ -119,7 +127,7 @@ data class BlogEntryDraft(
         val unpublishedChanges: Boolean,
         val created: ZonedDateTime,
         val updated: ZonedDateTime
-) {
+):BlogResource() {
 
     fun toUpdate(): BlogEntryUpdate = BlogEntryUpdate(
             id = id,
