@@ -5,12 +5,11 @@ import com.binarymonks.gonzo.web.Routes
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
-import org.springframework.web.client.getForObject
 
 
 class BlogClient(baseURL: String) : Blog, AuthClient(baseURL) {
 
-    override fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntryDraft {
+    override fun createBlogEntry(blogEntryNew: BlogDraftEntryNew): BlogEntryDraft {
         return restTemplate.postForObject(
                 "$baseURL/${Routes.BLOGS}",
                 HttpEntity(blogEntryNew, createHeaders()),
@@ -18,7 +17,7 @@ class BlogClient(baseURL: String) : Blog, AuthClient(baseURL) {
         )!!
     }
 
-    override fun updateBlogEntry(update: BlogEntryUpdate): BlogEntryDraft {
+    override fun updateBlogEntry(update: BlogDraftEntryUpdate): BlogEntryDraft {
         val response = restTemplate.exchange(
                 "$baseURL/${Routes.BLOGS}/${update.id}",
                 HttpMethod.PUT,
@@ -29,11 +28,20 @@ class BlogClient(baseURL: String) : Blog, AuthClient(baseURL) {
     }
 
     override fun publishBlogEntry(blogID: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        restTemplate.put(
+                "$baseURL/${Routes.publishBlog(blogID)}",
+                HttpEntity(null,createHeaders())
+        )
     }
 
     override fun getBlogEntryDraftByID(blogID: Long): BlogEntryDraft {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val response =  restTemplate.exchange(
+                "$baseURL/${Routes.blogDraft(blogID)}",
+                HttpMethod.GET,
+                HttpEntity(null,createHeaders()),
+                object : ParameterizedTypeReference<BlogEntryDraft>() {}
+        )
+        return checkNotNull(response.body)
     }
 
     override fun getBlogEntryHeadersByAuthor(authorID: Long): List<BlogEntryHeader> {
@@ -56,7 +64,7 @@ class BlogClient(baseURL: String) : Blog, AuthClient(baseURL) {
 
     override fun getBlogEntryById(id: Long): BlogEntry {
         return restTemplate.getForObject(
-                "$baseURL/${Routes.BLOGS}/$id",
+                "$baseURL/${Routes.blogEntry(id)}",
                 BlogEntry::class.java
         )!!
     }

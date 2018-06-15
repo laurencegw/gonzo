@@ -19,7 +19,7 @@ class BlogService : Blog {
     lateinit var userRepo: UserRepo
 
 
-    override fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntryDraft {
+    override fun createBlogEntry(blogEntryNew: BlogDraftEntryNew): BlogEntryDraft {
 
         return blogRepo.save(BlogEntryDraftEntity(
                 title = blogEntryNew.title,
@@ -31,7 +31,7 @@ class BlogService : Blog {
     }
 
 
-    override fun updateBlogEntry(update: BlogEntryUpdate): BlogEntryDraft {
+    override fun updateBlogEntry(update: BlogDraftEntryUpdate): BlogEntryDraft {
         val entry = blogRepo.findById(update.id).get()
         val changed = listOf(
                 entry.publishedBlog?.content != update.content,

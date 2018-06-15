@@ -12,12 +12,12 @@ interface Blog {
     /**
      * Creates a new blog that is not initially published.
      */
-    fun createBlogEntry(blogEntryNew: BlogEntryNew): BlogEntryDraft
+    fun createBlogEntry(blogEntryNew: BlogDraftEntryNew): BlogEntryDraft
 
     /**
      * Updates the draft state of a blog. Changes will still need to be published.
      */
-    fun updateBlogEntry(update: BlogEntryUpdate): BlogEntryDraft
+    fun updateBlogEntry(update: BlogDraftEntryUpdate): BlogEntryDraft
 
     /**
      * Retrieves the draft state of a blog.
@@ -55,44 +55,48 @@ interface Blog {
 }
 
 interface BlogAuth {
-    fun createBlogEntry(credentials: Credentials, blogEntryNew: BlogEntryNew): BlogEntryDraft
+    fun createBlogEntry(credentials: Credentials, blogEntryNew: BlogDraftEntryNew): BlogEntryDraft
 
-    fun updateBlogEntry(credentials: Credentials,update: BlogEntryUpdate): BlogEntryDraft
+    fun updateBlogEntry(credentials: Credentials, update: BlogDraftEntryUpdate): BlogEntryDraft
 
-    fun getBlogEntryDraftByID(credentials: Credentials,blogID: Long): BlogEntryDraft
+    fun getBlogEntryDraftByID(credentials: Credentials, blogID: Long): BlogEntryDraft
 
-    fun publishBlogEntry(credentials: Credentials,blogID: Long)
+    fun publishBlogEntry(credentials: Credentials, blogID: Long)
 
-    fun getBlogEntryById(credentials: Credentials,id: Long): BlogEntry
+    fun getBlogEntryById(credentials: Credentials, id: Long): BlogEntry
 
     fun getBlogEntryHeaders(credentials: Credentials): List<BlogEntryHeader>
 
     fun getBlogEntryHeadersByAuthor(credentials: Credentials, authorID: Long): List<BlogEntryHeader>
 
-    fun getBlogEntryDraftHeaders(credentials: Credentials,authorID: Long): List<BlogEntryHeader>
+    fun getBlogEntryDraftHeaders(credentials: Credentials, authorID: Long): List<BlogEntryHeader>
 }
 
-open class BlogResource: Resource(type = Types.BLOG){
+open class AuthoredResource(type: String) : Resource(type) {
     override fun attributes(): Map<String, Any?> {
         val atts = super.attributes().toMutableMap()
-        if(this.hasProperty("author")){
-            atts["authorID"]=(atts["author"] as UserPublicHeader).id
+        if (this.hasProperty("author")) {
+            atts["authorID"] = (atts["author"] as UserPublicHeader).id
         }
         return atts
     }
 }
 
-data class BlogEntryNew @JsonCreator constructor(
+open class BlogDraftResource : AuthoredResource(type = Types.BLOG_DRAFT)
+open class BlogResource : AuthoredResource(type = Types.BLOG)
+
+
+data class BlogDraftEntryNew @JsonCreator constructor(
         val title: String,
         val content: String,
         val authorID: Long
-) : BlogResource()
+) : BlogDraftResource()
 
-data class BlogEntryUpdate @JsonCreator constructor(
+data class BlogDraftEntryUpdate @JsonCreator constructor(
         val id: Long,
         val title: String,
         val content: String
-): BlogResource()
+) : BlogDraftResource()
 
 /**
  * Publicly viewable info for a  published blog
@@ -104,7 +108,7 @@ data class BlogEntry @JsonCreator constructor(
         val author: UserPublicHeader,
         val lastEdited: ZonedDateTime,
         val publishedOn: ZonedDateTime
-) {
+):BlogResource(){
 
     fun toHeader(): BlogEntryHeader = BlogEntryHeader(
             id = id,
@@ -127,9 +131,9 @@ data class BlogEntryDraft(
         val unpublishedChanges: Boolean,
         val created: ZonedDateTime,
         val updated: ZonedDateTime
-):BlogResource() {
+) : BlogDraftResource() {
 
-    fun toUpdate(): BlogEntryUpdate = BlogEntryUpdate(
+    fun toUpdate(): BlogDraftEntryUpdate = BlogDraftEntryUpdate(
             id = id,
             title = title,
             content = content

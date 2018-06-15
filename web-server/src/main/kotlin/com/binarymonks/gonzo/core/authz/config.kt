@@ -33,18 +33,23 @@ val USER_POLICIES = listOf(
 )
 
 val BLOG_POLICIES = listOf(
-        // CREATE OWN
-        allOf {
+        // ANYONE CAN READ PUBLISHED BLOGS
+        allOf{
             resource("type").equalTo().value(Types.BLOG)
+            action().equalTo().value(Actions.READ)
+        },
+        // ONLY AUTHORS AND ADMINS CAN CREATE
+        allOf {
+            resource("type").equalTo().value(Types.BLOG_DRAFT)
             subject("role").isIn().value(listOf(Role.ADMIN, Role.AUTHOR))
             subject("id").equalTo().resource("authorID")
             action().equalTo().value(Actions.CREATE)
         },
-        // Modify Own
+        // READ MODIFY OWN DRAFT
         allOf {
-            resource("type").equalTo().value(Types.BLOG)
+            resource("type").equalTo().value(Types.BLOG_DRAFT)
             subject("id").equalTo().resource("authorID")
-            action().equalTo().value(Actions.MODIFY)
+            action().isIn().value(listOf(Actions.MODIFY, Actions.READ))
         }
 )
 

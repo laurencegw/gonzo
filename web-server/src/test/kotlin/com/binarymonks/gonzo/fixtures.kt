@@ -9,8 +9,8 @@ import com.binarymonks.gonzo.core.users.api.UserNew
 import java.time.ZonedDateTime
 
 
-fun blogEntryNew(): BlogEntryNew {
-    return BlogEntryNew(
+fun blogEntryNew(): BlogDraftEntryNew {
+    return BlogDraftEntryNew(
             title = "Some Blog Entry",
             content = "A bit of content",
             authorID = 1
@@ -39,8 +39,8 @@ fun blogEntry(): BlogEntry {
     )
 }
 
-fun blogEntryUpdate(): BlogEntryUpdate {
-    return BlogEntryUpdate(
+fun blogEntryUpdate(): BlogDraftEntryUpdate {
+    return BlogDraftEntryUpdate(
             id = 3,
             title = "Some Blog Entry Update",
             content = "A bit of content Updated"

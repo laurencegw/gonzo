@@ -5,6 +5,9 @@ object Routes {
       const val LOGIN = "/login"
 
       const val BLOGS = "$API/blogs"
+      fun blogEntry(blogID: Long) = "$BLOGS/$blogID"
+      fun publishBlog(blogID: Long) = "${blogEntry(blogID)}/publish"
+      fun blogDraft(blogID: Long) = "${blogEntry(blogID)}/draft"
 
       const val USERS = "$API/users"
       const val ME = "$USERS/me"

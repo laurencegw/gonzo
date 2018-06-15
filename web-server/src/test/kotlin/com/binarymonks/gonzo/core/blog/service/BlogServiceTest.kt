@@ -3,7 +3,7 @@ package com.binarymonks.gonzo.core.blog.service
 import com.binarymonks.gonzo.blogEntryNew
 import com.binarymonks.gonzo.core.blog.api.BlogEntry
 import com.binarymonks.gonzo.core.blog.api.BlogEntryDraft
-import com.binarymonks.gonzo.core.blog.api.BlogEntryNew
+import com.binarymonks.gonzo.core.blog.api.BlogDraftEntryNew
 import com.binarymonks.gonzo.core.common.NotFound
 import com.binarymonks.gonzo.core.test.GonzoTestConfig
 import com.binarymonks.gonzo.core.test.harness.TestDataManager
@@ -59,7 +59,7 @@ class BlogServiceTest {
     fun createAndGetBlogEntryDraft() {
         val now = itIsNow()
 
-        val newBlogEntry = BlogEntryNew(
+        val newBlogEntry = BlogDraftEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
                 authorID = user.id
@@ -87,7 +87,7 @@ class BlogServiceTest {
 
     @Test
     fun createBlogEntry_GetBlogEntryThatHasNotBeenPublished() {
-        val newBlogEntry = BlogEntryNew(
+        val newBlogEntry = BlogDraftEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
                 authorID = user.id
@@ -104,7 +104,7 @@ class BlogServiceTest {
     fun updateBlogEntry_Unpublished() {
         val now = itIsNow()
 
-        val newBlogEntry = BlogEntryNew(
+        val newBlogEntry = BlogDraftEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
                 authorID = user.id
@@ -135,7 +135,7 @@ class BlogServiceTest {
     fun publishBlogEntry() {
         val createdTime = itIsNow()
 
-        val newBlogEntry = BlogEntryNew(
+        val newBlogEntry = BlogDraftEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
                 authorID = user.id
@@ -169,7 +169,7 @@ class BlogServiceTest {
     fun updateBlogEntry_realChanges_AlreadyPublished() {
         val createdTime = itIsNow()
 
-        val newBlogEntry = BlogEntryNew(
+        val newBlogEntry = BlogDraftEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
                 authorID = user.id
@@ -215,7 +215,7 @@ class BlogServiceTest {
     fun updateBlogEntry_noChange_AlreadyPublished() {
         val createdTime = itIsNow()
 
-        val newBlogEntry = BlogEntryNew(
+        val newBlogEntry = BlogDraftEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
                 authorID = user.id
@@ -257,7 +257,7 @@ class BlogServiceTest {
     fun publishBlogEntry_withChanges_AlreadyPublished(){
         val createdTime = itIsNow()
 
-        val newBlogEntry = BlogEntryNew(
+        val newBlogEntry = BlogDraftEntryNew(
                 title = "Some Blog Entry",
                 content = "A bit of content",
                 authorID = user.id

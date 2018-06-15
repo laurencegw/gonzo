@@ -7,6 +7,7 @@ class Types{
         const val USER = "USER"
         const val USER_ROLES = "USER_ROLES"
         const val BLOG = "BLOG"
+        const val BLOG_DRAFT = "BLOG_DRAFT"
     }
 }
 
