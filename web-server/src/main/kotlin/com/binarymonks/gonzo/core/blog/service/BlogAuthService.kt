@@ -54,10 +54,12 @@ class BlogAuthService(
     }
 
     override fun getBlogEntryHeadersByAuthor(credentials: Credentials, authorID: Long): List<BlogEntryHeader> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        checkAuth(credentials,Actions.READ, mapOf(Pair("type", Types.BLOG), Pair("authorID",authorID)))
+        return blogService.getBlogEntryHeadersByAuthor(authorID)
     }
 
     override fun getBlogEntryDraftHeaders(credentials: Credentials, authorID: Long): List<BlogEntryHeader> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        checkAuth(credentials,Actions.READ, mapOf(Pair("type", Types.BLOG_DRAFT), Pair("authorID",authorID)))
+        return blogService.getBlogEntryDraftHeaders(authorID)
     }
 }

@@ -45,11 +45,23 @@ class BlogClient(baseURL: String) : Blog, AuthClient(baseURL) {
     }
 
     override fun getBlogEntryHeadersByAuthor(authorID: Long): List<BlogEntryHeader> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val response =  restTemplate.exchange(
+                "$baseURL/${Routes.userBlogs(authorID)}",
+                HttpMethod.GET,
+                HttpEntity(null,createHeaders()),
+                object : ParameterizedTypeReference<List<BlogEntryHeader>>() {}
+        )
+        return checkNotNull(response.body)
     }
 
     override fun getBlogEntryDraftHeaders(authorID: Long): List<BlogEntryHeader> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val response =  restTemplate.exchange(
+                "$baseURL/${Routes.userDrafts(authorID)}",
+                HttpMethod.GET,
+                HttpEntity(null,createHeaders()),
+                object : ParameterizedTypeReference<List<BlogEntryHeader>>() {}
+        )
+        return checkNotNull(response.body)
     }
 
     override fun getBlogEntryHeaders(): List<BlogEntryHeader> {

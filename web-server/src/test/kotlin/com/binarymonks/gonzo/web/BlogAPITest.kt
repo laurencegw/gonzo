@@ -103,16 +103,15 @@ class BlogAPITest {
     }
 
     @TestFactory
-    fun updateBlog_whenItIsYourOwn(): List<DynamicTest> {
+    fun updatePublishAndReadBlogDraft_whenItIsYourOwn(): List<DynamicTest> {
         return listOf(
-                arrayOf("Reader can update own blog", Role.READER, true),
-                arrayOf("Author can update own blog", Role.AUTHOR, true),
-                arrayOf("Admin can update own blog", Role.ADMIN, true)
+                arrayOf("Reader can update own blog", Role.READER),
+                arrayOf("Author can update own blog", Role.AUTHOR),
+                arrayOf("Admin can update own blog", Role.ADMIN)
         ).map {
             DynamicTest.dynamicTest(it[0] as String, {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
-                val allowed: Boolean = it[2] as Boolean
 
                 val requestUser = newUser()
                 val user = testDataManager.forceCreateUser(requestUser, userRole)
@@ -122,30 +121,24 @@ class BlogAPITest {
                 val myBlog = blogService.createBlogEntry(newBlog)
 
                 val update = blogEntryUpdate().copy(id = myBlog.id)
-
-                if (allowed) {
-                    blogClient.updateBlogEntry(update)
-
-                } else {
-                    Assertions.assertThrows(NotAuthorized::class.java, {
-                        blogClient.updateBlogEntry(update)
-                    })
-                }
+                blogClient.updateBlogEntry(update)
+                blogClient.publishBlogEntry(myBlog.id)
+                blogClient.getBlogEntryDraftByID(myBlog.id)
+                blogClient.getBlogEntryDraftHeaders(user.id)
             })
         }.toList()
     }
 
     @TestFactory
-    fun updateBlog_forSomeoneElse(): List<DynamicTest> {
+    fun updatePublishAndReadSomeoneElsesBlogDraft(): List<DynamicTest> {
         return listOf(
-                arrayOf("Reader cannot update someone else's blog", Role.READER, false),
-                arrayOf("Author cannot update someone else's blog", Role.AUTHOR, false),
-                arrayOf("Admin cannot update someone else's blog", Role.ADMIN, false)
+                arrayOf("Reader cannot update someone else's blog", Role.READER),
+                arrayOf("Author cannot update someone else's blog", Role.AUTHOR),
+                arrayOf("Admin cannot update someone else's blog", Role.ADMIN)
         ).map {
             DynamicTest.dynamicTest(it[0] as String, {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
-                val allowed: Boolean = it[2] as Boolean
 
                 val requestUser = newUser()
                 testDataManager.forceCreateUser(requestUser, userRole)
@@ -156,121 +149,22 @@ class BlogAPITest {
                 )
 
                 val newBlog = blogEntryNew().copy(authorID = targetUser.id)
-                val myBlog = blogService.createBlogEntry(newBlog)
+                val someOneElseBlog = blogService.createBlogEntry(newBlog)
+                blogService.publishBlogEntry(someOneElseBlog.id)
 
-                val update = blogEntryUpdate().copy(id = myBlog.id)
-
-                if (allowed) {
+                val update = blogEntryUpdate().copy(id = someOneElseBlog.id)
+                Assertions.assertThrows(NotAuthorized::class.java, {
                     blogClient.updateBlogEntry(update)
-
-                } else {
-                    Assertions.assertThrows(NotAuthorized::class.java, {
-                        blogClient.updateBlogEntry(update)
-                    })
-                }
-
-            })
-        }.toList()
-    }
-
-    @TestFactory
-    fun publishSomeoneElsesBlog(): List<DynamicTest> {
-        return listOf(
-                arrayOf("Reader cannot publish someone else's blog", Role.READER, false),
-                arrayOf("Author cannot publish someone else's blog", Role.AUTHOR, false),
-                arrayOf("Admin cannot publish someone else's blog", Role.ADMIN, false)
-        ).map {
-            DynamicTest.dynamicTest(it[0] as String, {
-                testDataManager.clearData()
-                val userRole: Role = it[1] as Role
-                val allowed: Boolean = it[2] as Boolean
-
-                val requestUser = newUser()
-                testDataManager.forceCreateUser(requestUser, userRole)
-                blogClient.signIn(requestUser.email, requestUser.password)
-
-                val targetUser = testDataManager.forceCreateUser(
-                        newUser().copy(email = "another@email.com", handle = "another")
-                )
-
-                val otherNewBlog = blogEntryNew().copy(authorID = targetUser.id)
-                val otherBlog = blogService.createBlogEntry(otherNewBlog)
-
-                if (allowed) {
-                    blogClient.publishBlogEntry(otherBlog.id)
-                } else {
-                    Assertions.assertThrows(NotAuthorized::class.java, {
-                        blogClient.publishBlogEntry(otherBlog.id)
-                    })
-                }
-
-            })
-        }.toList()
-    }
-
-
-    @TestFactory
-    fun getSomeoneElsesBlogDraft(): List<DynamicTest> {
-        return listOf(
-                arrayOf("Reader cannot get someone else's blog draft", Role.READER, false),
-                arrayOf("Author cannot get someone else's blog draft", Role.AUTHOR, false),
-                arrayOf("Admin cannot get someone else's blog draft", Role.ADMIN, false)
-        ).map {
-            DynamicTest.dynamicTest(it[0] as String, {
-                testDataManager.clearData()
-                val userRole: Role = it[1] as Role
-                val allowed: Boolean = it[2] as Boolean
-
-                val requestUser = newUser()
-                testDataManager.forceCreateUser(requestUser, userRole)
-                blogClient.signIn(requestUser.email, requestUser.password)
-
-                val targetUser = testDataManager.forceCreateUser(
-                        newUser().copy(email = "another@email.com", handle = "another")
-                )
-
-                val otherNewBlog = blogEntryNew().copy(authorID = targetUser.id)
-                val otherBlog = blogService.createBlogEntry(otherNewBlog)
-
-                if (allowed) {
-                    blogClient.getBlogEntryDraftByID(otherBlog.id)
-                } else {
-                    Assertions.assertThrows(NotAuthorized::class.java, {
-                        blogClient.getBlogEntryDraftByID(otherBlog.id)
-                    })
-                }
-
-            })
-        }.toList()
-    }
-
-    @TestFactory
-    fun getYourBlogDraft(): List<DynamicTest> {
-        return listOf(
-                arrayOf("Reader can get own blog draft", Role.READER, true),
-                arrayOf("Author can get own blog draft", Role.AUTHOR, true),
-                arrayOf("Admin can get own blog draft", Role.ADMIN, true)
-        ).map {
-            DynamicTest.dynamicTest(it[0] as String, {
-                testDataManager.clearData()
-                val userRole: Role = it[1] as Role
-                val allowed: Boolean = it[2] as Boolean
-
-                val requestUser = newUser()
-                val user = testDataManager.forceCreateUser(requestUser, userRole)
-                blogClient.signIn(requestUser.email, requestUser.password)
-
-                val newBlog = blogEntryNew().copy(authorID = user.id)
-                val myBlog = blogService.createBlogEntry(newBlog)
-
-                if (allowed) {
-                    blogClient.getBlogEntryDraftByID(myBlog.id)
-
-                } else {
-                    Assertions.assertThrows(NotAuthorized::class.java, {
-                        blogClient.getBlogEntryDraftByID(myBlog.id)
-                    })
-                }
+                })
+                Assertions.assertThrows(NotAuthorized::class.java, {
+                    blogClient.publishBlogEntry(someOneElseBlog.id)
+                })
+                Assertions.assertThrows(NotAuthorized::class.java, {
+                    blogClient.getBlogEntryDraftByID(someOneElseBlog.id)
+                })
+                Assertions.assertThrows(NotAuthorized::class.java, {
+                    blogClient.getBlogEntryDraftHeaders(targetUser.id)
+                })
             })
         }.toList()
     }
@@ -290,6 +184,7 @@ class BlogAPITest {
 
         blogClient.getBlogEntryById(otherBlog.id)
         blogClient.getBlogEntryHeaders()
+        blogClient.getBlogEntryHeadersByAuthor(targetUser.id)
 
     }
 

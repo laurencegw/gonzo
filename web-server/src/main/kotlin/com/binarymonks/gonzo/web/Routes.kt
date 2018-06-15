@@ -13,5 +13,7 @@ object Routes {
       const val ME = "$USERS/me"
       fun user(userID: Long) = "$USERS/$userID"
       fun userRoles(userID: Long) = "${user(userID)}/roles"
+      fun userBlogs(userID: Long) = "${user(userID)}/blogs"
+      fun userDrafts(userID: Long) = "${user(userID)}/drafts"
 
 }
