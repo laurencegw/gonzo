@@ -1,4 +1,4 @@
-import {Routes, RouterModule} from "@angular/router";
+import {RouterModule, Routes} from "@angular/router";
 import {NgModule} from "@angular/core";
 import {HomeComponent} from "./home/home.component";
 import {BlogComponent} from "./blog/blog.component";
@@ -11,12 +11,13 @@ import {BlogEntryNewComponent} from "./blog/blog-entry-new/blog-entry-new.compon
 const appRoutes: Routes = [
   {path: "", redirectTo: "/home", pathMatch: 'full'},
   {path: "home", component: HomeComponent},
-  {path: "blog", component: BlogComponent,
-  children:[
-    {path:"", pathMatch:'full', component: BlogEntryBlankComponent},
-    {path:"new", component: BlogEntryNewComponent},
-    {path:":id", resolve: {blogEntry: BlogEntryResolver }, component: BlogEntryResolverComponent},
-  ]
+  {
+    path: "blog", component: BlogComponent,
+    children: [
+      {path: "", pathMatch: 'full', component: BlogEntryBlankComponent},
+      {path: "new", component: BlogEntryNewComponent},
+      {path: ":id", resolve: {blogEntry: BlogEntryResolver}, component: BlogEntryResolverComponent},
+    ]
   },
   {path: "**", redirectTo: "/home"}
 ];

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-blog-entry-edit',
@@ -7,7 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BlogEntryEditComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
   }

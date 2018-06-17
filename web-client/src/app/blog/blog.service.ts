@@ -1,6 +1,6 @@
-import {Observable} from "rxjs/Observable";
-import {BlogEntry, BlogEntryHeader, copyBlogEntry, NewBlogEntry} from "./blog.models";
-import "rxjs/add/observable/of";
+import {Observable} from "rxjs/Observable"
+import {BlogEntry, BlogEntryHeader, copyBlogEntry, NewBlogEntry} from "./blog.models"
+import "rxjs/add/observable/of"
 
 export interface BlogService {
 
@@ -15,12 +15,12 @@ export interface BlogService {
 
 export class StubBlogService implements BlogService {
 
-  private idCounter = 0;
-  blogEntries: BlogEntry[] = [];
+  blogEntries: BlogEntry[] = []
+  private idCounter = 0
 
   constructor() {
     for (let i = 0; i < 3; i++) {
-      this.idCounter++;
+      this.idCounter++
       this.blogEntries.push(
         new BlogEntry(
           this.idCounter,
@@ -41,24 +41,18 @@ export class StubBlogService implements BlogService {
     }
   }
 
-  private nextID(): number {
-    this.idCounter++
-    return this.idCounter
-  }
-
   createBlogEntry(newBlogEntry: NewBlogEntry): Observable<BlogEntry> {
-    let created = new BlogEntry(
+    const created = new BlogEntry(
       this.nextID(),
       newBlogEntry.publish ? new Date() : null,
       new Date(),
       new Date(),
       newBlogEntry.title,
       newBlogEntry.content
-    );
-    this.blogEntries.push(created);
+    )
+    this.blogEntries.push(created)
     return Observable.of(copyBlogEntry(created))
   }
-
 
   getBlogEntryHeaders(): Observable<BlogEntryHeader[]> {
     return Observable.of(this.blogEntries.map((entry) => {
@@ -67,12 +61,17 @@ export class StubBlogService implements BlogService {
   }
 
   getBlogEntryById(id: number): Observable<BlogEntry> {
-    for (let entry of this.blogEntries) {
-      if (entry.id == id) {
+    for (const entry of this.blogEntries) {
+      if (entry.id === id) {
         return Observable.of(entry)
       }
     }
     return Observable.of(null)
+  }
+
+  private nextID(): number {
+    this.idCounter++
+    return this.idCounter
   }
 
 }

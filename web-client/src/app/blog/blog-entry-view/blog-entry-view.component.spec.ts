@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { BlogEntryViewComponent } from './blog-entry-view.component';
+import {BlogEntryViewComponent} from './blog-entry-view.component';
 import {BlogEntry} from "../blog.models";
 import {By} from "@angular/platform-browser";
 
@@ -18,9 +18,9 @@ describe('BlogEntryViewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BlogEntryViewComponent ]
+      declarations: [BlogEntryViewComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -34,7 +34,7 @@ describe('BlogEntryViewComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display the Title and contents of the blog', () =>{
+  it('should display the Title and contents of the blog', () => {
     var titleDebug = fixture.debugElement.query(By.css('#title'));
     var titleElement = titleDebug.nativeElement;
     expect(titleElement.textContent).toContain(blogEntry.title);
