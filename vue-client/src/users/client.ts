@@ -1,7 +1,8 @@
-import {LoginCredentials, User, UserUpdate, Users} from "./api"
+import axios from "axios"
+import {LoginCredentials, User, Users, UserUpdate} from "./api"
 
 
-class Client implements Users {
+export class UsersClient implements Users {
     private usersBasePath = "api/users"
 
     assertLoggedIn(token: string): Promise<boolean> {
@@ -13,7 +14,14 @@ class Client implements Users {
     }
 
     login(credentials: LoginCredentials): Promise<string> {
-        throw Error("Not Implemented")
+        return new Promise<string>((resolve, reject) => {
+            axios.post<string>("/api/login", credentials).then((response) => {
+                    resolve(response.data)
+                }
+            ).catch((rejection) => {
+                reject(rejection)
+            })
+        })
     }
 
     updateUser(user: UserUpdate): Promise<User> {

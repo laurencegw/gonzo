@@ -2,7 +2,7 @@ package com.binarymonks.gonzo.web
 
 object Routes {
       const val API = "/api"
-      const val LOGIN = "/login"
+      const val LOGIN = "$API/login"
 
       const val BLOGS = "$API/blogs"
       fun blogEntry(blogID: Long) = "$BLOGS/$blogID"
