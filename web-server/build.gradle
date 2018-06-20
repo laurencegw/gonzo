@@ -56,7 +56,13 @@ dependencies {
     testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 }
 
-build.dependsOn(':web-clients:build')
+task copyVueClient(type: Copy) {
+    from project(':vue-client').file('dist')
+    into file('src/main/resources/static')
+}
+
+build.dependsOn(':vue-client:build')
+build.dependsOn('copyVueClient')
 
 test{
     useJUnitPlatform{
