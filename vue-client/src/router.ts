@@ -1,27 +1,27 @@
 import Vue from "vue"
 import Router from "vue-router"
-import Login from "./users/views/Login.vue"
-import Home from "./views/Home.vue"
-import About from "./views/About.vue"
+import Tags from "./views/Tags.vue"
+import FrontPage from "./views/FrontPage.vue"
+import Authors from "./views/Authors.vue"
 
 Vue.use(Router)
 
 export default new Router({
     routes: [
         {
-            path: "/",
-            name: "home",
-            component: Home,
+            path: "/tags",
+            name: "tags",
+            component: Tags,
         },
         {
-            path: "/about",
-            name: "about",
-            component: About,
+            path: "/frontpage",
+            name: "frontpage",
+            component: FrontPage,
         },
         {
-            path: "/login",
-            name: "login",
-            component: Login,
+            path: "/authors",
+            name: "authors",
+            component: Authors,
         },
     ],
 })
