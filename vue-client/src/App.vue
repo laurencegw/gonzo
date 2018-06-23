@@ -56,7 +56,7 @@
         @Getter user
 
         get isLoggedIn(): Boolean {
-            return this.user != undefined
+            return this.user !== undefined
         }
     }
 </script>

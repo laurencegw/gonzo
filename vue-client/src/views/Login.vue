@@ -8,7 +8,7 @@
             <label>email</label>
           </b-col>
           <b-col md="3">
-            <input type="text">
+            <input type="text" v-model="email">
           </b-col>
         </b-row>
         <br>
@@ -17,13 +17,13 @@
             <label>password</label>
           </b-col>
           <b-col md="3">
-            <input type="password">
+            <input type="password" v-model="password">
           </b-col>
         </b-row>
         <br>
         <b-row>
           <b-col md="2" offset-md="5">
-            <button>
+            <button @click="login">
               Login
             </button>
           </b-col>
@@ -36,12 +36,32 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator"
-    import Login from "../users/views/Login";
+    import {Mutation} from "vuex-class"
+    import {UsersClient} from "../users/client"
+    import {LoginCredentials} from "../users/api"
 
-    @Component({
-        components: {Login}
-    })
+    @Component
     export default class LoginComponent extends Vue {
+        client: UsersClient = new UsersClient()
+
+        email = ""
+        password = ""
+
+        @Mutation setUser
+
+        login() {
+            this.client.login(new LoginCredentials(
+                this.email,
+                this.password
+            )).then((token) => {
+                this.client.getUserFromToken(token).then((user) => {
+                    this.setUser(user)
+                    this.$router.push({name: "frontpage"})
+                })
+            })
+        }
+
+
     }
 
 

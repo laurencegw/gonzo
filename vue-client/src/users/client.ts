@@ -10,7 +10,16 @@ export class UsersClient implements Users {
     }
 
     getUserFromToken(token: string): Promise<User> {
-        throw Error("Not Implemented")
+        const header = `Authorization: Bearer ${token}`
+        return new Promise<User>((resolve, reject) => {
+            axios.get<string>("/api/me", { headers: { Authorization: `Bearer ${token}` }, responseType: "json" }).then((response) => {
+                    // @ts-ignore
+                resolve(response.data as User)
+                }
+            ).catch((rejection) => {
+                reject(rejection)
+            })
+        })
     }
 
     login(credentials: LoginCredentials): Promise<string> {
