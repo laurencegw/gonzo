@@ -12,10 +12,20 @@
             <router-link to="/frontpage">Front Page</router-link>
             |
             <router-link to="/authors">Authors</router-link>
+            |
+            <router-link to="/me">Me</router-link>
         </div>
         <router-view/>
     </div>
 </template>
+
+<script lang="ts">
+    import {Component, Vue} from "vue-property-decorator"
+
+    @Component
+    export default class App extends Vue {
+    }
+</script>
 
 <style lang="scss">
     #app {

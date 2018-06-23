@@ -3,6 +3,7 @@ import Router from "vue-router"
 import Tags from "./views/Tags.vue"
 import FrontPage from "./views/FrontPage.vue"
 import Authors from "./views/Authors.vue"
+import Me from "./views/Me.vue"
 
 Vue.use(Router)
 
@@ -23,5 +24,10 @@ export default new Router({
             name: "authors",
             component: Authors,
         },
+        {
+            path: "/me",
+            name: "me",
+            component: Me,
+        }
     ],
 })
