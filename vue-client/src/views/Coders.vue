@@ -1,5 +1,5 @@
 <template>
   <div>
-    <h1>This is the Authors Page</h1>
+    <h1>This is the Coders Page</h1>
   </div>
 </template>
