@@ -1,7 +1,8 @@
 import {LoginCredentials, User, Users} from "@/users/api"
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex"
 import Vue from "vue"
-import {UsersClient} from "@/users/client"
+import {UsersClient, UsersClientFake} from "@/users/client"
+import {isDev} from "@/utils"
 
 export enum LoginState {
     UNKNOWN,
@@ -71,6 +72,7 @@ const buildActions = function (userClient: Users): ActionTree<UserState, any> {
         },
         checkLoginState(store: ActionContext<UserState, any>) {
             const token = localStorage.getItem(tokenKey)
+            console.log(`Token was ${token}`)
             if (token === null) {
                 store.commit("setLoggedOut")
             } else {
@@ -104,4 +106,11 @@ const createStore = function (userClient: Users): any {
     }
 }
 
-export const UserStore = createStore(new UsersClient())
+const client = function (): Users {
+    if (isDev()) {
+        return new UsersClientFake()
+    }
+    return new UsersClient()
+}
+
+export const UserStore = createStore(client())

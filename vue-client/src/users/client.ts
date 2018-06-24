@@ -1,6 +1,5 @@
 import axios from "axios"
-import {LoginCredentials, User, Users, UserUpdate} from "./api"
-import {Role} from "@/users/api"
+import {LoginCredentials, Role, User, Users, UserUpdate} from "@/users/api"
 
 
 export class UsersClient implements Users {
@@ -15,7 +14,6 @@ export class UsersClient implements Users {
     }
 
     getUserFromToken(token: string): Promise<User> {
-        const header = `Authorization: Bearer ${token}`
         return new Promise<User>((resolve, reject) => {
             axios.get<string>(
                 `${this.usersBasePath}/me`,
@@ -51,6 +49,24 @@ export class UsersClient implements Users {
 
 
 export class UsersClientFake implements Users {
+    private idCounter = 0
+    private users: Map<number, User> = new Map()
+    private userPasswords: Map<number, string> = new Map()
+
+    constructor() {
+        const id = this.idCounter++
+        const adminUser = new User(
+            id,
+            "admin@email.com",
+            "admin1",
+            Role.AUTHOR,
+            "Sarah",
+            "Smith"
+        )
+        const adminUserPassword = "password"
+        this.users.set(id, adminUser)
+        this.userPasswords.set(id, adminUserPassword)
+    }
 
     assertValid(token: string): Promise<boolean> {
         return new Promise<boolean>(
@@ -61,22 +77,27 @@ export class UsersClientFake implements Users {
     }
 
     getUserFromToken(token: string): Promise<User> {
-        const header = `Authorization: Bearer ${token}`
         return new Promise<User>((resolve, reject) => {
-            resolve(new User(
-                1,
-                "fake@email.com",
-                "fakeDude",
-                Role.AUTHOR,
-                "Fakey",
-                "Fakenson"
-            ))
+            const userID = Number(token)
+            if (userID !== null) {
+                resolve(this.users.get(userID!))
+            }
         })
     }
 
     login(credentials: LoginCredentials): Promise<string> {
         return new Promise<string>((resolve, reject) => {
-            resolve("arbitrary_credentials")
+            for (const user of this.users.values()) {
+                if (user.email === credentials.email) {
+                    const userPassword = this.userPasswords.get(user.id)
+                    const passwordMatched = userPassword === credentials.password
+                    if (passwordMatched) {
+                        resolve(`${user.id}`)
+                        return
+                    }
+                }
+            }
+            reject(Error("No"))
         })
     }
 

@@ -51,8 +51,8 @@ import {LoginState} from "./users/store";
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator"
     import {Getter, Action} from "vuex-class"
-    import {User} from "./users/api"
-    import {LoginState} from "./users/store"
+    import {User} from "@/users/api"
+    import {LoginState} from "@/users/store"
 
     @Component
     export default class App extends Vue {
@@ -71,107 +71,6 @@ import {LoginState} from "./users/store";
     }
 </script>
 
-<style lang="scss">
-
-  $color-dark-dark: #323031;
-  $color-medium-dark: #4e4b4d;
-  $color-light-dark: #747570;
-  $color-border-dark: #1a1a1a;
-  $color-white: #e6ffff;
-  $color-turquoise: #69FFF1;
-  $color-green: #63D471;
-  $color-darker-green: #63A46C;
-  $color-red: #f44265;
-
-  .title-bar {
-    background-color: $color-dark-dark;
-    color: azure;
-    font-size: 25px;
-    text-align: center;
-  }
-
-  .nav-item {
-    background-color: $color-medium-dark;
-    white-space: nowrap;
-    font-size: 20px;
-    color: $color-white;
-    cursor: pointer;
-    border-style: solid;
-    border-color: $color-turquoise;
-    border-left: 0px;
-    border-right: 0px;
-    border-bottom: 0px;
-  }
-
-  .nav-item:hover {
-    background: $color-light-dark;
-  }
-
-  .no-padding {
-    padding: 0 !important;
-  }
-
-  .nav-buffer {
-    background-color: $color-medium-dark;
-    padding: 0px !important;
-    border-style: solid;
-    border-color: $color-turquoise;
-    border-left: 0px;
-    border-right: 0px;
-    border-bottom: 0px;
-  }
-
-  .main-body {
-    background-color: $color-dark-dark;
-    color: $color-white;
-  }
-
-  .text-center {
-    text-align: center;
-  }
-
-  .router-link-active.nav-item {
-    background-color: $color-dark-dark;
-    color: $color-turquoise;
-    border-style: solid;
-    border-color: $color-turquoise;
-    border-top: 0px;
-
-  }
-
-  .bordered {
-    border-style: solid;
-    border-color: $color-turquoise;
-    border-radius: 10px;
-    border-width: 2px;
-  }
-
-  .bordered-thin {
-    border-style: solid;
-    border-color: $color-turquoise;
-    border-radius: 10px;
-    border-width: 1px;
-  }
-
-  .margined {
-    margin: 2px;
-  }
-
-  .button-medium {
-    border-style: solid;
-    border-color: $color-turquoise;
-    border-radius: 5px;
-    border-width: 1px;
-    font-size: 15px;
-    cursor: pointer;
-  }
-
-  .button-medium:hover {
-    background: $color-medium-dark;
-  }
-
-  .failure-message {
-    color: $color-red;
-  }
+<style lang="scss" src="@/gonzo_style.scss">
 </style>
 

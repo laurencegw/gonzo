@@ -1,3 +1,5 @@
+import {LoginState} from "../users/store";
+import {LoginState} from "../users/store";
 <template>
   <b-row>
     <b-col md="8" offset-md="2">
@@ -46,11 +48,11 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator"
+    import {Component, Vue, Watch} from "vue-property-decorator"
     import {Action, Getter} from "vuex-class"
-    import {UsersClientFake} from "../users/client"
-    import {LoginCredentials, Users} from "../users/api"
-    import {LoginState} from "../users/store"
+    import {UsersClientFake} from "@/users/client"
+    import {LoginCredentials, Users} from "@/users/api"
+    import {LoginState} from "@/users/store"
 
     @Component
     export default class LoginComponent extends Vue {
@@ -71,9 +73,19 @@
             ))
         }
 
+        @Watch("loginState")
+        onLoginStateChange(newState: LoginState, oldState: LoginState) {
+            if (newState === LoginState.LOGGED_IN) {
+                this.$router.push({name: "frontpage"})
+            }
+        }
+
         get loginFailed(): Boolean {
             return this.loginState === LoginState.FAILED
         }
 
     }
 </script>
+
+<style lang="scss" src="@/gonzo_style.scss">
+</style>
