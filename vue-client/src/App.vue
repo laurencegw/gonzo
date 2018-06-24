@@ -1,3 +1,4 @@
+import {LoginState} from "./users/store";
 <template>
   <div id="app" class="main-body">
     <b-container fluid>
@@ -49,14 +50,23 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator"
-    import {Getter} from "vuex-class"
+    import {Getter, Action} from "vuex-class"
+    import {User} from "./users/api"
+    import {LoginState} from "./users/store"
 
     @Component
     export default class App extends Vue {
-        @Getter user
+        @Getter user?: User
+        @Getter loginState?: LoginState
+
+        @Action checkLoginState
+
+        created() {
+            this.checkLoginState()
+        }
 
         get isLoggedIn(): Boolean {
-            return this.user !== undefined
+            return this.loginState === LoginState.LOGGED_IN
         }
     }
 </script>
@@ -71,6 +81,7 @@
   $color-turquoise: #69FFF1;
   $color-green: #63D471;
   $color-darker-green: #63A46C;
+  $color-red: #f44265;
 
   .title-bar {
     background-color: $color-dark-dark;
@@ -92,7 +103,7 @@
     border-bottom: 0px;
   }
 
-  .nav-item:hover{
+  .nav-item:hover {
     background: $color-light-dark;
   }
 
@@ -135,7 +146,7 @@
     border-width: 2px;
   }
 
-  .bordered-thin{
+  .bordered-thin {
     border-style: solid;
     border-color: $color-turquoise;
     border-radius: 10px;
@@ -157,6 +168,10 @@
 
   .button-medium:hover {
     background: $color-medium-dark;
+  }
+
+  .failure-message {
+    color: $color-red;
   }
 </style>
 

@@ -61,7 +61,7 @@ task copyVueClient(type: Copy) {
     into file('src/main/resources/static')
 }
 
-build.dependsOn(':vue-client:build')
+copyVueClient.dependsOn(':vue-client:build')
 build.dependsOn('copyVueClient')
 
 test{

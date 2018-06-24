@@ -64,11 +64,11 @@ export class UserUpdate {
 
 
 export interface Users {
-    updateUser(user: UserUpdate): Promise<User>
+    updateUser(token: string, user: UserUpdate): Promise<User>
 
     login(credentials: LoginCredentials): Promise<string>
 
-    assertLoggedIn(token: string): Promise<boolean>
+    assertValid(token: string): Promise<boolean>
 
     getUserFromToken(token: string): Promise<User>
 }
