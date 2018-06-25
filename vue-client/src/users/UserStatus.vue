@@ -52,18 +52,22 @@
 
         dropDownNames(): string[] {
             return [
+                "profile",
+                "content",
                 "logout",
-                "my content"
             ]
         }
 
         dropDownHandlers(): (() => void)[] {
             return [
                 () => {
-                    this.logout()
+                    this.$router.push({name: "me"})
                 },
                 () => {
                     this.$router.push({name: "mycontent"})
+                },
+                () => {
+                    this.logout()
                 }
             ]
         }
