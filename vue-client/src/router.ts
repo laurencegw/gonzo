@@ -4,6 +4,7 @@ import Tags from "./views/Tags.vue"
 import FrontPage from "./views/FrontPage.vue"
 import Authors from "./views/Coders.vue"
 import Me from "./views/Me.vue"
+import MyContent from "./views/MyContent.vue"
 import Login from "./views/Login.vue"
 import store from "@/store"
 import {LoginState} from "@/users/store"
@@ -35,6 +36,18 @@ export default new Router({
             path: "/me",
             name: "me",
             component: Me,
+            beforeEnter: (from, to, next) => {
+                if (store.getters.loginState !== LoginState.LOGGED_IN) {
+                    next({name: "frontpage"})
+                } else {
+                    next()
+                }
+            }
+        },
+        {
+            path: "/mycontent",
+            name: "mycontent",
+            component: MyContent,
             beforeEnter: (from, to, next) => {
                 if (store.getters.loginState !== LoginState.LOGGED_IN) {
                     next({name: "frontpage"})

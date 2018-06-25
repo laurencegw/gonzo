@@ -8,7 +8,7 @@ import {LoginState} from "../users/store";
         <div v-if="loginFailed">
           <br>
           <b-row>
-            <b-col md="5" offset-md="1">
+            <b-col md="auto" offset-md="1">
               <div class="failure-message no-padding">
                 {{ loginErrorMessage }}
               </div>
@@ -35,10 +35,10 @@ import {LoginState} from "../users/store";
         </b-row>
         <br>
         <b-row>
-          <b-col md="2" offset-md="5">
-            <button @click="login">
+          <b-col md="4" offset-md="4">
+            <v-button @click="login">
               Login
-            </button>
+            </v-button>
           </b-col>
         </b-row>
         <br>
@@ -49,12 +49,15 @@ import {LoginState} from "../users/store";
 
 <script lang="ts">
     import {Component, Vue, Watch} from "vue-property-decorator"
-    import {Action, Getter} from "vuex-class"
+    import {Action, Getter, Mutation} from "vuex-class"
     import {UsersClientFake} from "@/users/client"
     import {LoginCredentials, Users} from "@/users/api"
     import {LoginState} from "@/users/store"
+    import VButton from "@/components/VButton.vue"
 
-    @Component
+    @Component({
+        components: {VButton}
+    })
     export default class LoginComponent extends Vue {
         client: Users = new UsersClientFake()
 
@@ -63,8 +66,14 @@ import {LoginState} from "../users/store";
 
         @Getter loginState?: LoginState
         @Getter loginErrorMessage?: string
+        @Mutation clearErrors
 
         @Action("login") loginAction
+
+        mounted() {
+            console.log("clearing errors")
+            this.clearErrors()
+        }
 
         login() {
             this.loginAction(new LoginCredentials(

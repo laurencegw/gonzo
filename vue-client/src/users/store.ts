@@ -40,6 +40,9 @@ const mutations: MutationTree<UserState> = {
         Vue.set(userState, "loginErrorMessage", message)
         Vue.set(userState, "loginState", LoginState.FAILED)
     },
+    clearErrors(userState: UserState) {
+        Vue.set(userState, "loginErrorMessage", "")
+    },
     setLoggingIn(userState: UserState) {
         Vue.set(userState, "loginErrorMessage", "")
         Vue.set(userState, "loginState", LoginState.TRYING_TO_LOGIN)

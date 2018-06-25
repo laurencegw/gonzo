@@ -82,19 +82,6 @@ $color-red: #f44265;
   margin: 2px;
 }
 
-.button-medium {
-  border-style: solid;
-  border-color: $color-turquoise;
-  border-radius: 5px;
-  border-width: 1px;
-  font-size: 15px;
-  cursor: pointer;
-}
-
-.button-medium:hover {
-  background: $color-medium-dark;
-}
-
 .failure-message {
   color: $color-red;
 }

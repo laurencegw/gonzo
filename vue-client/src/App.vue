@@ -7,10 +7,7 @@ import {LoginState} from "./users/store";
           &lt;GONZO CODE&gt;
         </b-col>
         <b-col md="1" offset-m="3">
-          <div v-if="isLoggedIn">{{user.handle}}</div>
-          <router-link v-else to="/login" tag="div">
-            <div class="button-medium">login</div>
-          </router-link>
+          <user-status></user-status>
         </b-col>
       </b-row>
       <b-row>
@@ -50,24 +47,15 @@ import {LoginState} from "./users/store";
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator"
-    import {Getter, Action} from "vuex-class"
-    import {User} from "@/users/api"
-    import {LoginState} from "@/users/store"
+    import UserStatus from "@/users/UserStatus.vue"
 
-    @Component
+    @Component({
+        components: {
+            UserStatus
+        }
+    })
     export default class App extends Vue {
-        @Getter user?: User
-        @Getter loginState?: LoginState
 
-        @Action checkLoginState
-
-        created() {
-            this.checkLoginState()
-        }
-
-        get isLoggedIn(): Boolean {
-            return this.loginState === LoginState.LOGGED_IN
-        }
     }
 </script>
 
