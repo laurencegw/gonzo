@@ -64,7 +64,7 @@
                     this.$router.push({name: "me"})
                 },
                 () => {
-                    this.$router.push({name: "mycontent"})
+                    this.$router.push({name: "my-content"})
                 },
                 () => {
                     this.logout()

@@ -85,3 +85,13 @@ $color-red: #f44265;
 .failure-message {
   color: $color-red;
 }
+
+input {
+  background-color: $color-medium-dark;
+  color: $color-white;
+  width: 100%;
+}
+
+textarea {
+  @extend input
+}

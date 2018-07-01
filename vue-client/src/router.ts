@@ -1,11 +1,12 @@
 import Vue from "vue"
 import Router from "vue-router"
-import Tags from "./views/Tags.vue"
-import FrontPage from "./views/FrontPage.vue"
-import Authors from "./views/Coders.vue"
-import Me from "./views/Me.vue"
-import MyContent from "./views/MyContent.vue"
-import Login from "./views/Login.vue"
+import Tags from "@/views/Tags.vue"
+import FrontPage from "@/views/FrontPage.vue"
+import Authors from "@/views/Coders.vue"
+import Me from "@/views/Me.vue"
+import MyContent from "@/views/MyContent.vue"
+import Login from "@/views/Login.vue"
+import NewEntry from "@/mycontent/NewEntry.vue"
 import store from "@/store"
 import {LoginState} from "@/users/store"
 
@@ -45,8 +46,8 @@ export default new Router({
             }
         },
         {
-            path: "/mycontent",
-            name: "mycontent",
+            path: "/my-content",
+            name: "my-content",
             component: MyContent,
             beforeEnter: (from, to, next) => {
                 if (store.getters.loginState !== LoginState.LOGGED_IN) {
@@ -54,7 +55,14 @@ export default new Router({
                 } else {
                     next()
                 }
-            }
+            },
+            children: [
+                {
+                    path: "new-entry",
+                    name: "new-entry",
+                    component: NewEntry,
+                }
+            ]
         },
         {
             path: "/login",

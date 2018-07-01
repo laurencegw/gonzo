@@ -22,7 +22,7 @@
 
         @Prop() dropDownNames!: string[]
 
-        @Prop() dropDownHandlers!: () => void[]
+        @Prop() dropDownHandlers!: (() => void)[]
 
 
         dropDownClicked() {
