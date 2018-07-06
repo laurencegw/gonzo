@@ -20,7 +20,7 @@ import {LoginState} from "../users/store";
           <b-col md="2" offset-md="1">
             <label>email</label>
           </b-col>
-          <b-col md="3" offset-md="1">
+          <b-col md="6" offset-md="1">
             <input type="text" v-model="email">
           </b-col>
         </b-row>
@@ -29,7 +29,7 @@ import {LoginState} from "../users/store";
           <b-col md="2" offset-md="1">
             <label>password</label>
           </b-col>
-          <b-col md="3" offset-md="1">
+          <b-col md="6" offset-md="1">
             <input type="password" v-model="password">
           </b-col>
         </b-row>

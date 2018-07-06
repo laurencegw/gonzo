@@ -32,7 +32,6 @@ import java.time.ZonedDateTime
         ],
         loader = AnnotationConfigContextLoader::class
 )
-
 class BlogServiceTest {
 
     lateinit var mockClock: Clock

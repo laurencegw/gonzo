@@ -1,6 +1,7 @@
 package com.binarymonks.gonzo.web.controllers
 
 import com.binarymonks.gonzo.core.common.NotAuthorized
+import com.binarymonks.gonzo.core.common.ValidationException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -14,10 +15,16 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 class ExceptionResponseHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(NotAuthorized::class)
-    fun handleConflict(ex: NotAuthorized, request: WebRequest): ResponseEntity<Any> {
+    fun handleNotAuthorized(ex: NotAuthorized, request: WebRequest): ResponseEntity<Any> {
         val bodyOfResponse = "Permissions not met"
         return handleExceptionInternal(ex, bodyOfResponse,
                 HttpHeaders(), HttpStatus.FORBIDDEN, request)
+    }
+
+    @ExceptionHandler(ValidationException::class)
+    fun handleValidation(ex: ValidationException, request: WebRequest): ResponseEntity<Any> {
+        return handleExceptionInternal(ex, ex.validationMessages,
+                HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, request)
     }
 
 }

@@ -5,6 +5,8 @@ import com.binarymonks.gonzo.blogEntryUpdate
 import com.binarymonks.gonzo.clients.BlogClient
 import com.binarymonks.gonzo.core.blog.service.BlogService
 import com.binarymonks.gonzo.core.common.NotAuthorized
+import com.binarymonks.gonzo.core.common.ValidationException
+import com.binarymonks.gonzo.core.common.ValidationMessage
 import com.binarymonks.gonzo.core.test.GonzoTestHarnessConfig
 import com.binarymonks.gonzo.core.test.harness.TestDataManager
 import com.binarymonks.gonzo.core.users.api.Role
@@ -46,7 +48,7 @@ class BlogAPITest {
                 arrayOf("Author can create blog", Role.AUTHOR, true),
                 arrayOf("Admin can create blog", Role.ADMIN, true)
         ).map {
-            DynamicTest.dynamicTest(it[0] as String, {
+            DynamicTest.dynamicTest(it[0] as String) {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
                 val allowed: Boolean = it[2] as Boolean
@@ -60,13 +62,39 @@ class BlogAPITest {
                 if (allowed) {
                     blogClient.createBlogEntry(newBlog)
                 } else {
-                    Assertions.assertThrows(NotAuthorized::class.java, {
+                    Assertions.assertThrows(NotAuthorized::class.java) {
                         blogClient.createBlogEntry(newBlog)
-                    })
+                    }
                 }
 
-            })
+            }
         }.toList()
+    }
+
+    @Test
+    fun createBlogValidation(){
+        testDataManager.clearData()
+        val requestUser = newUser()
+        val user = testDataManager.forceCreateUser(requestUser, Role.ADMIN)
+        blogClient.signIn(requestUser.email, requestUser.password)
+
+        val newBlog = blogEntryNew().copy(
+                title = "",
+                authorID = user.id
+        )
+
+        val exception = assertThrows<ValidationException> {
+            blogClient.createBlogEntry(newBlog)
+        }
+        Assertions.assertEquals(
+                listOf(
+                        ValidationMessage(
+                                "title",
+                                "Title is required"
+                        )
+                )
+                , exception.validationMessages.messages
+        )
     }
 
     @TestFactory
@@ -76,7 +104,7 @@ class BlogAPITest {
                 arrayOf("Author can create blog", Role.AUTHOR, false),
                 arrayOf("Admin can create blog", Role.ADMIN, false)
         ).map {
-            DynamicTest.dynamicTest(it[0] as String, {
+            DynamicTest.dynamicTest(it[0] as String) {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
                 val allowed: Boolean = it[2] as Boolean
@@ -93,12 +121,12 @@ class BlogAPITest {
                     val newBlogEntry = blogEntryNew().copy(authorID = targetUser.id)
                     blogClient.createBlogEntry(newBlogEntry)
                 } else {
-                    Assertions.assertThrows(NotAuthorized::class.java, {
+                    Assertions.assertThrows(NotAuthorized::class.java) {
                         blogClient.createBlogEntry(blogEntryNew())
-                    })
+                    }
                 }
 
-            })
+            }
         }.toList()
     }
 
@@ -109,7 +137,7 @@ class BlogAPITest {
                 arrayOf("Author can update own blog", Role.AUTHOR),
                 arrayOf("Admin can update own blog", Role.ADMIN)
         ).map {
-            DynamicTest.dynamicTest(it[0] as String, {
+            DynamicTest.dynamicTest(it[0] as String) {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
 
@@ -125,7 +153,7 @@ class BlogAPITest {
                 blogClient.publishBlogEntry(myBlog.id)
                 blogClient.getBlogEntryDraftByID(myBlog.id)
                 blogClient.getBlogEntryDraftHeaders(user.id)
-            })
+            }
         }.toList()
     }
 
@@ -136,7 +164,7 @@ class BlogAPITest {
                 arrayOf("Author cannot update someone else's blog", Role.AUTHOR),
                 arrayOf("Admin cannot update someone else's blog", Role.ADMIN)
         ).map {
-            DynamicTest.dynamicTest(it[0] as String, {
+            DynamicTest.dynamicTest(it[0] as String) {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
 
@@ -153,19 +181,19 @@ class BlogAPITest {
                 blogService.publishBlogEntry(someOneElseBlog.id)
 
                 val update = blogEntryUpdate().copy(id = someOneElseBlog.id)
-                Assertions.assertThrows(NotAuthorized::class.java, {
+                Assertions.assertThrows(NotAuthorized::class.java) {
                     blogClient.updateBlogEntry(update)
-                })
-                Assertions.assertThrows(NotAuthorized::class.java, {
+                }
+                Assertions.assertThrows(NotAuthorized::class.java) {
                     blogClient.publishBlogEntry(someOneElseBlog.id)
-                })
-                Assertions.assertThrows(NotAuthorized::class.java, {
+                }
+                Assertions.assertThrows(NotAuthorized::class.java) {
                     blogClient.getBlogEntryDraftByID(someOneElseBlog.id)
-                })
-                Assertions.assertThrows(NotAuthorized::class.java, {
+                }
+                Assertions.assertThrows(NotAuthorized::class.java) {
                     blogClient.getBlogEntryDraftHeaders(targetUser.id)
-                })
-            })
+                }
+            }
         }.toList()
     }
 

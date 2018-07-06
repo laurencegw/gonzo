@@ -6,6 +6,7 @@ import com.binarymonks.gonzo.core.common.Types
 import com.binarymonks.gonzo.core.users.api.UserPublicHeader
 import com.fasterxml.jackson.annotation.JsonCreator
 import java.time.ZonedDateTime
+import javax.validation.constraints.NotBlank
 
 interface Blog {
 
@@ -87,6 +88,7 @@ open class BlogResource : AuthoredResource(type = Types.BLOG)
 
 
 data class BlogDraftEntryNew @JsonCreator constructor(
+        @field:NotBlank(message = "Title is required")
         val title: String,
         val content: String,
         val authorID: Long

@@ -9,18 +9,17 @@ import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+
 @Service
-class BlogService : Blog {
-
-    @Autowired
-    lateinit var blogRepo: BlogRepo
-
-    @Autowired
-    lateinit var userRepo: UserRepo
-
+class BlogService(
+        @Autowired
+        var blogRepo: BlogRepo,
+        @Autowired
+        var userRepo: UserRepo
+) : Blog {
 
     override fun createBlogEntry(blogEntryNew: BlogDraftEntryNew): BlogEntryDraft {
-
+        blogEntryNew.validate()
         return blogRepo.save(BlogEntryDraftEntity(
                 title = blogEntryNew.title,
                 content = blogEntryNew.content,
@@ -29,7 +28,6 @@ class BlogService : Blog {
                 updated = nowUTC()
         )).toBlogEntryDraft()
     }
-
 
     override fun updateBlogEntry(update: BlogDraftEntryUpdate): BlogEntryDraft {
         val entry = blogRepo.findById(update.id).get()
@@ -56,7 +54,8 @@ class BlogService : Blog {
     override fun getBlogEntryHeadersByAuthor(authorID: Long): List<BlogEntryHeader> {
         val userEntity = userRepo.findById(authorID).get()
         val userBlogEntries = blogRepo.findAllByAuthor(userEntity).filter {
-            it.publishedBlog!=null }
+            it.publishedBlog != null
+        }
         val userHeaders = userBlogEntries.map { it.toBlogEntry().toHeader() }
         return userHeaders
     }
@@ -70,7 +69,6 @@ class BlogService : Blog {
             entity.publishedBlog!!.updated = now
         } else {
             entity.publishedBlog = BlogEntryPublished(
-//                    blogEntryDraftID = entity.id!!,
                     title = entity.title,
                     content = entity.content,
                     created = now,
@@ -82,8 +80,10 @@ class BlogService : Blog {
     }
 
     override fun getBlogEntryHeaders(): List<BlogEntryHeader> = blogRepo.findAll().filter {
-        it.publishedBlog!=null }.map {
-        it.toBlogEntry().toHeader() }
+        it.publishedBlog != null
+    }.map {
+        it.toBlogEntry().toHeader()
+    }
 
     override fun getBlogEntryById(id: Long): BlogEntry = blogRepo.findById(id).get().toBlogEntry()
 

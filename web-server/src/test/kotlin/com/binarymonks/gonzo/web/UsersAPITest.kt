@@ -112,7 +112,7 @@ class UsersAuthorizedPermissionsTest {
                 arrayOf("Author update another user", Role.AUTHOR, false),
                 arrayOf("Admin update another user", Role.ADMIN, false)
         ).map {
-            dynamicTest(it[0] as String, {
+            dynamicTest(it[0] as String) {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
                 val allowed: Boolean = it[2] as Boolean
@@ -131,13 +131,13 @@ class UsersAuthorizedPermissionsTest {
                             email = "changed" + targetUser.email
                     ))
                 } else {
-                    Assertions.assertThrows(NotAuthorized::class.java, {
+                    Assertions.assertThrows(NotAuthorized::class.java) {
                         userClient.updateUser(targetUser.toUpdate().copy(
                                 email = "changed" + targetUser.email
                         ))
-                    })
+                    }
                 }
-            })
+            }
         }.toList()
     }
 
@@ -149,7 +149,7 @@ class UsersAuthorizedPermissionsTest {
                 arrayOf("Author update own user", Role.AUTHOR, true),
                 arrayOf("Admin update own user", Role.ADMIN, true)
         ).map {
-            dynamicTest(it[0] as String, {
+            dynamicTest(it[0] as String) {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
                 val allowed: Boolean = it[2] as Boolean
@@ -163,13 +163,13 @@ class UsersAuthorizedPermissionsTest {
                             email = "changed" + user.email
                     ))
                 } else {
-                    Assertions.assertThrows(NotAuthorized::class.java, {
+                    Assertions.assertThrows(NotAuthorized::class.java) {
                         userClient.updateUser(user.toUpdate().copy(
                                 email = "changed" + user.email
                         ))
-                    })
+                    }
                 }
-            })
+            }
         }.toList()
     }
 }

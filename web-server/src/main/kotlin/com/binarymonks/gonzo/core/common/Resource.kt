@@ -1,5 +1,6 @@
 package com.binarymonks.gonzo.core.common
 
+import javax.validation.Validation
 import kotlin.reflect.full.declaredMemberProperties
 
 class Types{
@@ -12,6 +13,10 @@ class Types{
 }
 
 open class Resource(val type: String) {
+
+    companion object {
+        val validator = Validation.buildDefaultValidatorFactory().validator!!
+    }
 
     open fun attributes(): Map<String, Any?> {
         val map: MutableMap<String, Any?> = mutableMapOf(Pair("type", type))
@@ -42,5 +47,15 @@ open class Resource(val type: String) {
         val clazz = this::class
         @Suppress("UNCHECKED_CAST")
         return clazz.declaredMemberProperties.first { it.name == name }.getter.call(this)
+    }
+
+    fun validate(){
+        val violations = validator.validate(this)
+        val messages = violations.map {
+            ValidationMessage(it.propertyPath.toString(), it.message)
+        }.toMutableList()
+        if (messages.isNotEmpty()) {
+            throw ValidationException(validationMessages= ValidationMessages(messages))
+        }
     }
 }
