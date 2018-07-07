@@ -12,9 +12,6 @@ import org.springframework.web.client.RestTemplate
 fun restTemplateWithErrorHandler(): RestTemplate{
     val restTemplate = RestTemplate()
     restTemplate.errorHandler = CustomErrorHandler()
-//    val converter = MappingJackson2HttpMessageConverter()
-//    converter.supportedMediaTypes = mutableListOf(MediaType.APPLICATION_JSON)
-//    restTemplate.messageConverters.add(converter)
     return restTemplate
 }
 
