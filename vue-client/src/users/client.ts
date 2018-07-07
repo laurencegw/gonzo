@@ -22,8 +22,7 @@ export class UsersClient implements Users {
                     responseType: "json"
                 }
             ).then((response) => {
-                    // @ts-ignore
-                    resolve(response.data as User)
+                    resolve(new User(response.data))
                 }
             ).catch((rejection) => {
                 reject(rejection)
@@ -55,14 +54,14 @@ export class UsersClientFake implements Users {
 
     constructor() {
         const id = this.idCounter++
-        const adminUser = new User(
-            id,
-            "admin@email.com",
-            "admin1",
-            Role.AUTHOR,
-            "Sarah",
-            "Smith"
-        )
+        const adminUser = new User({
+            id: id,
+            email: "admin@email.com",
+            handle: "admin1",
+            role: Role.AUTHOR,
+            firstName: "Sarah",
+            lastName: "Smith"
+        })
         const adminUserPassword = "password"
         this.users.set(id, adminUser)
         this.userPasswords.set(id, adminUserPassword)

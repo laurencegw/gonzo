@@ -22,13 +22,13 @@ export class User {
     public firstName: string
     public lastName: string
 
-    constructor(id: number, email: string, handle: string, role: Role, firstName: string, lastName: string) {
-        this.id = id
-        this.email = email
-        this.handle = handle
-        this.role = role
-        this.firstName = firstName
-        this.lastName = lastName
+    constructor(obj: any) {
+        this.id = obj.id
+        this.email = obj.email
+        this.handle = obj.handle
+        this.role = obj.role
+        this.firstName = obj.firstName
+        this.lastName = obj.lastName
     }
 }
 

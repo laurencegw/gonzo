@@ -16,12 +16,31 @@ export class BlogDraftUpdate {
     id: number
     title: string
     content: string
+
     constructor(id: number, title: string, content: string) {
         this.id = id
         this.title = title
         this.content = content
     }
 }
+
+export class BlogHeader {
+    id: number
+    title: string
+    author: UserPublicHeader
+    updated: Date
+    created: Date
+
+
+    constructor(id: number, title: string, author: UserPublicHeader, updated: Date, created: Date) {
+        this.id = id
+        this.title = title
+        this.author = author
+        this.updated = updated
+        this.created = created
+    }
+}
+
 
 /**
  * Publicly viewable info for a  published blog
@@ -57,40 +76,36 @@ export class BlogDraft {
     created: Date
     updated: Date
 
-    constructor(id: number, title: string, content: string, author: UserPublicHeader, published: Boolean,
-                unpublishedChanges: Boolean, created: Date, updated: Date) {
-        this.id = id
-        this.title = title
-        this.content = content
-        this.author = author
-        this.published = published
-        this.unpublishedChanges = unpublishedChanges
-        this.created = created
-        this.updated = updated
+    constructor(obj: any) {
+        this.id = obj.id
+        this.title = obj.title
+        this.content = obj.content
+        this.author = obj.author
+        this.published = obj.published
+        this.unpublishedChanges = obj.unpublishedChanges
+        this.created = obj.created
+        this.updated = obj.updated
+    }
+
+    toHeader(): BlogHeader {
+        return new BlogHeader(
+            this.id,
+            this.title,
+            this.author,
+            this.updated,
+            this.created
+        )
     }
 }
 
-export class BlogHeader {
-    id: number
-    title: string
-    author: UserPublicHeader
-    updated: Date
-    created: Date
-
-
-    constructor(id: number, title: string, author: UserPublicHeader, updated: Date, created: Date) {
-        this.id = id
-        this.title = title
-        this.author = author
-        this.updated = updated
-        this.created = created
-    }
-}
 
 export interface Blogs {
-    createBlogDraft(token: string, blogDraftNew: BlogDraftNew):  Promise<BlogDraft>
-    updateBlogDraft(token: string, blogDraftUpdate: BlogDraftUpdate): Promise<BlogDraft>
-    getBlogDraftHeaders(token: string, authorID: number): Promise<Array<BlogHeader>>
-    getBlogDraftByID(token: string, blogID: number): Promise<BlogDraft>
+    createBlogDraft(blogDraftNew: BlogDraftNew): Promise<BlogDraft>
+
+    updateBlogDraft(blogDraftUpdate: BlogDraftUpdate): Promise<BlogDraft>
+
+    getBlogDraftHeaders(authorID: number): Promise<Array<BlogHeader>>
+
+    getBlogDraftByID(blogID: number): Promise<BlogDraft>
 }
 

@@ -111,7 +111,8 @@ const createStore = function (userClient: Users): any {
 
 const client = function (): Users {
     if (isDev()) {
-        return new UsersClientFake()
+        // return new UsersClientFake()
+        return new UsersClient()
     }
     return new UsersClient()
 }
