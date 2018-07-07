@@ -1,6 +1,6 @@
 import {UserPublicHeader} from "@/users/api"
 
-class BlogDraftEntryNew {
+export class BlogDraftNew {
     title: string
     content: string
     authorID: number
@@ -12,7 +12,7 @@ class BlogDraftEntryNew {
     }
 }
 
-class BlogDraftEntryUpdate {
+export class BlogDraftUpdate {
     id: number
     title: string
     content: string
@@ -26,7 +26,7 @@ class BlogDraftEntryUpdate {
 /**
  * Publicly viewable info for a  published blog
  */
-class BlogEntry {
+export class Blog {
     id: number
     title: string
     content: string
@@ -47,7 +47,7 @@ class BlogEntry {
 /**
  * Representation of a blog for the Author.
  */
-class BlogEntryDraft {
+export class BlogDraft {
     id: number
     title: string
     content: string
@@ -70,9 +70,7 @@ class BlogEntryDraft {
     }
 }
 
-
-
-class BlogEntryHeader {
+export class BlogHeader {
     id: number
     title: string
     author: UserPublicHeader
@@ -87,5 +85,12 @@ class BlogEntryHeader {
         this.updated = updated
         this.created = created
     }
+}
+
+export interface Blogs {
+    createBlogDraft(token: string, blogDraftNew: BlogDraftNew):  Promise<BlogDraft>
+    updateBlogDraft(token: string, blogDraftUpdate: BlogDraftUpdate): Promise<BlogDraft>
+    getBlogDraftHeaders(token: string, authorID: number): Promise<Array<BlogHeader>>
+    getBlogDraftByID(token: string, blogID: number): Promise<BlogDraft>
 }
 
