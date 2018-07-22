@@ -13,7 +13,11 @@
     <div v-else>
       <b-row>
         <b-col>
-          <header-list :blog-headers="blogHeaders"></header-list>
+          <b-row class="header-list vertical-scroll mh-25">
+            <b-col>
+              <header-list :blog-headers="blogHeaders"></header-list>
+            </b-col>
+          </b-row>
         </b-col>
         <b-col>
           <router-view/>
@@ -64,3 +68,10 @@
         }
     }
 </script>
+
+<style lang="scss" src="@/gonzo_style.scss">
+
+  .header-list {
+    height: 500px;
+  }
+</style>

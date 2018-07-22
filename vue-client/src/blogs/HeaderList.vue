@@ -1,5 +1,5 @@
 <template>
-  <div class="scroll-pane">
+  <div>
     <b-row v-for="(header, index) in blogHeaders">
       <b-col :class="myStyle(index)">
         <div @click="select(index)">
@@ -34,9 +34,9 @@
 
         myStyle(index: number): Array<String> {
             if (this.selected === index) {
-                return ["bordered-neon", "background-medium-dark"]
+                return ["margined", "bordered-neon", "background-medium-dark"]
             } else {
-                return ["bordered-light-thin"]
+                return ["margined", "bordered-light-thin"]
             }
         }
     }
