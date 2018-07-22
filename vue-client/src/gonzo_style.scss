@@ -64,18 +64,49 @@ $color-red: #f44265;
 
 }
 
-.bordered {
+%bordered {
   border-style: solid;
   border-color: $color-turquoise;
   border-radius: 10px;
   border-width: 2px;
 }
 
-.bordered-thin {
+%bordered-thin {
   border-style: solid;
-  border-color: $color-turquoise;
   border-radius: 10px;
   border-width: 1px;
+}
+
+.bordered-neon {
+  @extend %bordered;
+  border-color: $color-turquoise;
+}
+
+.bordered-neon-thin {
+  @extend %bordered-thin;
+  border-color: $color-turquoise;
+}
+
+.bordered-light {
+  @extend %bordered;
+  border-color: $color-white;
+}
+
+.bordered-light-thin {
+  @extend %bordered-thin;
+  border-color: $color-white;
+}
+
+.background-dark-dark{
+  background-color: $color-dark-dark;
+}
+
+.background-medium-dark{
+  background-color: $color-medium-dark;
+}
+
+.background-light-dark{
+  background-color: $color-light-dark;
 }
 
 .margined {

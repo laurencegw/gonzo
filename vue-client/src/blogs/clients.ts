@@ -1,10 +1,11 @@
 import {BlogDraft, BlogDraftNew, BlogDraftUpdate, BlogHeader, Blogs} from "@/blogs/api"
 import {UserPublicHeader} from "@/users/api"
-import axios from "axios";
+import axios from "axios"
 
 
 export class BlogsClient implements Blogs {
     private blogsBasePath = "api/blogs"
+    private usersBasePath = "api/users"
     private tokenKey = "userToken"
 
     private headers(token: string): any {
@@ -34,7 +35,23 @@ export class BlogsClient implements Blogs {
     }
 
     getBlogDraftHeaders(authorID: number): Promise<Array<BlogHeader>> {
-        throw Error("Not Implemented")
+        const token = localStorage.getItem(this.tokenKey)
+        if (token === null) {
+            return Promise.reject(new Error("Not logged in"))
+        }
+        return new Promise<Array<BlogHeader>>((resolve, reject) => {
+            axios.get<string>(`${this.usersBasePath}/${authorID}/drafts`, {
+                headers: this.headers(token),
+                responseType: "json"
+            }).then((response) => {
+                    // @ts-ignore
+                    const blogHeaders: Array<any> = response.data
+                    resolve(blogHeaders.map((blogHeaderObj) => new BlogHeader(blogHeaderObj)))
+                }
+            ).catch((rejection) => {
+                reject(rejection)
+            })
+        })
     }
 
     updateBlogDraft(blogDraftUpdate: BlogDraftUpdate): Promise<BlogDraft> {

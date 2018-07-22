@@ -37,7 +37,7 @@ import {LoginState} from "./users/store";
     <br>
     <b-container>
       <b-row>
-        <b-col md="8" offset-md="2">
+        <b-col md="12">
           <router-view/>
         </b-col>
       </b-row>

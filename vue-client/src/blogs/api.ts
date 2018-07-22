@@ -32,12 +32,12 @@ export class BlogHeader {
     created: Date
 
 
-    constructor(id: number, title: string, author: UserPublicHeader, updated: Date, created: Date) {
-        this.id = id
-        this.title = title
-        this.author = author
-        this.updated = updated
-        this.created = created
+    constructor(obj: any) {
+        this.id = obj.id
+        this.title = obj.title
+        this.author = obj.author
+        this.updated = obj.updated
+        this.created = obj.created
     }
 }
 
@@ -88,13 +88,7 @@ export class BlogDraft {
     }
 
     toHeader(): BlogHeader {
-        return new BlogHeader(
-            this.id,
-            this.title,
-            this.author,
-            this.updated,
-            this.created
-        )
+        return new BlogHeader(this)
     }
 }
 

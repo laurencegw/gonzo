@@ -12,6 +12,16 @@ import {LoginState} from "@/users/store"
 
 Vue.use(Router)
 
+function loginGuard(from, to, next) {
+    return store.dispatch("checkLoginState").then(() => {
+        if (store.getters.loginState !== LoginState.LOGGED_IN) {
+            next({name: "frontpage"})
+        } else {
+            next()
+        }
+    })
+}
+
 export default new Router({
     routes: [
         {
@@ -37,25 +47,13 @@ export default new Router({
             path: "/me",
             name: "me",
             component: Me,
-            beforeEnter: (from, to, next) => {
-                if (store.getters.loginState !== LoginState.LOGGED_IN) {
-                    next({name: "frontpage"})
-                } else {
-                    next()
-                }
-            }
+            beforeEnter: loginGuard
         },
         {
             path: "/my-content",
             name: "my-content",
             component: MyContent,
-            beforeEnter: (from, to, next) => {
-                if (store.getters.loginState !== LoginState.LOGGED_IN) {
-                    next({name: "frontpage"})
-                } else {
-                    next()
-                }
-            },
+            beforeEnter: loginGuard,
             children: [
                 {
                     path: "new-entry",

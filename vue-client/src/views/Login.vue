@@ -3,7 +3,7 @@ import {LoginState} from "../users/store";
 <template>
   <b-row>
     <b-col md="8" offset-md="2">
-      <div class="bordered">
+      <div class="bordered-neon">
 
         <div v-if="loginFailed">
           <br>

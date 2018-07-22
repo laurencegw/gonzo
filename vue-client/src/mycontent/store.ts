@@ -1,4 +1,4 @@
-import {BlogDraft, BlogDraftNew, BlogHeader, Blogs} from "@/blogs/api"
+import {Blog, BlogDraft, BlogDraftNew, BlogHeader, Blogs} from "@/blogs/api"
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex"
 import {cloneDeep} from "lodash"
 import {isDev} from "@/utils"
@@ -13,16 +13,19 @@ class MyContentState {
 
 const getters: GetterTree<MyContentState, any> = {
     blogIDs(state: MyContentState): Array<number> {
-        return state.blogIDs
+        return cloneDeep(state.blogIDs)
     },
     blogHeader(state: MyContentState, blogID: number): BlogHeader {
-        return state.blogHeadersByID[blogID]
+        return cloneDeep(state.blogHeadersByID[blogID])
+    },
+    blogHeaders(state: MyContentState): Array<BlogHeader> {
+        return cloneDeep(state.blogIDs.map(id => state.blogHeadersByID[id]))
     },
     blogDraft(state: MyContentState): BlogDraft | undefined {
-        return state.blogDraft
+        return cloneDeep(state.blogDraft)
     },
     modifiedBlogDraft(state: MyContentState): BlogDraft | undefined {
-        return state.modifiedBlogDraft
+        return cloneDeep(state.modifiedBlogDraft)
     }
 }
 
@@ -48,13 +51,13 @@ const buildActions = function (blogClient: Blogs): ActionTree<MyContentState, an
         loadDraftHeadersForAuthor(store: ActionContext<MyContentState, any>, authorID: number) {
             return blogClient.getBlogDraftHeaders(authorID).then((headers) => {
                 store.commit("setBlogHeaders", headers)
-            }).then()
+            })
         },
         createBlog(store:  ActionContext<MyContentState, any>, newBlog: BlogDraftNew) {
             return blogClient.createBlogDraft(newBlog).then((blogDraft) => {
                 store.commit("addBlogHeader", blogDraft.toHeader())
                 store.commit("workOnBlog", blogDraft)
-            }).then()
+            })
         }
     }
     return actions

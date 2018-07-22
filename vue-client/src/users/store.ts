@@ -1,5 +1,6 @@
 import {LoginCredentials, User, Users} from "@/users/api"
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex"
+import {cloneDeep} from "lodash"
 import Vue from "vue"
 import {UsersClient, UsersClientFake} from "@/users/client"
 import {isDev} from "@/utils"
@@ -20,7 +21,7 @@ class UserState {
 
 const getters: GetterTree<UserState, any> = {
     user(state: UserState): User | undefined {
-        return state.user
+        return cloneDeep(state.user)
     },
     loginState(state: UserState): LoginState {
         return state.loginState
@@ -78,8 +79,9 @@ const buildActions = function (userClient: Users): ActionTree<UserState, any> {
             console.log(`Token was ${token}`)
             if (token === null) {
                 store.commit("setLoggedOut")
+                return Promise.resolve()
             } else {
-                userClient.getUserFromToken(token).then((user) => {
+                return userClient.getUserFromToken(token).then((user) => {
                     store.commit("setLoggedInUser", user)
                 }).catch((reason) => {
                     localStorage.removeItem(tokenKey)
