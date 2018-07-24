@@ -31,7 +31,21 @@ export class BlogsClient implements Blogs {
     }
 
     getBlogDraftByID(blogID: number): Promise<BlogDraft> {
-        throw Error("Not Implemented")
+        const token = localStorage.getItem(this.tokenKey)
+        if (token === null) {
+            return Promise.reject(new Error("Not logged in"))
+        }
+        return new Promise<BlogDraft>((resolve, reject) => {
+            axios.get<BlogDraft>(`${this.blogsBasePath}/${blogID}/draft`, {
+                headers: this.headers(token),
+                responseType: "json"
+            }).then((response) => {
+                    resolve(new BlogDraft(response.data))
+                }
+            ).catch((rejection) => {
+                reject(rejection)
+            })
+        })
     }
 
     getBlogDraftHeaders(authorID: number): Promise<Array<BlogHeader>> {
@@ -40,11 +54,10 @@ export class BlogsClient implements Blogs {
             return Promise.reject(new Error("Not logged in"))
         }
         return new Promise<Array<BlogHeader>>((resolve, reject) => {
-            axios.get<string>(`${this.usersBasePath}/${authorID}/drafts`, {
+            axios.get<Array<any>>(`${this.usersBasePath}/${authorID}/drafts`, {
                 headers: this.headers(token),
                 responseType: "json"
             }).then((response) => {
-                    // @ts-ignore
                     const blogHeaders: Array<any> = response.data
                     resolve(blogHeaders.map((blogHeaderObj) => new BlogHeader(blogHeaderObj)))
                 }

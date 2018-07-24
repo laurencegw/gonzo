@@ -6,7 +6,8 @@ import Authors from "@/views/Coders.vue"
 import Me from "@/views/Me.vue"
 import MyContent from "@/views/MyContent.vue"
 import Login from "@/views/Login.vue"
-import NewEntry from "@/mycontent/NewEntry.vue"
+import NewBlog from "@/mycontent/NewBlog.vue"
+import ExistingBlog from "@/mycontent/ExistingBlog.vue"
 import store from "@/store"
 import {LoginState} from "@/users/store"
 
@@ -58,8 +59,13 @@ export default new Router({
                 {
                     path: "new-entry",
                     name: "new-entry",
-                    component: NewEntry,
-                }
+                    component: NewBlog,
+                },
+                {
+                    path: "draft/:id",
+                    name: "draft",
+                    component: ExistingBlog,
+                },
             ]
         },
         {

@@ -30,6 +30,7 @@
 
         select(index: number) {
             this.selected = index
+            this.$emit("selected", this.blogHeaders[index])
         }
 
         myStyle(index: number): Array<String> {

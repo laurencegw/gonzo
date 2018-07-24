@@ -15,7 +15,7 @@
         <b-col>
           <b-row class="header-list vertical-scroll mh-25">
             <b-col>
-              <header-list :blog-headers="blogHeaders"></header-list>
+              <header-list :blog-headers="blogHeaders" @selected="selected"></header-list>
             </b-col>
           </b-row>
         </b-col>
@@ -65,6 +65,10 @@
 
         get isLoading() {
             return this.state !== STATE_LOADED
+        }
+
+        selected(blogHeader: BlogHeader) {
+            this.$router.push({ name: "draft", params: { id: `${blogHeader.id}` }})
         }
     }
 </script>

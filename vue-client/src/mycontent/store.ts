@@ -1,11 +1,12 @@
-import {Blog, BlogDraft, BlogDraftNew, BlogHeader, Blogs} from "@/blogs/api"
+import {BlogDraft, BlogDraftNew, BlogHeader, Blogs} from "@/blogs/api"
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex"
 import {cloneDeep} from "lodash"
 import {isDev} from "@/utils"
-import {BlogsClient, BlogsClientFake} from "@/blogs/clients"
+import {BlogsClient} from "@/blogs/clients"
+import Vue from "vue"
 
 class MyContentState {
-    blogHeadersByID: {[id: number]: BlogHeader} = {}
+    blogHeadersByID: { [id: number]: BlogHeader } = {}
     blogIDs: Array<number> = []
     blogDraft?: BlogDraft
     modifiedBlogDraft?: BlogDraft
@@ -32,7 +33,7 @@ const getters: GetterTree<MyContentState, any> = {
 const mutations: MutationTree<MyContentState> = {
     setBlogHeaders(state: MyContentState, blogHeaders: Array<BlogHeader>) {
         const IDs: Array<number> = []
-        const headersByID: {[id: number]: BlogHeader} = {}
+        const headersByID: { [id: number]: BlogHeader } = {}
         for (const header of blogHeaders) {
             IDs.push(header.id)
             headersByID[header.id] = header
@@ -41,8 +42,8 @@ const mutations: MutationTree<MyContentState> = {
         state.blogHeadersByID = headersByID
     },
     workOnBlog(state: MyContentState, blog: BlogDraft) {
-        state.blogDraft = cloneDeep(blog)
-        state.modifiedBlogDraft = cloneDeep(blog)
+        Vue.set(state, "blogDraft", cloneDeep(blog))
+        Vue.set(state, "modifiedBlogDraft", cloneDeep(blog))
     },
 }
 
@@ -53,9 +54,15 @@ const buildActions = function (blogClient: Blogs): ActionTree<MyContentState, an
                 store.commit("setBlogHeaders", headers)
             })
         },
-        createBlog(store:  ActionContext<MyContentState, any>, newBlog: BlogDraftNew) {
+        createBlog(store: ActionContext<MyContentState, any>, newBlog: BlogDraftNew) {
             return blogClient.createBlogDraft(newBlog).then((blogDraft) => {
                 store.commit("addBlogHeader", blogDraft.toHeader())
+                store.commit("workOnBlog", blogDraft)
+            })
+        },
+        loadBlogDraft(store: ActionContext<MyContentState, any>, blogID: number) {
+            return blogClient.getBlogDraftByID(blogID).then((blogDraft) => {
+                console.log("loaded blog")
                 store.commit("workOnBlog", blogDraft)
             })
         }
