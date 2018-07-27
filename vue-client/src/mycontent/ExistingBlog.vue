@@ -39,6 +39,7 @@
             console.log(`Route changed ${blogID}`)
             this.loadBlogDraft(blogID).then((blogDraft) => {
                 this.loaded = true
+                console.log(`component got ${blogDraft.id}`)
             })
         }
 

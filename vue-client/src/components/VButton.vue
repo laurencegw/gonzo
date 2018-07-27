@@ -24,6 +24,8 @@
     border-color: $color-turquoise;
     border-radius: 5px;
     border-width: 1px;
+    padding-right: 4px;
+    padding-left: 4px;
     font-size: 15px;
     cursor: pointer;
     text-align: center;

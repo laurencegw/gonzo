@@ -38,8 +38,8 @@ const mutations: MutationTree<MyContentState> = {
             IDs.push(header.id)
             headersByID[header.id] = header
         }
-        state.blogIDs = IDs
-        state.blogHeadersByID = headersByID
+        Vue.set(state, "blogIDs", IDs)
+        Vue.set(state, "blogHeadersByID", headersByID)
     },
     workOnBlog(state: MyContentState, blog: BlogDraft) {
         Vue.set(state, "blogDraft", cloneDeep(blog))
@@ -52,18 +52,21 @@ const buildActions = function (blogClient: Blogs): ActionTree<MyContentState, an
         loadDraftHeadersForAuthor(store: ActionContext<MyContentState, any>, authorID: number) {
             return blogClient.getBlogDraftHeaders(authorID).then((headers) => {
                 store.commit("setBlogHeaders", headers)
+                return headers
             })
         },
         createBlog(store: ActionContext<MyContentState, any>, newBlog: BlogDraftNew) {
             return blogClient.createBlogDraft(newBlog).then((blogDraft) => {
                 store.commit("addBlogHeader", blogDraft.toHeader())
                 store.commit("workOnBlog", blogDraft)
+                return blogDraft
             })
         },
         loadBlogDraft(store: ActionContext<MyContentState, any>, blogID: number) {
             return blogClient.getBlogDraftByID(blogID).then((blogDraft) => {
                 console.log("loaded blog")
                 store.commit("workOnBlog", blogDraft)
+                return blogDraft
             })
         }
     }
