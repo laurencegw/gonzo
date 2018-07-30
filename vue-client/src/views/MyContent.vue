@@ -2,30 +2,39 @@
   <div>
     <b-row>
       <b-col md="3">
-        MY CONTENT
-      </b-col>
-      <b-col md="9">
         <b-row>
-          <v-button v-if="notModifying" @click="$router.push({name:'new-entry'})">New</v-button>
+          <b-col>
+            MY CONTENT
+          </b-col>
         </b-row>
-      </b-col>
-    </b-row>
-    <br>
-    <div v-if="isLoading">Loading..</div>
-    <div v-else>
-      <b-row>
-        <b-col md="3">
-          <b-row class="vertical-scroll">
+        <br>
+        <v-loading :is-loading="isLoading">
+          <b-row class="vertical-scroll max-height-75">
             <b-col>
               <header-list :blog-headers="blogHeaders" @selected="selected"></header-list>
             </b-col>
           </b-row>
-        </b-col>
-        <b-col md="9">
-          <router-view/>
-        </b-col>
-      </b-row>
-    </div>
+        </v-loading>
+        <b-row>
+          <b-col><label></label></b-col>
+        </b-row>
+      </b-col>
+      <b-col md="9">
+        <b-row>
+          <b-col>
+            <b-row>
+              <v-button v-if="notModifying" @click="$router.push({name:'new-entry'})">New</v-button>
+            </b-row>
+          </b-col>
+        </b-row>
+        <br>
+        <b-row>
+          <b-col>
+            <router-view/>
+          </b-col>
+        </b-row>
+      </b-col>
+    </b-row>
   </div>
 </template>
 <script lang="ts">
@@ -34,13 +43,15 @@
     import VButton from "@/components/VButton.vue"
     import HeaderList from "@/blogs/HeaderList.vue"
     import {BlogHeader} from "../blogs/api"
-    import {User} from "../users/api"
+    import {User} from "@/users/api"
+    import VLoading from "@/components/VLoading.vue"
 
     const STATE_LOADING = "LOADING"
     const STATE_LOADED = "LOADED"
 
     @Component({
         components: {
+            VLoading,
             VButton,
             HeaderList,
         }
@@ -71,10 +82,15 @@
         }
 
         selected(blogHeader: BlogHeader) {
-            this.$router.push({ name: "draft", params: { id: `${blogHeader.id}` }})
+            this.$router.push({name: "draft", params: {id: `${blogHeader.id}`}})
         }
     }
 </script>
 
 <style lang="scss" src="@/gonzo_style.scss">
+
+  .max-height-75 {
+    height: 200px !important;
+  }
+
 </style>
