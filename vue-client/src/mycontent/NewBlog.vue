@@ -34,9 +34,10 @@
                 this.title,
                 this.content,
                 userID
-            )).then(
-
-            )
+            )).then(blogDraft => {
+                console.log(blogDraft)
+                this.$router.push({name: "draft", params: {id: blogDraft.id}})
+            })
         }
 
     }

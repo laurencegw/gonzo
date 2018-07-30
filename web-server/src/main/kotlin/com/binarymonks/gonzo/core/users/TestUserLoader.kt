@@ -2,7 +2,9 @@ package com.binarymonks.gonzo.core.users
 
 import com.binarymonks.gonzo.core.blog.api.BlogDraftEntryNew
 import com.binarymonks.gonzo.core.blog.service.BlogService
+import com.binarymonks.gonzo.core.users.api.Role
 import com.binarymonks.gonzo.core.users.api.UserNew
+import com.binarymonks.gonzo.core.users.api.UserRoleUpdate
 import com.binarymonks.gonzo.core.users.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.event.ApplicationStartedEvent
@@ -25,6 +27,7 @@ class TestUserLoader {
                 email = "gonzo@coder.com",
                 password = "password"
         ))
+        userService.setUserRole(UserRoleUpdate(user.id, Role.ADMIN))
         for (i in (0..20)){
             blogService.createBlogEntry(BlogDraftEntryNew(
                     "My Blog $i",

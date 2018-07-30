@@ -45,6 +45,12 @@ const mutations: MutationTree<MyContentState> = {
         Vue.set(state, "blogDraft", cloneDeep(blog))
         Vue.set(state, "modifiedBlogDraft", cloneDeep(blog))
     },
+    addBlogHeader(state: MyContentState, blogHeader: BlogHeader) {
+        state.blogIDs.unshift(blogHeader.id)
+        Vue.set(state, "blogIDs", state.blogIDs)
+        state.blogHeadersByID[blogHeader.id] = blogHeader
+        Vue.set(state, "blogHeadersByID", state.blogHeadersByID)
+    }
 }
 
 const buildActions = function (blogClient: Blogs): ActionTree<MyContentState, any> {
