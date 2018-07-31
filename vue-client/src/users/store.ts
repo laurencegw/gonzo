@@ -60,7 +60,6 @@ const buildActions = function (userClient: Users): ActionTree<UserState, any> {
         login(store: ActionContext<UserState, any>, loginCredentials: LoginCredentials) {
             store.commit("setLoggingIn")
             const loginErrorHandler = function (reason) {
-                console.log(reason)
                 store.commit("setLoginFailed", "Sorry that did not work. Try again.")
             }
             userClient.login(loginCredentials).then((token) => {
@@ -76,7 +75,6 @@ const buildActions = function (userClient: Users): ActionTree<UserState, any> {
         },
         checkLoginState(store: ActionContext<UserState, any>) {
             const token = localStorage.getItem(tokenKey)
-            console.log(`Token was ${token}`)
             if (token === null) {
                 store.commit("setLoggedOut")
                 return Promise.resolve()

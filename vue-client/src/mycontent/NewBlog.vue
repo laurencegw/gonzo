@@ -23,7 +23,7 @@
             VButton
         }
     })
-    export default class NewEntry extends Vue {
+    export default class NewBlog extends Vue {
 
         title = ""
         content = ""
@@ -35,7 +35,6 @@
                 this.content,
                 userID
             )).then(blogDraft => {
-                console.log(blogDraft)
                 this.$router.push({name: "draft", params: {id: blogDraft.id}})
             })
         }

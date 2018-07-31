@@ -70,7 +70,6 @@ const buildActions = function (blogClient: Blogs): ActionTree<MyContentState, an
         },
         loadBlogDraft(store: ActionContext<MyContentState, any>, blogID: number) {
             return blogClient.getBlogDraftByID(blogID).then((blogDraft) => {
-                console.log("loaded blog")
                 store.commit("workOnBlog", blogDraft)
                 return blogDraft
             })

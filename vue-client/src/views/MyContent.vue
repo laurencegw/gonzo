@@ -24,6 +24,7 @@
           <b-col>
             <b-row>
               <v-button v-if="notModifying" @click="$router.push({name:'new-entry'})">New</v-button>
+              <v-button v-if="viewing" @click="$router.push({name:'edit'})">Edit</v-button>
             </b-row>
           </b-col>
         </b-row>
@@ -59,6 +60,7 @@
     export default class MyContent extends Vue {
 
         notModifying = true
+        viewing = false
         state = STATE_LOADING
 
         @Getter user!: User
@@ -66,15 +68,16 @@
         @Action loadDraftHeadersForAuthor
 
         mounted() {
-            this.checkIfCurrentlyModifying()
+            this.checkCurrentActivity()
             this.loadDraftHeadersForAuthor(this.user.id).then(() => {
                 this.state = STATE_LOADED
             })
         }
 
         @Watch("$route")
-        checkIfCurrentlyModifying() {
-            this.notModifying = this.$router.currentRoute.name !== "new-entry"
+        checkCurrentActivity() {
+            this.notModifying = !["new-entry" , "edit"].includes(this.$router.currentRoute.name as string)
+            this.viewing = this.$router.currentRoute.name === "draft"
         }
 
         get isLoading() {

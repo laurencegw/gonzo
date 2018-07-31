@@ -71,7 +71,6 @@ import {LoginState} from "../users/store";
         @Action("login") loginAction
 
         mounted() {
-            console.log("clearing errors")
             this.clearErrors()
         }
 

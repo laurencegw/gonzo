@@ -26,7 +26,6 @@
 
 
         dropDownClicked() {
-            console.log("dropdown clicked")
             this.showDropDown = !this.showDropDown
         }
 

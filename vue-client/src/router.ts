@@ -8,6 +8,7 @@ import MyContent from "@/views/MyContent.vue"
 import Login from "@/views/Login.vue"
 import NewBlog from "@/mycontent/NewBlog.vue"
 import ExistingBlog from "@/mycontent/ExistingBlog.vue"
+import EditBlog from "@/mycontent/EditBlog.vue"
 import store from "@/store"
 import {LoginState} from "@/users/store"
 
@@ -65,6 +66,11 @@ export default new Router({
                     path: "draft/:id",
                     name: "draft",
                     component: ExistingBlog,
+                },
+                {
+                    path: "edit/:id",
+                    name: "edit",
+                    component: EditBlog,
                 },
             ]
         },
