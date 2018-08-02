@@ -3,13 +3,13 @@
     <b-container fluid>
       <b-row>
         <b-col md="1"><label for="title-input">Title:</label></b-col>
-        <b-col md="9"><input :value="title" id="title-input" type="text" @change="change"></b-col>
+        <b-col md="9"><v-input :value="title" id="title-input" name="title" type="text" @keypress="change"></v-input></b-col>
         <b-col md="2">
           <v-button @click="save()">Save</v-button>
         </b-col>
       </b-row>
       <br>
-      <b-row><textarea :value="content" @change="change" rows="15" cols="80"></textarea></b-row>
+      <b-row><textarea :value="content" @keypress="change" rows="15" cols="80"></textarea></b-row>
     </b-container>
   </v-loading>
 
@@ -21,17 +21,19 @@
     import VButton from "@/components/VButton.vue"
     import {BlogDraft} from "@/blogs/api"
     import VLoading from "@/components/VLoading.vue"
+    import VInput from "@/components/VInput.vue"
 
     @Component({
         components: {
             VButton,
-            VLoading
+            VLoading,
+            VInput
         }
     })
     export default class EditBlog extends Vue {
         loaded = false
 
-        @Getter blogDraft?: BlogDraft
+        @Getter modifiedBlogDraft?: BlogDraft
         @Action loadBlogDraft
 
         mounted() {
@@ -52,15 +54,15 @@
         }
 
         get title(): string {
-            return this.blogDraft ? this.blogDraft.title : ""
+            return this.modifiedBlogDraft ? this.modifiedBlogDraft.title : ""
         }
 
         get content(): string {
-            return this.blogDraft ? this.blogDraft.content : ""
+            return this.modifiedBlogDraft ? this.modifiedBlogDraft.content : ""
         }
 
-        change(target: { name: string, value: any }) {
-            console.log(target)
+        change(event) {
+            console.log(event)
         }
 
         save() {
