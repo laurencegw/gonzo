@@ -3,13 +3,21 @@
     <b-container fluid>
       <b-row>
         <b-col md="1"><label for="title-input">Title:</label></b-col>
-        <b-col md="9"><v-input :value="title" id="title-input" name="title" type="text" @keypress="change"></v-input></b-col>
+        <b-col md="9">
+          <v-input
+              :value="title"
+              id="title-input"
+              attribute-name="title"
+              type="text"
+              @keyup="attributeChange"
+          ></v-input>
+        </b-col>
         <b-col md="2">
           <v-button @click="save()">Save</v-button>
         </b-col>
       </b-row>
       <br>
-      <b-row><textarea :value="content" @keypress="change" rows="15" cols="80"></textarea></b-row>
+      <b-row><textarea :value="content" @keyup="attributeChange" rows="15" cols="80"></textarea></b-row>
     </b-container>
   </v-loading>
 
@@ -35,6 +43,7 @@
 
         @Getter modifiedBlogDraft?: BlogDraft
         @Action loadBlogDraft
+        @Action updateBlogDraftAttribute
 
         mounted() {
             this.loaded = false
@@ -61,8 +70,8 @@
             return this.modifiedBlogDraft ? this.modifiedBlogDraft.content : ""
         }
 
-        change(event) {
-            console.log(event)
+        attributeChange(change: { attributeName: string, value: any }) {
+            this.updateBlogDraftAttribute(change)
         }
 
         save() {

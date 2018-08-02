@@ -51,8 +51,8 @@ const mutations: MutationTree<MyContentState> = {
         state.blogHeadersByID[blogHeader.id] = blogHeader
         Vue.set(state, "blogHeadersByID", state.blogHeadersByID)
     },
-    updateBlogDraftAttribute(state: MyContentState, payload: { name: string, value: any }) {
-        console.log(`Updating name: ${payload.name} and value ${payload.value}`)
+    updateBlogDraftAttribute(state: MyContentState, payload: { attributeName: string, value: any }) {
+        Vue.set(state.modifiedBlogDraft!, payload.attributeName, payload.value)
     }
 }
 
@@ -77,7 +77,7 @@ const buildActions = function (blogClient: Blogs): ActionTree<MyContentState, an
                 return blogDraft
             })
         },
-        updateBlogDraftAttribute(store: ActionContext<MyContentState, any>, payload: { name: string, value: any }) {
+        updateBlogDraftAttribute(store: ActionContext<MyContentState, any>, payload: { attributeName: string, value: any }) {
             store.commit("updateBlogDraftAttribute", payload)
         }
     }
