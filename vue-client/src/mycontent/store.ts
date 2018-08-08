@@ -81,7 +81,10 @@ const buildActions = function (blogClient: Blogs): ActionTree<MyContentState, an
             store.commit("updateBlogDraftAttribute", payload)
         },
         saveBlogDraft(store: ActionContext<MyContentState, any>) {
-            return blogClient.updateBlogDraft(store.getters.modifiedBlogDraft)
+            return blogClient.updateBlogDraft(store.getters.modifiedBlogDraft).then((blogDraft) => {
+                store.commit("workOnBlog", blogDraft)
+                return blogDraft
+            })
         }
     }
     return actions

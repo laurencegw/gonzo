@@ -7,9 +7,8 @@ import {getToken} from "@/common/token"
 export class BlogsClient implements Blogs {
     private blogsBasePath = "api/blogs"
     private usersBasePath = "api/users"
-    private
 
-    private headers(token: string): any {
+    private headers(token: string | String): any {
         return {Authorization: `Bearer ${token}`}
     }
 
@@ -26,44 +25,38 @@ export class BlogsClient implements Blogs {
     }
 
     getBlogDraftByID(blogID: number): Promise<BlogDraft> {
-        const token = localStorage.getItem(this.tokenKey)
-        if (token === null) {
-            return Promise.reject(new Error("Not logged in"))
-        }
-        return new Promise<BlogDraft>((resolve, reject) => {
-            axios.get<BlogDraft>(`${this.blogsBasePath}/${blogID}/draft`, {
+        return getToken().then((token) => {
+            return axios.get<BlogDraft>(`${this.blogsBasePath}/${blogID}/draft`, {
                 headers: this.headers(token),
                 responseType: "json"
-            }).then((response) => {
-                    resolve(new BlogDraft(response.data))
-                }
-            ).catch((rejection) => {
-                reject(rejection)
             })
+        }).then((response) => {
+            return new BlogDraft(response.data)
         })
     }
 
     getBlogDraftHeaders(authorID: number): Promise<Array<BlogHeader>> {
-        const token = localStorage.getItem(this.tokenKey)
-        if (token === null) {
-            return Promise.reject(new Error("Not logged in"))
-        }
-        return new Promise<Array<BlogHeader>>((resolve, reject) => {
-            axios.get<Array<any>>(`${this.usersBasePath}/${authorID}/drafts`, {
+        return getToken().then((token) => {
+            return axios.get<Array<any>>(`${this.usersBasePath}/${authorID}/drafts`, {
                 headers: this.headers(token),
                 responseType: "json"
-            }).then((response) => {
-                    const blogHeaders: Array<any> = response.data
-                    resolve(blogHeaders.map((blogHeaderObj) => new BlogHeader(blogHeaderObj)))
-                }
-            ).catch((rejection) => {
-                reject(rejection)
             })
+        }).then((response) => {
+            const blogHeaders: Array<any> = response.data
+            return blogHeaders.map((blogHeaderObj) => new BlogHeader(blogHeaderObj))
         })
     }
 
     updateBlogDraft(blogDraftUpdate: BlogDraftUpdate): Promise<BlogDraft> {
-        throw Error("Not Implemented")
+        return getToken().then((token) => {
+            return axios.put<string>(`${this.blogsBasePath}/${blogDraftUpdate.id}/`, blogDraftUpdate, {
+                headers: this.headers(token),
+                responseType: "json"
+            })
+        }).then((response) => {
+                return new BlogDraft(response.data)
+            }
+        )
     }
 }
 
