@@ -54,6 +54,7 @@
         @Getter modifiedBlogDraft?: BlogDraft
         @Action loadBlogDraft
         @Action updateBlogDraftAttribute
+        @Action saveBlogDraft
 
         mounted() {
             this.loaded = false
@@ -85,7 +86,7 @@
         }
 
         save() {
-            console.log("Saved")
+            this.saveBlogDraft()
         }
 
     }

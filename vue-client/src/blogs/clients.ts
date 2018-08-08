@@ -1,33 +1,28 @@
 import {BlogDraft, BlogDraftNew, BlogDraftUpdate, BlogHeader, Blogs} from "@/blogs/api"
 import {UserPublicHeader} from "@/users/api"
 import axios from "axios"
+import {getToken} from "@/common/token"
 
 
 export class BlogsClient implements Blogs {
     private blogsBasePath = "api/blogs"
     private usersBasePath = "api/users"
-    private tokenKey = "userToken"
+    private
 
     private headers(token: string): any {
         return {Authorization: `Bearer ${token}`}
     }
 
     createBlogDraft(blogDraftNew: BlogDraftNew): Promise<BlogDraft> {
-        const token = localStorage.getItem(this.tokenKey)
-        if (token === null) {
-            return Promise.reject(new Error("Not logged in"))
-        }
-        return new Promise<BlogDraft>((resolve, reject) => {
-            axios.post<string>(this.blogsBasePath, blogDraftNew, {
+        return getToken().then((token) => {
+            return axios.post<string>(this.blogsBasePath, blogDraftNew, {
                 headers: this.headers(token),
                 responseType: "json"
-            }).then((response) => {
-                    resolve(new BlogDraft(response.data))
-                }
-            ).catch((rejection) => {
-                reject(rejection)
             })
-        })
+        }).then((response) => {
+                return new BlogDraft(response.data)
+            }
+        )
     }
 
     getBlogDraftByID(blogID: number): Promise<BlogDraft> {

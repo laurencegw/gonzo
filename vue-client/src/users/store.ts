@@ -2,8 +2,9 @@ import {LoginCredentials, User, Users} from "@/users/api"
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex"
 import {cloneDeep} from "lodash"
 import Vue from "vue"
-import {UsersClient, UsersClientFake} from "@/users/client"
+import {UsersClient} from "@/users/client"
 import {isDev} from "@/utils"
+import {TOKEN_KEY} from "@/common/token"
 
 export enum LoginState {
     UNKNOWN,
@@ -55,7 +56,6 @@ const mutations: MutationTree<UserState> = {
 }
 
 const buildActions = function (userClient: Users): ActionTree<UserState, any> {
-    const tokenKey = "userToken"
     const actions: ActionTree<UserState, any> = {
         login(store: ActionContext<UserState, any>, loginCredentials: LoginCredentials) {
             store.commit("setLoggingIn")
@@ -63,7 +63,7 @@ const buildActions = function (userClient: Users): ActionTree<UserState, any> {
                 store.commit("setLoginFailed", "Sorry that did not work. Try again.")
             }
             userClient.login(loginCredentials).then((token) => {
-                localStorage.setItem(tokenKey, token)
+                localStorage.setItem(TOKEN_KEY, token)
                 userClient.getUserFromToken(token).then((user) => {
                     store.commit("setLoggedInUser", user)
                 }).catch((reason) => {
@@ -74,7 +74,7 @@ const buildActions = function (userClient: Users): ActionTree<UserState, any> {
             })
         },
         checkLoginState(store: ActionContext<UserState, any>) {
-            const token = localStorage.getItem(tokenKey)
+            const token = localStorage.getItem(TOKEN_KEY)
             if (token === null) {
                 store.commit("setLoggedOut")
                 return Promise.resolve()
@@ -82,13 +82,13 @@ const buildActions = function (userClient: Users): ActionTree<UserState, any> {
                 return userClient.getUserFromToken(token).then((user) => {
                     store.commit("setLoggedInUser", user)
                 }).catch((reason) => {
-                    localStorage.removeItem(tokenKey)
+                    localStorage.removeItem(TOKEN_KEY)
                     store.commit("setLoggedOut")
                 })
             }
         },
         logout(store: ActionContext<UserState, any>) {
-            localStorage.removeItem(tokenKey)
+            localStorage.removeItem(TOKEN_KEY)
             store.commit("setLoggedOut")
         }
     }
