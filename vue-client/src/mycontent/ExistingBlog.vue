@@ -42,12 +42,12 @@
             this.load()
         }
 
-        load(){
+        load() {
             this.loaded = false
             const blogID = Number(this.$route.params.id)
             this.loadBlogDraft(blogID).then((blogDraft) => {
                 this.loaded = true
-                if (!this.blogDraft.published) {
+                if (!this.blogDraft!.published) {
                     this.showDraft = true
                 }
             })
@@ -81,7 +81,7 @@
         }
 
         get unpublishedChanges(): Boolean {
-            return this.status === "Unpublished Changes"
+            return this.status === "Changes"
         }
 
     }

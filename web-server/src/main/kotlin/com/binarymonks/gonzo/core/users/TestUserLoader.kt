@@ -31,7 +31,14 @@ class TestUserLoader {
 
         blogService.createBlogEntry(BlogDraftEntryNew(
                 "Never published",
-                "This blog is only in draft state - no published content",
+                "## Markdown is supported\n" +
+                        "This **blog** is only in draft state - no published content\n" +
+                        "\n" +
+                        "Still working on this draft\n" +
+                        "\n" +
+                        "![vegeta](https://vignette.wikia.nocookie.net/dbz-dokkanbattle/images/9/95/Artwork_1012640.png/revision/latest/scale-to-width-down/250?cb=20180325041540)\n" +
+                        "\n" +
+                        "<h2>And so are html tags </h2>",
                 user.id
         ))
 
