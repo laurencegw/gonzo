@@ -3,7 +3,7 @@
         <v-loading :is-loading="!loaded">
             <b-row>
                 <b-col md="2">{{status}}</b-col>
-                <b-col v-if="isPublished" md="1"><input type="checkbox" v-model="showDraft"></b-col>
+                <b-col v-if="unpublishedChanges" md="1"><input type="checkbox" v-model="showDraft"></b-col>
             </b-row>
             <b-row>
                 <b-col>
@@ -34,19 +34,22 @@
         @Action loadBlogDraft
 
         mounted() {
-            this.loaded = false
-            const blogID = Number(this.$route.params.id)
-            this.loadBlogDraft(blogID).then((blogDraft) => {
-                this.loaded = true
-            })
+            this.load()
         }
 
         @Watch("$route")
         routeChanged() {
+            this.load()
+        }
+
+        load(){
             this.loaded = false
             const blogID = Number(this.$route.params.id)
             this.loadBlogDraft(blogID).then((blogDraft) => {
                 this.loaded = true
+                if (!this.blogDraft.published) {
+                    this.showDraft = true
+                }
             })
         }
 
@@ -67,7 +70,7 @@
         get status(): string {
             if (this.blogDraft) {
                 if (this.blogDraft.published && this.blogDraft.unpublishedChanges) {
-                    return "Unpublished Changes"
+                    return "Changes"
                 }
                 if (!this.blogDraft.unpublishedChanges) {
                     return "Published"
@@ -77,8 +80,8 @@
             return "Unknown"
         }
 
-        get isPublished(): Boolean {
-            return this.blogDraft ? this.blogDraft.published : false
+        get unpublishedChanges(): Boolean {
+            return this.status === "Unpublished Changes"
         }
 
     }
