@@ -2,7 +2,8 @@
     <div>
         <v-loading :is-loading="!loaded">
             <b-row>
-                <b-col>{{status}}</b-col>
+                <b-col md="2">{{status}}</b-col>
+                <b-col v-if="isPublished" md="1"><input type="checkbox" v-model="showDraft"></b-col>
             </b-row>
             <b-row>
                 <b-col>
@@ -26,8 +27,10 @@
     })
     export default class ExistingBlog extends Vue {
         loaded = false
+        showDraft = true
 
         @Getter blogDraft?: BlogDraft
+        @Getter publishedBlog?: Blog
         @Action loadBlogDraft
 
         mounted() {
@@ -48,11 +51,17 @@
         }
 
         get title(): string {
-            return this.blogDraft ? this.blogDraft.title : ""
+            if (this.showDraft) {
+                return this.blogDraft ? this.blogDraft.title : ""
+            }
+            return this.publishedBlog ? this.publishedBlog.title : ""
         }
 
         get content(): string {
-            return this.blogDraft ? this.blogDraft.content : ""
+            if (this.showDraft) {
+                return this.blogDraft ? this.blogDraft.content : ""
+            }
+            return this.publishedBlog ? this.publishedBlog.content : ""
         }
 
         get status(): string {
@@ -66,6 +75,10 @@
                 return "Draft"
             }
             return "Unknown"
+        }
+
+        get isPublished(): Boolean {
+            return this.blogDraft ? this.blogDraft.published : false
         }
 
     }

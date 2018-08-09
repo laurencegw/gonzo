@@ -1,4 +1,4 @@
-import {BlogDraft, BlogDraftNew, BlogDraftUpdate, BlogHeader, Blogs} from "@/blogs/api"
+import {Blog, BlogDraft, BlogDraftNew, BlogDraftUpdate, BlogHeader, Blogs} from "@/blogs/api"
 import {UserPublicHeader} from "@/users/api"
 import axios from "axios"
 import {getToken} from "@/common/token"
@@ -32,6 +32,17 @@ export class BlogsClient implements Blogs {
             })
         }).then((response) => {
             return new BlogDraft(response.data)
+        })
+    }
+
+    getBlogByID(blogID: number): Promise<Blog> {
+        return getToken().then((token) => {
+            return axios.get<Blog>(`${this.blogsBasePath}/${blogID}`, {
+                headers: this.headers(token),
+                responseType: "json"
+            })
+        }).then((response) => {
+            return new Blog(response.data)
         })
     }
 
@@ -89,6 +100,10 @@ export class BlogsClientFake implements Blogs {
     }
 
     updateBlogDraft(blogDraftUpdate: BlogDraftUpdate): Promise<BlogDraft> {
+        throw Error("Not Implemented")
+    }
+
+    getBlogByID(blogID: number): Promise<Blog> {
         throw Error("Not Implemented")
     }
 }

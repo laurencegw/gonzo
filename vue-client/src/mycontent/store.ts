@@ -1,4 +1,4 @@
-import {BlogDraft, BlogDraftNew, BlogHeader, Blogs} from "@/blogs/api"
+import {Blog, BlogDraft, BlogDraftNew, BlogHeader, Blogs} from "@/blogs/api"
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex"
 import {cloneDeep} from "lodash"
 import {isDev} from "@/utils"
@@ -8,6 +8,7 @@ import Vue from "vue"
 class MyContentState {
     blogHeadersByID: { [id: number]: BlogHeader } = {}
     blogIDs: Array<number> = []
+    publishedBlog?: Blog
     blogDraft?: BlogDraft
     modifiedBlogDraft?: BlogDraft
 }
@@ -27,6 +28,9 @@ const getters: GetterTree<MyContentState, any> = {
     },
     modifiedBlogDraft(state: MyContentState): BlogDraft | undefined {
         return cloneDeep(state.modifiedBlogDraft)
+    },
+    publishedBlog(state: MyContentState): Blog | undefined {
+        return cloneDeep(state.publishedBlog)
     }
 }
 
@@ -44,6 +48,9 @@ const mutations: MutationTree<MyContentState> = {
     workOnBlog(state: MyContentState, blog: BlogDraft) {
         Vue.set(state, "blogDraft", cloneDeep(blog))
         Vue.set(state, "modifiedBlogDraft", cloneDeep(blog))
+    },
+    setPublishedBlog(state: MyContentState, blog: Blog) {
+        Vue.set(state, "publishedBlog", blog)
     },
     addBlogHeader(state: MyContentState, blogHeader: BlogHeader) {
         state.blogIDs.unshift(blogHeader.id)
@@ -74,7 +81,13 @@ const buildActions = function (blogClient: Blogs): ActionTree<MyContentState, an
         loadBlogDraft(store: ActionContext<MyContentState, any>, blogID: number) {
             return blogClient.getBlogDraftByID(blogID).then((blogDraft) => {
                 store.commit("workOnBlog", blogDraft)
-                return blogDraft
+                if (blogDraft.published) {
+                    return blogClient.getBlogByID(blogID).then((blog) => {
+                        store.commit("setPublishedBlog", blog)
+                    })
+                } else {
+                    store.commit("setPublishedBlog", null)
+                }
             })
         },
         updateBlogDraftAttribute(store: ActionContext<MyContentState, any>, payload: { attributeName: string, value: any }) {

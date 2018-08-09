@@ -53,13 +53,13 @@ export class Blog {
     lastEdited: Date
     publishedOn: Date
 
-    constructor(id: number, title: string, content: string, author: UserPublicHeader, lastEdited: Date, publishedOn: Date) {
-        this.id = id
-        this.title = title
-        this.content = content
-        this.author = author
-        this.lastEdited = lastEdited
-        this.publishedOn = publishedOn
+    constructor(obj: any) {
+        this.id = obj.id
+        this.title = obj.title
+        this.content = obj.content
+        this.author = obj.author
+        this.lastEdited = obj.lastEdited
+        this.publishedOn = obj.publishedOn
     }
 }
 
@@ -101,5 +101,7 @@ export interface Blogs {
     getBlogDraftHeaders(authorID: number): Promise<Array<BlogHeader>>
 
     getBlogDraftByID(blogID: number): Promise<BlogDraft>
+
+    getBlogByID(blogID: number): Promise<Blog>
 }
 
