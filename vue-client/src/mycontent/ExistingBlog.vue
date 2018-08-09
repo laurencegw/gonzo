@@ -1,9 +1,16 @@
 <template>
-  <div>
-    <v-loading :is-loading="!loaded">
-      <blog :title="title" :content="content"></blog>
-    </v-loading>
-  </div>
+    <div>
+        <v-loading :is-loading="!loaded">
+            <b-row>
+                <b-col>{{status}}</b-col>
+            </b-row>
+            <b-row>
+                <b-col>
+                    <blog :title="title" :content="content"></blog>
+                </b-col>
+            </b-row>
+        </v-loading>
+    </div>
 </template>
 
 <script lang="ts">
@@ -46,6 +53,19 @@
 
         get content(): string {
             return this.blogDraft ? this.blogDraft.content : ""
+        }
+
+        get status(): string {
+            if (this.blogDraft) {
+                if (this.blogDraft.published && this.blogDraft.unpublishedChanges) {
+                    return "Unpublished Changes"
+                }
+                if (!this.blogDraft.unpublishedChanges) {
+                    return "Published"
+                }
+                return "Draft"
+            }
+            return "Unknown"
         }
 
     }

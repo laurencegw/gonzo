@@ -28,13 +28,37 @@ class TestUserLoader {
                 password = "password"
         ))
         userService.setUserRole(UserRoleUpdate(user.id, Role.ADMIN))
-        for (i in (0..20)){
-            blogService.createBlogEntry(BlogDraftEntryNew(
-                    "My Blog $i",
-                    "This is the content for blog number $i",
-                    user.id
-            ))
-        }
+
+        blogService.createBlogEntry(BlogDraftEntryNew(
+                "Never published",
+                "This blog is only in draft state - no published content",
+                user.id
+        ))
+
+        var blog = blogService.createBlogEntry(BlogDraftEntryNew(
+                "Published, No Changes",
+                "This blog is published and no current changes",
+                user.id
+        ))
+        blogService.publishBlogEntry(blog.id)
+
+        blog = blogService.createBlogEntry(BlogDraftEntryNew(
+                "Published, Unpublished Changes",
+                "This is content that has been published",
+                user.id
+        ))
+        blogService.publishBlogEntry(blog.id)
+        blogService.updateBlogEntry(blog.toUpdate().copy(
+                content = "This is content that has not been published"
+        ))
+
+//        for (i in (0..5)){
+//            blogService.createBlogEntry(BlogDraftEntryNew(
+//                    "My Blog $i",
+//                    "This is the content for blog number $i",
+//                    user.id
+//            ))
+//        }
 
     }
 }
