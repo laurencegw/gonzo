@@ -31,7 +31,9 @@ class BlogAuthService(
     }
 
     override fun deleteBlogEntry(credentials: Credentials, blogID: Long) {
-
+        val blogToDelete = blogService.getBlogEntryDraftByID(blogID)
+        checkAuth(credentials, Actions.DELETE, blogToDelete.attributes())
+        blogService.deleteBlogEntry(blogID)
     }
 
     override fun getBlogEntryDraftByID(credentials: Credentials, blogID: Long): BlogEntryDraft {

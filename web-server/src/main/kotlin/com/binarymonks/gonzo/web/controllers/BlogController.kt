@@ -23,6 +23,11 @@ class BlogController {
         return blogService.updateBlogEntry(getCredentials(), updateWithPathID)
     }
 
+    @DeleteMapping("${Routes.BLOGS}/{id}")
+    fun deleteBlogEntry(@PathVariable id: Long) {
+        return blogService.deleteBlogEntry(getCredentials(), id)
+    }
+
     @PutMapping("${Routes.BLOGS}/{id}/publish")
     fun publishBlog(@PathVariable id: Long) {
         return blogService.publishBlogEntry(getCredentials(), id)

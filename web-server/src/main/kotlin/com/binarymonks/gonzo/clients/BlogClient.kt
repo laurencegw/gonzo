@@ -35,7 +35,12 @@ class BlogClient(baseURL: String) : Blog, AuthClient(baseURL) {
     }
 
     override fun deleteBlogEntry(blogID: Long) {
-
+        restTemplate.exchange(
+                "$baseURL/${Routes.blogEntry(blogID)}",
+                HttpMethod.DELETE,
+                HttpEntity(null,createHeaders()),
+                String::class.java
+        )
     }
 
     override fun getBlogEntryDraftByID(blogID: Long): BlogEntryDraft {

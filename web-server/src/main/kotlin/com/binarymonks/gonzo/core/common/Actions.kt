@@ -6,5 +6,6 @@ class Actions {
         const val CREATE = "CREATE"
         const val MODIFY = "MODIFY"
         const val READ = "READ"
+        const val DELETE = "DELETE"
     }
 }

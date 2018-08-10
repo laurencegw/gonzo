@@ -45,11 +45,11 @@ val BLOG_POLICIES = listOf(
             subject("id").equalTo().resource("authorID")
             action().equalTo().value(Actions.CREATE)
         },
-        // READ MODIFY OWN DRAFT
+        // READ MODIFY DELETE OWN DRAFT
         allOf {
             resource("type").equalTo().value(Types.BLOG_DRAFT)
             subject("id").equalTo().resource("authorID")
-            action().isIn().value(listOf(Actions.MODIFY, Actions.READ))
+            action().isIn().value(listOf(Actions.MODIFY, Actions.READ, Actions.DELETE))
         }
 )
 

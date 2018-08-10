@@ -131,7 +131,7 @@ class BlogAPITest {
     }
 
     @TestFactory
-    fun updatePublishAndReadBlogDraft_whenItIsYourOwn(): List<DynamicTest> {
+    fun updatePublishReadDeleteBlogDraft_whenItIsYourOwn(): List<DynamicTest> {
         return listOf(
                 arrayOf("Reader can update own blog", Role.READER),
                 arrayOf("Author can update own blog", Role.AUTHOR),
@@ -153,6 +153,7 @@ class BlogAPITest {
                 blogClient.publishBlogEntry(myBlog.id)
                 blogClient.getBlogEntryDraftByID(myBlog.id)
                 blogClient.getBlogEntryDraftHeaders(user.id)
+                blogClient.deleteBlogEntry(myBlog.id)
             }
         }.toList()
     }
