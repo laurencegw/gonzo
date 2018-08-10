@@ -30,6 +30,10 @@ class BlogAuthService(
         return blogService.updateBlogEntry(update)
     }
 
+    override fun deleteBlogEntry(credentials: Credentials, blogID: Long) {
+
+    }
+
     override fun getBlogEntryDraftByID(credentials: Credentials, blogID: Long): BlogEntryDraft {
         val blogDraft = blogService.getBlogEntryDraftByID(blogID)
         checkAuth(credentials, Actions.READ, blogDraft.attributes())
@@ -44,22 +48,22 @@ class BlogAuthService(
 
     override fun getBlogEntryById(credentials: Credentials, id: Long): BlogEntry {
         val blog = blogService.getBlogEntryById(id)
-        checkAuth(credentials,Actions.READ, blog.attributes())
+        checkAuth(credentials, Actions.READ, blog.attributes())
         return blog
     }
 
     override fun getBlogEntryHeaders(credentials: Credentials): List<BlogEntryHeader> {
-        checkAuth(credentials,Actions.READ, mapOf(Pair("type", Types.BLOG)))
+        checkAuth(credentials, Actions.READ, mapOf(Pair("type", Types.BLOG)))
         return blogService.getBlogEntryHeaders()
     }
 
     override fun getBlogEntryHeadersByAuthor(credentials: Credentials, authorID: Long): List<BlogEntryHeader> {
-        checkAuth(credentials,Actions.READ, mapOf(Pair("type", Types.BLOG), Pair("authorID",authorID)))
+        checkAuth(credentials, Actions.READ, mapOf(Pair("type", Types.BLOG), Pair("authorID", authorID)))
         return blogService.getBlogEntryHeadersByAuthor(authorID)
     }
 
     override fun getBlogEntryDraftHeaders(credentials: Credentials, authorID: Long): List<BlogEntryHeader> {
-        checkAuth(credentials,Actions.READ, mapOf(Pair("type", Types.BLOG_DRAFT), Pair("authorID",authorID)))
+        checkAuth(credentials, Actions.READ, mapOf(Pair("type", Types.BLOG_DRAFT), Pair("authorID", authorID)))
         return blogService.getBlogEntryDraftHeaders(authorID)
     }
 }

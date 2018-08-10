@@ -44,6 +44,10 @@ class BlogService(
         return blogRepo.save(entry).toBlogEntryDraft()
     }
 
+    override fun deleteBlogEntry(blogID: Long){
+        blogRepo.deleteById(blogID)
+    }
+
     override fun getBlogEntryDraftByID(blogID: Long) = blogRepo.findById(blogID).get().toBlogEntryDraft()
 
     override fun getBlogEntryDraftHeaders(authorID: Long): List<BlogEntryHeader> {

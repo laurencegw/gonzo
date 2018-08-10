@@ -94,9 +94,9 @@ class BlogServiceTest {
 
         val created = blogService.createBlogEntry(newBlogEntry)
 
-        Assertions.assertThrows(NotFound::class.java, {
+        Assertions.assertThrows(NotFound::class.java) {
             blogService.getBlogEntryById(created.id)
-        })
+        }
     }
 
     @Test
@@ -253,7 +253,7 @@ class BlogServiceTest {
     }
 
     @Test
-    fun publishBlogEntry_withChanges_AlreadyPublished(){
+    fun publishBlogEntry_withChanges_AlreadyPublished() {
         val createdTime = itIsNow()
 
         val newBlogEntry = BlogDraftEntryNew(
@@ -392,6 +392,22 @@ class BlogServiceTest {
         }
     }
 
+    @Test
+    fun deleteBlogEntry_alreadyPublished(){
+        val newBlogEntry = BlogDraftEntryNew(
+                title = "Some Blog Entry",
+                content = "A bit of content",
+                authorID = user.id
+        )
+        val createdDraft = blogService.createBlogEntry(newBlogEntry)
+        blogService.publishBlogEntry(createdDraft.id)
+
+        blogService.deleteBlogEntry(createdDraft.id)
+
+        Assertions.assertThrows(NoSuchElementException::class.java) {
+            blogService.getBlogEntryDraftByID(createdDraft.id)
+        }
+    }
 
 
     /**

@@ -54,6 +54,9 @@ data class BlogEntryDraftEntity(
         @Column(nullable = false)
         var updated: ZonedDateTime? = null,
 
+        @Column(nullable = true)
+        var deleted: ZonedDateTime? = null,
+
         @OneToOne(cascade = [CascadeType.ALL])
         @JoinColumn(name="BlogEntryPublishedID")
         var publishedBlog: BlogEntryPublished? = null,

@@ -21,6 +21,11 @@ interface Blog {
     fun updateBlogEntry(update: BlogDraftEntryUpdate): BlogEntryDraft
 
     /**
+     * Permanently delete a blog (published or unpublished)
+     */
+    fun deleteBlogEntry(blogID: Long)
+
+    /**
      * Retrieves the draft state of a blog.
      */
     fun getBlogEntryDraftByID(blogID: Long): BlogEntryDraft
@@ -59,6 +64,8 @@ interface BlogAuth {
     fun createBlogEntry(credentials: Credentials, blogEntryNew: BlogDraftEntryNew): BlogEntryDraft
 
     fun updateBlogEntry(credentials: Credentials, update: BlogDraftEntryUpdate): BlogEntryDraft
+
+    fun deleteBlogEntry(credentials: Credentials, blogID: Long)
 
     fun getBlogEntryDraftByID(credentials: Credentials, blogID: Long): BlogEntryDraft
 

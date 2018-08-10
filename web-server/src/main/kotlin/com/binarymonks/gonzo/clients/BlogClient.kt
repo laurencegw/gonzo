@@ -34,6 +34,10 @@ class BlogClient(baseURL: String) : Blog, AuthClient(baseURL) {
         )
     }
 
+    override fun deleteBlogEntry(blogID: Long) {
+
+    }
+
     override fun getBlogEntryDraftByID(blogID: Long): BlogEntryDraft {
         val response =  restTemplate.exchange(
                 "$baseURL/${Routes.blogDraft(blogID)}",

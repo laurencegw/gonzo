@@ -158,7 +158,7 @@ class BlogAPITest {
     }
 
     @TestFactory
-    fun updatePublishAndReadSomeoneElsesBlogDraft(): List<DynamicTest> {
+    fun update_Publish_Read_Delete_SomeoneElsesBlogDraft(): List<DynamicTest> {
         return listOf(
                 arrayOf("Reader cannot update someone else's blog", Role.READER),
                 arrayOf("Author cannot update someone else's blog", Role.AUTHOR),
@@ -181,6 +181,9 @@ class BlogAPITest {
                 blogService.publishBlogEntry(someOneElseBlog.id)
 
                 val update = blogEntryUpdate().copy(id = someOneElseBlog.id)
+                Assertions.assertThrows(NotAuthorized::class.java) {
+                    blogClient.deleteBlogEntry(someOneElseBlog.id)
+                }
                 Assertions.assertThrows(NotAuthorized::class.java) {
                     blogClient.updateBlogEntry(update)
                 }
