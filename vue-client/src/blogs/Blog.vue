@@ -5,7 +5,7 @@
         </b-row>
         <b-row>
             <b-col>
-                <vue-markdown>{{content}}</vue-markdown>
+                <vue-markdown :source="content"></vue-markdown>
             </b-col>
         </b-row>
     </div>

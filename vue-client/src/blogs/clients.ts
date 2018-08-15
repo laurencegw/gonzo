@@ -24,6 +24,15 @@ export class BlogsClient implements Blogs {
         )
     }
 
+    deleteBlog(blogID: number): Promise<any> {
+        return getToken().then((token) => {
+            return axios.delete(`${this.blogsBasePath}/${blogID}`, {
+                headers: this.headers(token),
+                responseType: "json"
+            })
+        })
+    }
+
     getBlogDraftByID(blogID: number): Promise<BlogDraft> {
         return getToken().then((token) => {
             return axios.get<BlogDraft>(`${this.blogsBasePath}/${blogID}/draft`, {
@@ -89,6 +98,10 @@ export class BlogsClientFake implements Blogs {
             created: new Date(),
             updated: new Date()
         }))
+    }
+
+    deleteBlog(blogID: number): Promise<any> {
+        throw Error("Not Implemented")
     }
 
     getBlogDraftByID(blogID: number): Promise<BlogDraft> {

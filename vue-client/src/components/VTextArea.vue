@@ -1,9 +1,9 @@
 <template>
   <textarea
-      :value="value"
-      :rows="rows"
-      :cols="cols"
-      @keyup="keyUp"
+          :value="value"
+          :rows="rows"
+          :cols="cols"
+          @keyup="keyUp"
   ></textarea>
 </template>
 
@@ -33,5 +33,5 @@
 </script>
 
 <style scoped lang="scss">
-  @import "@/gonzo_style.scss";
+    @import "@/gonzo_style.scss";
 </style>

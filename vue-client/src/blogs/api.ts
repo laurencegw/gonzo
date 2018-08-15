@@ -96,6 +96,8 @@ export class BlogDraft {
 export interface Blogs {
     createBlogDraft(blogDraftNew: BlogDraftNew): Promise<BlogDraft>
 
+    deleteBlog(blogID: number): Promise<null>
+
     updateBlogDraft(blogDraftUpdate: BlogDraftUpdate): Promise<BlogDraft>
 
     getBlogDraftHeaders(authorID: number): Promise<Array<BlogHeader>>

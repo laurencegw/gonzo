@@ -12,7 +12,7 @@ Vue.use(BootstrapVue)
 Vue.filter("fDate", fDate)
 
 new Vue({
-  router,
-  store,
-  render: (h) => h(App),
+    router,
+    store,
+    render: (h) => h(App),
 }).$mount("#app")

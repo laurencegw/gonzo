@@ -60,6 +60,14 @@ const mutations: MutationTree<MyContentState> = {
     },
     updateBlogDraftAttribute(state: MyContentState, payload: { attributeName: string, value: any }) {
         Vue.set(state.modifiedBlogDraft!, payload.attributeName, payload.value)
+    },
+    deleteBlog(state: MyContentState, blogID) {
+        const currentIDs = state.blogIDs
+        const index = currentIDs.indexOf(blogID)
+        if (index !== -1) {
+            currentIDs.splice(index, 1)
+        }
+        Vue.set(state, "blogIDs", currentIDs)
     }
 }
 
@@ -76,6 +84,13 @@ const buildActions = function (blogClient: Blogs): ActionTree<MyContentState, an
                 store.commit("addBlogHeader", blogDraft.toHeader())
                 store.commit("workOnBlog", blogDraft)
                 return blogDraft
+            })
+        },
+        deleteBlog(store: ActionContext<MyContentState, any>) {
+            const currentBlogID = store.getters.blogDraft.id
+            return blogClient.deleteBlog(currentBlogID).then((blogDraft) => {
+                store.commit("deleteBlog", currentBlogID)
+                store.commit("workOnBlog", null)
             })
         },
         loadBlogDraft(store: ActionContext<MyContentState, any>, blogID: number) {

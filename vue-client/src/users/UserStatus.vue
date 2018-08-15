@@ -1,14 +1,14 @@
 <template>
-  <div>
-    <v-drop-down
-        v-if="isLoggedIn"
-        :header="'@'+user.handle"
-        :dropDownNames="dropDownNames()"
-        :dropDownHandlers="dropDownHandlers()"
-    >{{user.handle}}
-    </v-drop-down>
-    <v-button v-else-if="notOnLoginPage" @click="onLoginClick">login</v-button>
-  </div>
+    <div>
+        <v-drop-down
+                v-if="isLoggedIn"
+                :header="'@'+user.handle"
+                :dropDownNames="dropDownNames()"
+                :dropDownHandlers="dropDownHandlers()"
+        >{{user.handle}}
+        </v-drop-down>
+        <v-button v-else-if="notOnLoginPage" @click="onLoginClick">login</v-button>
+    </div>
 </template>
 
 <script lang="ts">
@@ -58,6 +58,12 @@
             ]
         }
 
+        triggerLogout() {
+            this.logout().then((result) => {
+                this.$router.push({name: "frontpage"})
+            })
+        }
+
         dropDownHandlers(): (() => void)[] {
             return [
                 () => {
@@ -67,7 +73,7 @@
                     this.$router.push({name: "my-content"})
                 },
                 () => {
-                    this.logout()
+                    this.triggerLogout()
                 }
             ]
         }

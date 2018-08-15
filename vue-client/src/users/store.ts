@@ -90,6 +90,7 @@ const buildActions = function (userClient: Users): ActionTree<UserState, any> {
         logout(store: ActionContext<UserState, any>) {
             localStorage.removeItem(TOKEN_KEY)
             store.commit("setLoggedOut")
+            return Promise.resolve(null)
         }
     }
     return actions
