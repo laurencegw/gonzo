@@ -1,5 +1,15 @@
 <template>
-  <div>
-    <h1>This is the Coders Page</h1>
-  </div>
+    <div>
+        <v-hunter-quote>Yesterday's weirdness is tomorrow's reason why.</v-hunter-quote>
+    </div>
 </template>
+<script lang="ts">
+    import {Component, Vue} from "vue-property-decorator"
+    import VHunterQuote from "@/components/VHunterQuote.vue"
+
+    @Component({
+        components: {VHunterQuote}
+    })
+    export default class Coders extends Vue {
+    }
+</script>

@@ -1,50 +1,65 @@
 import {LoginState} from "../users/store";
 import {LoginState} from "../users/store";
 <template>
-  <b-row>
-    <b-col md="8" offset-md="2">
-      <div class="bordered-neon">
-
-        <div v-if="loginFailed">
-          <br>
-          <b-row>
-            <b-col md="auto" offset-md="1">
-              <div class="failure-message no-padding">
-                {{ loginErrorMessage }}
-              </div>
+    <b-container>
+        <b-row>
+            <b-col md="8" offset-md="2">
+                <v-hunter-quote>
+                    Never create anything, it will be misinterpreted, it will chain you and follow you for the
+                    rest of your life.
+                </v-hunter-quote>
             </b-col>
-          </b-row>
-        </div>
-        <br>
+        </b-row>
         <b-row>
-          <b-col md="2" offset-md="1">
-            <label>email</label>
-          </b-col>
-          <b-col md="6" offset-md="1">
-            <input type="text" v-model="email">
-          </b-col>
+            <b-col md="8" offset-md="2">
+                <div class="bordered-neon">
+                    <div v-if="loginFailed">
+                        <br>
+                        <b-row>
+                            <b-col md="auto" offset-md="1">
+                                <div class="failure-message no-padding">
+                                    {{ loginErrorMessage }}
+                                </div>
+                            </b-col>
+                        </b-row>
+                    </div>
+                    <br>
+                    <b-row>
+                        <b-col md="2" offset-md="1">
+                            <label>email</label>
+                        </b-col>
+                        <b-col md="6" offset-md="1">
+                            <input type="text" v-model="email">
+                        </b-col>
+                    </b-row>
+                    <br>
+                    <b-row>
+                        <b-col md="2" offset-md="1">
+                            <label>password</label>
+                        </b-col>
+                        <b-col md="6" offset-md="1">
+                            <input type="password" v-model="password">
+                        </b-col>
+                    </b-row>
+                    <br>
+                    <b-row>
+                        <b-col md="4" offset-md="4">
+                            <v-button @click="login">
+                                Login
+                            </v-button>
+                        </b-col>
+                    </b-row>
+                    <br>
+                </div>
+            </b-col>
         </b-row>
         <br>
         <b-row>
-          <b-col md="2" offset-md="1">
-            <label>password</label>
-          </b-col>
-          <b-col md="6" offset-md="1">
-            <input type="password" v-model="password">
-          </b-col>
+            <b-col md="8" offset-md="2">
+                <p>We are not currently taking any new coders. The site is still getting built. Hopefully soon.</p>
+            </b-col>
         </b-row>
-        <br>
-        <b-row>
-          <b-col md="4" offset-md="4">
-            <v-button @click="login">
-              Login
-            </v-button>
-          </b-col>
-        </b-row>
-        <br>
-      </div>
-    </b-col>
-  </b-row>
+    </b-container>
 </template>
 
 <script lang="ts">
@@ -54,9 +69,10 @@ import {LoginState} from "../users/store";
     import {LoginCredentials, Users} from "@/users/api"
     import {LoginState} from "@/users/store"
     import VButton from "@/components/VButton.vue"
+    import VHunterQuote from "../components/VHunterQuote.vue"
 
     @Component({
-        components: {VButton}
+        components: {VHunterQuote, VButton}
     })
     export default class LoginComponent extends Vue {
         client: Users = new UsersClientFake()
