@@ -98,6 +98,8 @@ export interface Blogs {
 
     deleteBlog(blogID: number): Promise<null>
 
+    publishBlog(blogID: number): Promise<null>
+
     updateBlogDraft(blogDraftUpdate: BlogDraftUpdate): Promise<BlogDraft>
 
     getBlogDraftHeaders(authorID: number): Promise<Array<BlogHeader>>

@@ -45,6 +45,11 @@ const mutations: MutationTree<MyContentState> = {
         Vue.set(state, "blogIDs", IDs)
         Vue.set(state, "blogHeadersByID", headersByID)
     },
+    refreshBlogHeader(state: MyContentState, blogHeader: BlogHeader) {
+        const headersByID: { [id: number]: BlogHeader } = state.blogHeadersByID
+        headersByID[blogHeader.id] = blogHeader
+        Vue.set(state, "blogHeadersByID", headersByID)
+    },
     workOnBlog(state: MyContentState, blog: BlogDraft) {
         Vue.set(state, "blogDraft", cloneDeep(blog))
         Vue.set(state, "modifiedBlogDraft", cloneDeep(blog))
@@ -93,15 +98,26 @@ const buildActions = function (blogClient: Blogs): ActionTree<MyContentState, an
                 store.commit("workOnBlog", null)
             })
         },
+        publishBlog(store: ActionContext<MyContentState, any>) {
+            const currentBlogID = store.getters.blogDraft.id
+            return blogClient.publishBlog(currentBlogID).then(() => {
+                return store.dispatch("loadBlogDraft", currentBlogID).then((blogDraft: BlogDraft) => {
+                    store.commit("refreshBlogHeader", blogDraft.toHeader())
+                    return blogDraft
+                })
+            })
+        },
         loadBlogDraft(store: ActionContext<MyContentState, any>, blogID: number) {
             return blogClient.getBlogDraftByID(blogID).then((blogDraft) => {
                 store.commit("workOnBlog", blogDraft)
                 if (blogDraft.published) {
                     return blogClient.getBlogByID(blogID).then((blog) => {
                         store.commit("setPublishedBlog", blog)
+                        return blogDraft
                     })
                 } else {
                     store.commit("setPublishedBlog", null)
+                    return blogDraft
                 }
             })
         },
@@ -111,6 +127,7 @@ const buildActions = function (blogClient: Blogs): ActionTree<MyContentState, an
         saveBlogDraft(store: ActionContext<MyContentState, any>) {
             return blogClient.updateBlogDraft(store.getters.modifiedBlogDraft).then((blogDraft) => {
                 store.commit("workOnBlog", blogDraft)
+                store.commit("refreshBlogHeader", blogDraft.toHeader())
                 return blogDraft
             })
         }

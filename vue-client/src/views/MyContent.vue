@@ -26,6 +26,7 @@
                             <v-button v-if="notModifying" @click="newHandler">New</v-button>
                             <v-button v-if="viewing" @click="$router.push({name:'edit'})">Edit</v-button>
                             <v-button v-if="viewing" @click="deleteHandler">Delete</v-button>
+                            <v-button v-if="viewing && unpublishedChanges" @click="publishHandler">Publish</v-button>
                         </b-row>
                     </b-col>
                 </b-row>
@@ -44,7 +45,7 @@
     import {Action, Getter} from "vuex-class"
     import VButton from "@/components/VButton.vue"
     import HeaderList from "@/blogs/HeaderList.vue"
-    import {BlogDraftNew, BlogHeader} from "../blogs/api"
+    import {BlogDraft, BlogDraftNew, BlogHeader} from "../blogs/api"
     import {User} from "@/users/api"
     import VLoading from "@/components/VLoading.vue"
     import {nowString} from "@/common/time"
@@ -69,10 +70,12 @@
 
         @Getter user!: User
         @Getter blogHeaders!: Array<BlogHeader>
+        @Getter blogDraft!: BlogDraft
 
         @Action loadDraftHeadersForAuthor
         @Action deleteBlog
         @Action createBlog
+        @Action publishBlog
 
         mounted() {
             this.checkCurrentActivity()
@@ -89,6 +92,10 @@
 
         get isLoading() {
             return this.state !== STATE_LOADED
+        }
+
+        get unpublishedChanges() {
+            return this.blogDraft ? this.blogDraft.unpublishedChanges : false
         }
 
         selected(blogHeader: BlogHeader) {
@@ -114,6 +121,10 @@
                     this.$router.push({name: "my-content"})
                 }
             )
+        }
+
+        publishHandler() {
+            this.publishBlog()
         }
     }
 </script>

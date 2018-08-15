@@ -33,6 +33,18 @@ export class BlogsClient implements Blogs {
         })
     }
 
+    publishBlog(blogID: number): Promise<any> {
+        return getToken().then((token) => {
+            return axios.put<string>(
+                `${this.blogsBasePath}/${blogID}/publish`,
+                null,
+                {
+                    headers: this.headers(token),
+                    responseType: "json"
+                })
+        })
+    }
+
     getBlogDraftByID(blogID: number): Promise<BlogDraft> {
         return getToken().then((token) => {
             return axios.get<BlogDraft>(`${this.blogsBasePath}/${blogID}/draft`, {
@@ -101,6 +113,10 @@ export class BlogsClientFake implements Blogs {
     }
 
     deleteBlog(blogID: number): Promise<any> {
+        throw Error("Not Implemented")
+    }
+
+    publishBlog(blogID: number): Promise<any> {
         throw Error("Not Implemented")
     }
 
