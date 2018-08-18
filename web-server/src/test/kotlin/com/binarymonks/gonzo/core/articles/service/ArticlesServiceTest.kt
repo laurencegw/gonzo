@@ -1,9 +1,9 @@
-package com.binarymonks.gonzo.core.article.service
+package com.binarymonks.gonzo.core.articles.service
 
 import com.binarymonks.gonzo.articleEntryNew
-import com.binarymonks.gonzo.core.article.api.ArticleEntry
-import com.binarymonks.gonzo.core.article.api.ArticleEntryDraft
-import com.binarymonks.gonzo.core.article.api.ArticleDraftEntryNew
+import com.binarymonks.gonzo.core.articles.api.Article
+import com.binarymonks.gonzo.core.articles.api.ArticleDraft
+import com.binarymonks.gonzo.core.articles.api.ArticleDraftNew
 import com.binarymonks.gonzo.core.common.NotFound
 import com.binarymonks.gonzo.core.test.GonzoTestConfig
 import com.binarymonks.gonzo.core.test.harness.TestDataManager
@@ -32,12 +32,12 @@ import java.time.ZonedDateTime
         ],
         loader = AnnotationConfigContextLoader::class
 )
-class ArticleServiceTest {
+class ArticlesServiceTest {
 
     lateinit var mockClock: Clock
 
     @Autowired
-    lateinit var articleService: ArticleService
+    lateinit var articleService: ArticlesService
     @Autowired
     lateinit var userService: UserService
     @Autowired
@@ -58,15 +58,15 @@ class ArticleServiceTest {
     fun createAndGetArticleEntryDraft() {
         val now = itIsNow()
 
-        val newArticleEntry = ArticleDraftEntryNew(
-                title = "Some Article Entry",
+        val newArticleEntry = ArticleDraftNew(
+                title = "Some Articles Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
 
         val created = articleService.createArticleEntry(newArticleEntry)
 
-        val expectedArticleEntry = ArticleEntryDraft(
+        val expectedArticleEntry = ArticleDraft(
                 id = created.id,
                 title = newArticleEntry.title,
                 content = newArticleEntry.content,
@@ -86,8 +86,8 @@ class ArticleServiceTest {
 
     @Test
     fun createArticleEntry_GetArticleEntryThatHasNotBeenPublished() {
-        val newArticleEntry = ArticleDraftEntryNew(
-                title = "Some Article Entry",
+        val newArticleEntry = ArticleDraftNew(
+                title = "Some Articles Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
@@ -103,8 +103,8 @@ class ArticleServiceTest {
     fun updateArticleEntry_Unpublished() {
         val now = itIsNow()
 
-        val newArticleEntry = ArticleDraftEntryNew(
-                title = "Some Article Entry",
+        val newArticleEntry = ArticleDraftNew(
+                title = "Some Articles Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
@@ -134,8 +134,8 @@ class ArticleServiceTest {
     fun publishArticleEntry() {
         val createdTime = itIsNow()
 
-        val newArticleEntry = ArticleDraftEntryNew(
-                title = "Some Article Entry",
+        val newArticleEntry = ArticleDraftNew(
+                title = "Some Articles Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
@@ -150,7 +150,7 @@ class ArticleServiceTest {
                 published = true,
                 unpublishedChanges = false
         )
-        val expectedArticleEntry = ArticleEntry(
+        val expectedArticleEntry = Article(
                 id = createdDraft.id,
                 title = createdDraft.title,
                 content = createdDraft.content,
@@ -168,8 +168,8 @@ class ArticleServiceTest {
     fun updateArticleEntry_realChanges_AlreadyPublished() {
         val createdTime = itIsNow()
 
-        val newArticleEntry = ArticleDraftEntryNew(
-                title = "Some Article Entry",
+        val newArticleEntry = ArticleDraftNew(
+                title = "Some Articles Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
@@ -194,7 +194,7 @@ class ArticleServiceTest {
                 published = true,
                 unpublishedChanges = true
         )
-        val expectedArticleEntry = ArticleEntry(
+        val expectedArticleEntry = Article(
                 id = createdDraft.id,
                 title = createdDraft.title,
                 content = createdDraft.content,
@@ -214,8 +214,8 @@ class ArticleServiceTest {
     fun updateArticleEntry_noChange_AlreadyPublished() {
         val createdTime = itIsNow()
 
-        val newArticleEntry = ArticleDraftEntryNew(
-                title = "Some Article Entry",
+        val newArticleEntry = ArticleDraftNew(
+                title = "Some Articles Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
@@ -236,7 +236,7 @@ class ArticleServiceTest {
                 published = true,
                 unpublishedChanges = false
         )
-        val expectedArticleEntry = ArticleEntry(
+        val expectedArticleEntry = Article(
                 id = createdDraft.id,
                 title = createdDraft.title,
                 content = createdDraft.content,
@@ -256,8 +256,8 @@ class ArticleServiceTest {
     fun publishArticleEntry_withChanges_AlreadyPublished() {
         val createdTime = itIsNow()
 
-        val newArticleEntry = ArticleDraftEntryNew(
-                title = "Some Article Entry",
+        val newArticleEntry = ArticleDraftNew(
+                title = "Some Articles Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
@@ -288,7 +288,7 @@ class ArticleServiceTest {
                 published = true,
                 unpublishedChanges = false
         )
-        val expectedArticleEntry = ArticleEntry(
+        val expectedArticleEntry = Article(
                 id = createdDraft.id,
                 title = updated.title,
                 content = updated.content,
@@ -394,8 +394,8 @@ class ArticleServiceTest {
 
     @Test
     fun deleteArticleEntry_alreadyPublished(){
-        val newArticleEntry = ArticleDraftEntryNew(
-                title = "Some Article Entry",
+        val newArticleEntry = ArticleDraftNew(
+                title = "Some Articles Entry",
                 content = "A bit of content",
                 authorID = user.id
         )

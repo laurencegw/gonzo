@@ -7,7 +7,7 @@
             </b-row>
             <b-row>
                 <b-col>
-                    <article :title="title" :content="content"></article>
+                    <article-content :title="title" :content="content"></article-content>
                 </b-col>
             </b-row>
         </v-loading>
@@ -19,18 +19,18 @@
     import {Component, Watch} from "vue-property-decorator"
     import {Action, Getter} from "vuex-class"
     import {ArticleDraft} from "@/articles/api"
-    import Article from "@/articles/ArticleContent.vue"
+    import ArticleContent from "@/articles/ArticleContent.vue"
     import VLoading from "@/components/VLoading.vue"
 
     @Component({
-        components: {VLoading, Article}
+        components: {VLoading, ArticleContent}
     })
     export default class ExistingArticle extends Vue {
         loaded = false
         showDraft = true
 
         @Getter articleDraft?: ArticleDraft
-        @Getter publishedArticle?: Article
+        @Getter publishedArticle?: ArticleContent
         @Action loadArticleDraft
 
         mounted() {

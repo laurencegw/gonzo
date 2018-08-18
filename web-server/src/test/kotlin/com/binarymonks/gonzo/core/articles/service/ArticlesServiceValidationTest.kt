@@ -1,7 +1,7 @@
-package com.binarymonks.gonzo.core.article.service
+package com.binarymonks.gonzo.core.articles.service
 
-import com.binarymonks.gonzo.core.article.api.ArticleDraftEntryNew
-import com.binarymonks.gonzo.core.article.persistence.ArticleRepo
+import com.binarymonks.gonzo.core.articles.api.ArticleDraftNew
+import com.binarymonks.gonzo.core.articles.persistence.ArticleRepo
 import com.binarymonks.gonzo.core.common.ValidationException
 import com.binarymonks.gonzo.core.common.ValidationMessage
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
@@ -12,14 +12,14 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 
 
-class ArticleServiceValidationTest {
+class ArticlesServiceValidationTest {
 
 
-    lateinit var articleService: ArticleService
+    lateinit var articleService: ArticlesService
 
     @BeforeEach
     fun setUp() {
-        articleService = ArticleService(
+        articleService = ArticlesService(
                 Mockito.mock(ArticleRepo::class.java),
                 Mockito.mock(UserRepo::class.java)
         )
@@ -27,7 +27,7 @@ class ArticleServiceValidationTest {
 
     @Test
     fun testCreateArticle_titleNotEmpty() {
-        val newArticleEntry = ArticleDraftEntryNew(
+        val newArticleEntry = ArticleDraftNew(
                 title = "",
                 content = "A bit of content",
                 authorID = 1

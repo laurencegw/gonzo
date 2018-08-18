@@ -43,7 +43,7 @@ data class JWTAuthentication(
 /**
  * A JWT Authentication Filter for [SignInService] based tokens.
  *
- * Cool article explaining this stuff here: https://auth0.com/article/implementing-jwt-authentication-on-spring-boot/
+ * Cool articles explaining this stuff here: https://auth0.com/articles/implementing-jwt-authentication-on-spring-boot/
  */
 class JWTAuthenticationFilter(
         authManager: AuthenticationManager

@@ -1,7 +1,7 @@
 package com.binarymonks.gonzo.core.users
 
-import com.binarymonks.gonzo.core.article.api.ArticleDraftEntryNew
-import com.binarymonks.gonzo.core.article.service.ArticleService
+import com.binarymonks.gonzo.core.articles.api.ArticleDraftNew
+import com.binarymonks.gonzo.core.articles.service.ArticlesService
 import com.binarymonks.gonzo.core.users.api.Role
 import com.binarymonks.gonzo.core.users.api.UserNew
 import com.binarymonks.gonzo.core.users.api.UserRoleUpdate
@@ -18,7 +18,7 @@ class TestUserLoader {
     lateinit var userService:UserService
 
     @Autowired
-    lateinit var articleService:ArticleService
+    lateinit var articleService:ArticlesService
 
     @EventListener
     fun onApplicationEvent(event: ApplicationStartedEvent){
@@ -29,10 +29,10 @@ class TestUserLoader {
         ))
         userService.setUserRole(UserRoleUpdate(user.id, Role.ADMIN))
 
-        articleService.createArticleEntry(ArticleDraftEntryNew(
+        articleService.createArticleEntry(ArticleDraftNew(
                 "Never published",
                 "## Markdown is supported\n" +
-                        "This **article** is only in draft state - no published content\n" +
+                        "This **articles** is only in draft state - no published content\n" +
                         "\n" +
                         "Still working on this draft\n" +
                         "\n" +
@@ -42,14 +42,14 @@ class TestUserLoader {
                 user.id
         ))
 
-        var article = articleService.createArticleEntry(ArticleDraftEntryNew(
+        var article = articleService.createArticleEntry(ArticleDraftNew(
                 "Published, No Changes",
-                "This article is published and no current changes",
+                "This articles is published and no current changes",
                 user.id
         ))
         articleService.publishArticleEntry(article.id)
 
-        article = articleService.createArticleEntry(ArticleDraftEntryNew(
+        article = articleService.createArticleEntry(ArticleDraftNew(
                 "Published, Unpublished Changes",
                 "This is content that has been published",
                 user.id
@@ -60,9 +60,9 @@ class TestUserLoader {
         ))
 
 //        for (i in (0..5)){
-//            articleService.createArticleEntry(ArticleDraftEntryNew(
-//                    "My Article $i",
-//                    "This is the content for article number $i",
+//            articleService.createArticleEntry(ArticleDraftNew(
+//                    "My Articles $i",
+//                    "This is the content for articles number $i",
 //                    user.id
 //            ))
 //        }

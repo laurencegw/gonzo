@@ -1,7 +1,7 @@
 package com.binarymonks.gonzo
 
 import com.binarymonks.gonzo.core.authz.api.AccessRequest
-import com.binarymonks.gonzo.core.article.api.*
+import com.binarymonks.gonzo.core.articles.api.*
 import com.binarymonks.gonzo.core.extensions.time.normalise
 import com.binarymonks.gonzo.core.users.api.Role
 import com.binarymonks.gonzo.core.users.api.User
@@ -9,17 +9,17 @@ import com.binarymonks.gonzo.core.users.api.UserNew
 import java.time.ZonedDateTime
 
 
-fun articleEntryNew(): ArticleDraftEntryNew {
-    return ArticleDraftEntryNew(
-            title = "Some Article Entry",
+fun articleEntryNew(): ArticleDraftNew {
+    return ArticleDraftNew(
+            title = "Some Articles Entry",
             content = "A bit of content",
             authorID = 1
     )
 }
 
-fun articleEntryDraft() = ArticleEntryDraft(
+fun articleEntryDraft() = ArticleDraft(
         id = 2,
-        title = "Some Article Entry",
+        title = "Some Articles Entry",
         content = "A bit of content",
         published = false,
         unpublishedChanges = true,
@@ -28,10 +28,10 @@ fun articleEntryDraft() = ArticleEntryDraft(
         created = ZonedDateTime.now().normalise()
 )
 
-fun articleEntry(): ArticleEntry {
-    return ArticleEntry(
+fun articleEntry(): Article {
+    return Article(
             id = 2,
-            title = "Some Article Entry",
+            title = "Some Articles Entry",
             content = "A bit of content",
             author = user().toPublicHeader(),
             lastEdited = ZonedDateTime.now().normalise(),
@@ -39,18 +39,18 @@ fun articleEntry(): ArticleEntry {
     )
 }
 
-fun articleEntryUpdate(): ArticleDraftEntryUpdate {
-    return ArticleDraftEntryUpdate(
+fun articleEntryUpdate(): ArticleDraftUpdate {
+    return ArticleDraftUpdate(
             id = 3,
-            title = "Some Article Entry Update",
+            title = "Some Articles Entry Update",
             content = "A bit of content Updated"
     )
 }
 
-fun articleEntryHeader(): ArticleEntryHeader {
-    return ArticleEntryHeader(
+fun articleEntryHeader(): ArticleHeader {
+    return ArticleHeader(
             id = 2,
-            title = "Some Article Entry",
+            title = "Some Articles Entry",
             author = user().toPublicHeader(),
             created = ZonedDateTime.now().normalise(),
             updated = ZonedDateTime.now().normalise()

@@ -1,7 +1,7 @@
-package com.binarymonks.gonzo.core.article.persistence
+package com.binarymonks.gonzo.core.articles.persistence
 
-import com.binarymonks.gonzo.core.article.api.ArticleEntry
-import com.binarymonks.gonzo.core.article.api.ArticleEntryDraft
+import com.binarymonks.gonzo.core.articles.api.Article
+import com.binarymonks.gonzo.core.articles.api.ArticleDraft
 import com.binarymonks.gonzo.core.common.NotFound
 import com.binarymonks.gonzo.core.extensions.time.normalise
 import com.binarymonks.gonzo.core.users.persistence.UserEntity
@@ -11,7 +11,7 @@ import javax.persistence.*
 
 
 @Entity
-data class ArticleEntryPublished(
+data class ArticlePublished(
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,7 @@ data class ArticleEntryPublished(
 )
 
 @Entity
-data class ArticleEntryDraftEntity(
+data class ArticleDraftEntity(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         var id: Long? = null,
@@ -59,13 +59,13 @@ data class ArticleEntryDraftEntity(
 
         @OneToOne(cascade = [CascadeType.ALL])
         @JoinColumn(name="ArticleEntryPublishedID")
-        var publishedArticle: ArticleEntryPublished? = null,
+        var publishedArticle: ArticlePublished? = null,
 
         @Column(nullable = false)
         var unpublishedChanges: Boolean = true
 
         ) {
-    fun toArticleEntryDraft() = ArticleEntryDraft(
+    fun toArticleEntryDraft() = ArticleDraft(
             id = id!!,
             title = title,
             content = content,
@@ -76,11 +76,11 @@ data class ArticleEntryDraftEntity(
             updated = updated!!.normalise()
     )
 
-    fun toArticleEntry(): ArticleEntry {
+    fun toArticleEntry(): Article {
         if (publishedArticle == null) {
             throw NotFound()
         }
-        return ArticleEntry(
+        return Article(
                 id = id!!,
                 title = publishedArticle!!.title,
                 content = publishedArticle!!.content,
@@ -91,6 +91,6 @@ data class ArticleEntryDraftEntity(
     }
 }
 
-interface ArticleRepo : CrudRepository<ArticleEntryDraftEntity, Long>{
-    fun findAllByAuthor(user: UserEntity): Iterable<ArticleEntryDraftEntity>
+interface ArticleRepo : CrudRepository<ArticleDraftEntity, Long>{
+    fun findAllByAuthor(user: UserEntity): Iterable<ArticleDraftEntity>
 }

@@ -1,7 +1,7 @@
 package com.binarymonks.gonzo.web.controllers
 
-import com.binarymonks.gonzo.core.article.api.*
-import com.binarymonks.gonzo.core.article.service.ArticleAuthService
+import com.binarymonks.gonzo.core.articles.api.*
+import com.binarymonks.gonzo.core.articles.service.ArticleAuthService
 import com.binarymonks.gonzo.web.Routes
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -13,12 +13,12 @@ class ArticleController {
     lateinit var articleService: ArticleAuthService
 
     @PostMapping("${Routes.ARTICLES}")
-    fun createArticleEntry(@RequestBody newArticleEntry: ArticleDraftEntryNew): ArticleEntryDraft {
-        return articleService.createArticleEntry(getCredentials(), newArticleEntry)
+    fun createArticleEntry(@RequestBody newArticle: ArticleDraftNew): ArticleDraft {
+        return articleService.createArticleEntry(getCredentials(), newArticle)
     }
 
     @PutMapping("${Routes.ARTICLES}/{id}")
-    fun updateArticleEntry(@PathVariable id: Long, @RequestBody update: ArticleDraftEntryUpdate): ArticleEntryDraft {
+    fun updateArticleEntry(@PathVariable id: Long, @RequestBody update: ArticleDraftUpdate): ArticleDraft {
         val updateWithPathID = update.copy(id = id)
         return articleService.updateArticleEntry(getCredentials(), updateWithPathID)
     }
@@ -34,27 +34,27 @@ class ArticleController {
     }
 
     @GetMapping("${Routes.ARTICLES}")
-    fun getArticleEntryHeaders(): List<ArticleEntryHeader> {
+    fun getArticleEntryHeaders(): List<ArticleHeader> {
         return articleService.getArticleEntryHeaders(getCredentials())
     }
 
     @GetMapping("${Routes.USERS}/{authorID}/drafts")
-    fun getArticleEntryDraftHeaders(@PathVariable authorID: Long): List<ArticleEntryHeader> {
+    fun getArticleEntryDraftHeaders(@PathVariable authorID: Long): List<ArticleHeader> {
         return articleService.getArticleEntryDraftHeaders(getCredentials(), authorID)
     }
 
     @GetMapping("${Routes.USERS}/{authorID}/articles")
-    fun getArticleEntryHeadersByAuthor(@PathVariable authorID: Long): List<ArticleEntryHeader> {
+    fun getArticleEntryHeadersByAuthor(@PathVariable authorID: Long): List<ArticleHeader> {
         return articleService.getArticleEntryHeadersByAuthor(getCredentials(), authorID)
     }
 
     @GetMapping("${Routes.ARTICLES}/{id}/draft")
-    fun getArticleEntryDraftByID(@PathVariable id: Long): ArticleEntryDraft {
+    fun getArticleEntryDraftByID(@PathVariable id: Long): ArticleDraft {
         return articleService.getArticleEntryDraftByID(getCredentials(), id)
     }
 
     @GetMapping("${Routes.ARTICLES}/{id}")
-    fun getArticleEntryById(@PathVariable id: Long): ArticleEntry {
+    fun getArticleEntryById(@PathVariable id: Long): Article {
         return articleService.getArticleEntryById(getCredentials(), id)
     }
 

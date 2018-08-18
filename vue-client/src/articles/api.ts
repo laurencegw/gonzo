@@ -43,7 +43,7 @@ export class ArticleHeader {
 
 
 /**
- * Publicly viewable info for a  published article
+ * Publicly viewable info for a  published articles
  */
 export class Article {
     id: number
@@ -64,7 +64,7 @@ export class Article {
 }
 
 /**
- * Representation of a article for the Author.
+ * Representation of a articles for the Author.
  */
 export class ArticleDraft {
     id: number

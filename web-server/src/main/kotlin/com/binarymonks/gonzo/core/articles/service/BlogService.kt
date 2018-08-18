@@ -1,9 +1,9 @@
-package com.binarymonks.gonzo.core.article.service
+package com.binarymonks.gonzo.core.articles.service
 
-import com.binarymonks.gonzo.core.article.api.*
-import com.binarymonks.gonzo.core.article.persistence.ArticleEntryDraftEntity
-import com.binarymonks.gonzo.core.article.persistence.ArticleEntryPublished
-import com.binarymonks.gonzo.core.article.persistence.ArticleRepo
+import com.binarymonks.gonzo.core.articles.api.*
+import com.binarymonks.gonzo.core.articles.persistence.ArticleDraftEntity
+import com.binarymonks.gonzo.core.articles.persistence.ArticlePublished
+import com.binarymonks.gonzo.core.articles.persistence.ArticleRepo
 import com.binarymonks.gonzo.core.time.nowUTC
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,25 +11,25 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class ArticleService(
+class ArticlesService(
         @Autowired
         var articleRepo: ArticleRepo,
         @Autowired
         var userRepo: UserRepo
-) : Article {
+) : Articles {
 
-    override fun createArticleEntry(articleEntryNew: ArticleDraftEntryNew): ArticleEntryDraft {
-        articleEntryNew.validate()
-        return articleRepo.save(ArticleEntryDraftEntity(
-                title = articleEntryNew.title,
-                content = articleEntryNew.content,
-                author = userRepo.findById(articleEntryNew.authorID).get(),
+    override fun createArticleEntry(articleNew: ArticleDraftNew): ArticleDraft {
+        articleNew.validate()
+        return articleRepo.save(ArticleDraftEntity(
+                title = articleNew.title,
+                content = articleNew.content,
+                author = userRepo.findById(articleNew.authorID).get(),
                 created = nowUTC(),
                 updated = nowUTC()
         )).toArticleEntryDraft()
     }
 
-    override fun updateArticleEntry(update: ArticleDraftEntryUpdate): ArticleEntryDraft {
+    override fun updateArticleEntry(update: ArticleDraftUpdate): ArticleDraft {
         val entry = articleRepo.findById(update.id).get()
         val changed = listOf(
                 entry.publishedArticle?.content != update.content,
@@ -50,12 +50,12 @@ class ArticleService(
 
     override fun getArticleEntryDraftByID(articleID: Long) = articleRepo.findById(articleID).get().toArticleEntryDraft()
 
-    override fun getArticleEntryDraftHeaders(authorID: Long): List<ArticleEntryHeader> {
+    override fun getArticleEntryDraftHeaders(authorID: Long): List<ArticleHeader> {
         val userEntity = userRepo.findById(authorID).get()
         return articleRepo.findAllByAuthor(userEntity).map { it.toArticleEntryDraft().toHeader() }
     }
 
-    override fun getArticleEntryHeadersByAuthor(authorID: Long): List<ArticleEntryHeader> {
+    override fun getArticleEntryHeadersByAuthor(authorID: Long): List<ArticleHeader> {
         val userEntity = userRepo.findById(authorID).get()
         val userArticleEntries = articleRepo.findAllByAuthor(userEntity).filter {
             it.publishedArticle != null
@@ -72,7 +72,7 @@ class ArticleService(
             entity.publishedArticle!!.title = entity.title
             entity.publishedArticle!!.updated = now
         } else {
-            entity.publishedArticle = ArticleEntryPublished(
+            entity.publishedArticle = ArticlePublished(
                     title = entity.title,
                     content = entity.content,
                     created = now,
@@ -83,12 +83,12 @@ class ArticleService(
         articleRepo.save(entity)
     }
 
-    override fun getArticleEntryHeaders(): List<ArticleEntryHeader> = articleRepo.findAll().filter {
+    override fun getArticleEntryHeaders(): List<ArticleHeader> = articleRepo.findAll().filter {
         it.publishedArticle != null
     }.map {
         it.toArticleEntry().toHeader()
     }
 
-    override fun getArticleEntryById(id: Long): ArticleEntry = articleRepo.findById(id).get().toArticleEntry()
+    override fun getArticleEntryById(id: Long): Article = articleRepo.findById(id).get().toArticleEntry()
 
 }

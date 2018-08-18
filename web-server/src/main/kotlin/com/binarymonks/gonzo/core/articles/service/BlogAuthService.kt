@@ -1,8 +1,8 @@
-package com.binarymonks.gonzo.core.article.service
+package com.binarymonks.gonzo.core.articles.service
 
 import com.binarymonks.gonzo.core.authz.service.AccessDecisionService
 import com.binarymonks.gonzo.core.authz.service.AuthorizedService
-import com.binarymonks.gonzo.core.article.api.*
+import com.binarymonks.gonzo.core.articles.api.*
 import com.binarymonks.gonzo.core.common.Actions
 import com.binarymonks.gonzo.core.common.Credentials
 import com.binarymonks.gonzo.core.common.Types
@@ -17,14 +17,14 @@ class ArticleAuthService(
 ) : ArticleAuth, AuthorizedService(signInService, accessDecisionService) {
 
     @Autowired
-    lateinit var articleService: ArticleService
+    lateinit var articleService: ArticlesService
 
-    override fun createArticleEntry(credentials: Credentials, articleEntryNew: ArticleDraftEntryNew): ArticleEntryDraft {
-        checkAuth(credentials, Actions.CREATE, articleEntryNew.attributes())
-        return articleService.createArticleEntry(articleEntryNew)
+    override fun createArticleEntry(credentials: Credentials, articleNew: ArticleDraftNew): ArticleDraft {
+        checkAuth(credentials, Actions.CREATE, articleNew.attributes())
+        return articleService.createArticleEntry(articleNew)
     }
 
-    override fun updateArticleEntry(credentials: Credentials, update: ArticleDraftEntryUpdate): ArticleEntryDraft {
+    override fun updateArticleEntry(credentials: Credentials, update: ArticleDraftUpdate): ArticleDraft {
         val articleToUpdate = articleService.getArticleEntryDraftByID(update.id)
         checkAuth(credentials, Actions.MODIFY, articleToUpdate.attributes())
         return articleService.updateArticleEntry(update)
@@ -36,7 +36,7 @@ class ArticleAuthService(
         articleService.deleteArticleEntry(articleID)
     }
 
-    override fun getArticleEntryDraftByID(credentials: Credentials, articleID: Long): ArticleEntryDraft {
+    override fun getArticleEntryDraftByID(credentials: Credentials, articleID: Long): ArticleDraft {
         val articleDraft = articleService.getArticleEntryDraftByID(articleID)
         checkAuth(credentials, Actions.READ, articleDraft.attributes())
         return articleDraft
@@ -48,23 +48,23 @@ class ArticleAuthService(
         return articleService.publishArticleEntry(articleID)
     }
 
-    override fun getArticleEntryById(credentials: Credentials, id: Long): ArticleEntry {
+    override fun getArticleEntryById(credentials: Credentials, id: Long): Article {
         val article = articleService.getArticleEntryById(id)
         checkAuth(credentials, Actions.READ, article.attributes())
         return article
     }
 
-    override fun getArticleEntryHeaders(credentials: Credentials): List<ArticleEntryHeader> {
+    override fun getArticleEntryHeaders(credentials: Credentials): List<ArticleHeader> {
         checkAuth(credentials, Actions.READ, mapOf(Pair("type", Types.ARTICLE)))
         return articleService.getArticleEntryHeaders()
     }
 
-    override fun getArticleEntryHeadersByAuthor(credentials: Credentials, authorID: Long): List<ArticleEntryHeader> {
+    override fun getArticleEntryHeadersByAuthor(credentials: Credentials, authorID: Long): List<ArticleHeader> {
         checkAuth(credentials, Actions.READ, mapOf(Pair("type", Types.ARTICLE), Pair("authorID", authorID)))
         return articleService.getArticleEntryHeadersByAuthor(authorID)
     }
 
-    override fun getArticleEntryDraftHeaders(credentials: Credentials, authorID: Long): List<ArticleEntryHeader> {
+    override fun getArticleEntryDraftHeaders(credentials: Credentials, authorID: Long): List<ArticleHeader> {
         checkAuth(credentials, Actions.READ, mapOf(Pair("type", Types.ARTICLE_DRAFT), Pair("authorID", authorID)))
         return articleService.getArticleEntryDraftHeaders(authorID)
     }

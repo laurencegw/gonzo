@@ -2,8 +2,8 @@ package com.binarymonks.gonzo.web
 
 import com.binarymonks.gonzo.articleEntryNew
 import com.binarymonks.gonzo.articleEntryUpdate
-import com.binarymonks.gonzo.clients.ArticleClient
-import com.binarymonks.gonzo.core.article.service.ArticleService
+import com.binarymonks.gonzo.clients.ArticlesClient
+import com.binarymonks.gonzo.core.articles.service.ArticlesService
 import com.binarymonks.gonzo.core.common.NotAuthorized
 import com.binarymonks.gonzo.core.common.ValidationException
 import com.binarymonks.gonzo.core.common.ValidationMessage
@@ -23,7 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         classes = [GonzoApplication::class, GonzoTestHarnessConfig::class]
 )
 @ExtendWith(SpringExtension::class)
-class ArticleAPITest {
+class ArticlesAPITest {
 
     @LocalServerPort
     var port: Int = -1
@@ -32,21 +32,21 @@ class ArticleAPITest {
     lateinit var testDataManager: TestDataManager
 
     @Autowired
-    lateinit var articleService: ArticleService
+    lateinit var articleService: ArticlesService
 
-    lateinit var articleClient: ArticleClient
+    lateinit var articleClient: ArticlesClient
 
     @BeforeEach
     fun setUp() {
-        articleClient = ArticleClient("http://localhost:$port")
+        articleClient = ArticlesClient("http://localhost:$port")
     }
 
     @TestFactory
     fun createArticle(): List<DynamicTest> {
         return listOf(
-                arrayOf("Reader cannot create article", Role.READER, false),
-                arrayOf("Author can create article", Role.AUTHOR, true),
-                arrayOf("Admin can create article", Role.ADMIN, true)
+                arrayOf("Reader cannot create articles", Role.READER, false),
+                arrayOf("Author can create articles", Role.AUTHOR, true),
+                arrayOf("Admin can create articles", Role.ADMIN, true)
         ).map {
             DynamicTest.dynamicTest(it[0] as String) {
                 testDataManager.clearData()
@@ -100,9 +100,9 @@ class ArticleAPITest {
     @TestFactory
     fun createArticle_forSomeoneElse(): List<DynamicTest> {
         return listOf(
-                arrayOf("Reader cannot create article", Role.READER, false),
-                arrayOf("Author can create article", Role.AUTHOR, false),
-                arrayOf("Admin can create article", Role.ADMIN, false)
+                arrayOf("Reader cannot create articles", Role.READER, false),
+                arrayOf("Author can create articles", Role.AUTHOR, false),
+                arrayOf("Admin can create articles", Role.ADMIN, false)
         ).map {
             DynamicTest.dynamicTest(it[0] as String) {
                 testDataManager.clearData()
@@ -133,9 +133,9 @@ class ArticleAPITest {
     @TestFactory
     fun updatePublishReadDeleteArticleDraft_whenItIsYourOwn(): List<DynamicTest> {
         return listOf(
-                arrayOf("Reader can update own article", Role.READER),
-                arrayOf("Author can update own article", Role.AUTHOR),
-                arrayOf("Admin can update own article", Role.ADMIN)
+                arrayOf("Reader can update own articles", Role.READER),
+                arrayOf("Author can update own articles", Role.AUTHOR),
+                arrayOf("Admin can update own articles", Role.ADMIN)
         ).map {
             DynamicTest.dynamicTest(it[0] as String) {
                 testDataManager.clearData()
@@ -161,9 +161,9 @@ class ArticleAPITest {
     @TestFactory
     fun update_Publish_Read_Delete_SomeoneElsesArticleDraft(): List<DynamicTest> {
         return listOf(
-                arrayOf("Reader cannot update someone else's article", Role.READER),
-                arrayOf("Author cannot update someone else's article", Role.AUTHOR),
-                arrayOf("Admin cannot update someone else's article", Role.ADMIN)
+                arrayOf("Reader cannot update someone else's articles", Role.READER),
+                arrayOf("Author cannot update someone else's articles", Role.AUTHOR),
+                arrayOf("Admin cannot update someone else's articles", Role.ADMIN)
         ).map {
             DynamicTest.dynamicTest(it[0] as String) {
                 testDataManager.clearData()

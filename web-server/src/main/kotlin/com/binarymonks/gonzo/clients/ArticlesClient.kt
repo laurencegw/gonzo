@@ -1,28 +1,28 @@
 package com.binarymonks.gonzo.clients
 
-import com.binarymonks.gonzo.core.article.api.*
+import com.binarymonks.gonzo.core.articles.api.*
 import com.binarymonks.gonzo.web.Routes
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 
 
-class ArticleClient(baseURL: String) : Article, AuthClient(baseURL) {
+class ArticlesClient(baseURL: String) : Articles, AuthClient(baseURL) {
 
-    override fun createArticleEntry(articleEntryNew: ArticleDraftEntryNew): ArticleEntryDraft {
+    override fun createArticleEntry(articleNew: ArticleDraftNew): ArticleDraft {
         return restTemplate.postForObject(
                 "$baseURL/${Routes.ARTICLES}",
-                HttpEntity(articleEntryNew, createHeaders()),
-                ArticleEntryDraft::class.java
+                HttpEntity(articleNew, createHeaders()),
+                ArticleDraft::class.java
         )!!
     }
 
-    override fun updateArticleEntry(update: ArticleDraftEntryUpdate): ArticleEntryDraft {
+    override fun updateArticleEntry(update: ArticleDraftUpdate): ArticleDraft {
         val response = restTemplate.exchange(
                 "$baseURL/${Routes.ARTICLES}/${update.id}",
                 HttpMethod.PUT,
                 HttpEntity(update, createHeaders()),
-                object : ParameterizedTypeReference<ArticleEntryDraft>() {}
+                object : ParameterizedTypeReference<ArticleDraft>() {}
         )
         return checkNotNull(response.body)
     }
@@ -43,50 +43,50 @@ class ArticleClient(baseURL: String) : Article, AuthClient(baseURL) {
         )
     }
 
-    override fun getArticleEntryDraftByID(articleID: Long): ArticleEntryDraft {
+    override fun getArticleEntryDraftByID(articleID: Long): ArticleDraft {
         val response =  restTemplate.exchange(
                 "$baseURL/${Routes.articleDraft(articleID)}",
                 HttpMethod.GET,
                 HttpEntity(null,createHeaders()),
-                object : ParameterizedTypeReference<ArticleEntryDraft>() {}
+                object : ParameterizedTypeReference<ArticleDraft>() {}
         )
         return checkNotNull(response.body)
     }
 
-    override fun getArticleEntryHeadersByAuthor(authorID: Long): List<ArticleEntryHeader> {
+    override fun getArticleEntryHeadersByAuthor(authorID: Long): List<ArticleHeader> {
         val response =  restTemplate.exchange(
                 "$baseURL/${Routes.userArticles(authorID)}",
                 HttpMethod.GET,
                 HttpEntity(null,createHeaders()),
-                object : ParameterizedTypeReference<List<ArticleEntryHeader>>() {}
+                object : ParameterizedTypeReference<List<ArticleHeader>>() {}
         )
         return checkNotNull(response.body)
     }
 
-    override fun getArticleEntryDraftHeaders(authorID: Long): List<ArticleEntryHeader> {
+    override fun getArticleEntryDraftHeaders(authorID: Long): List<ArticleHeader> {
         val response =  restTemplate.exchange(
                 "$baseURL/${Routes.userDrafts(authorID)}",
                 HttpMethod.GET,
                 HttpEntity(null,createHeaders()),
-                object : ParameterizedTypeReference<List<ArticleEntryHeader>>() {}
+                object : ParameterizedTypeReference<List<ArticleHeader>>() {}
         )
         return checkNotNull(response.body)
     }
 
-    override fun getArticleEntryHeaders(): List<ArticleEntryHeader> {
+    override fun getArticleEntryHeaders(): List<ArticleHeader> {
         val response = restTemplate.exchange(
                 "$baseURL/${Routes.ARTICLES}",
                 HttpMethod.GET,
                 null,
-                object : ParameterizedTypeReference<List<ArticleEntryHeader>>() {}
+                object : ParameterizedTypeReference<List<ArticleHeader>>() {}
         )
         return checkNotNull(response.body)
     }
 
-    override fun getArticleEntryById(id: Long): ArticleEntry {
+    override fun getArticleEntryById(id: Long): Article {
         return restTemplate.getForObject(
                 "$baseURL/${Routes.articleEntry(id)}",
-                ArticleEntry::class.java
+                Article::class.java
         )!!
     }
 }

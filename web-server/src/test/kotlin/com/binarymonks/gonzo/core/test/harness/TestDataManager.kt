@@ -1,6 +1,6 @@
 package com.binarymonks.gonzo.core.test.harness
 
-import com.binarymonks.gonzo.core.article.persistence.ArticleRepo
+import com.binarymonks.gonzo.core.articles.persistence.ArticleRepo
 import com.binarymonks.gonzo.core.users.api.Role
 import com.binarymonks.gonzo.core.users.api.User
 import com.binarymonks.gonzo.core.users.api.UserNew

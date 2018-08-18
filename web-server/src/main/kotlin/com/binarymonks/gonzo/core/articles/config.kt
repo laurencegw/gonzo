@@ -1,4 +1,4 @@
-package com.binarymonks.gonzo.core.article
+package com.binarymonks.gonzo.core.articles
 
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.ComponentScan
@@ -7,12 +7,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @Configuration
 @ComponentScan(basePackages = [
-    "com.binarymonks.gonzo.core.article"
+    "com.binarymonks.gonzo.core.articles"
 ])
 @EnableJpaRepositories(basePackages = [
-    "com.binarymonks.gonzo.core.article.persistence"
+    "com.binarymonks.gonzo.core.articles.persistence"
 ])
 @EntityScan(basePackages = [
-    "com.binarymonks.gonzo.core.article.persistence"
+    "com.binarymonks.gonzo.core.articles.persistence"
 ])
 class ArticleConfig
