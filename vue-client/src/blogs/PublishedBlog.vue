@@ -1,24 +1,17 @@
 <template>
-    <div>
-        <b-row>
-            <b-col>{{title}}</b-col>
-        </b-row>
-        <b-row>
-            <b-col>
-                <vue-markdown :source="content"></vue-markdown>
-            </b-col>
-        </b-row>
-    </div>
+    <b-container>
+        <blog-content :title="title" :content="content"></blog-content>
+    </b-container>
 </template>
 
 <script lang="ts">
     import Vue from "vue"
     import Component from "vue-class-component"
     import {Prop} from "vue-property-decorator"
-    import VueMarkdown from "vue-markdown"
+    import BlogContent from "./BlogContent"
 
     @Component({
-        components: {"vue-markdown": VueMarkdown}
+        components: {BlogContent}
     })
     export default class Blog extends Vue {
         @Prop() title!: string

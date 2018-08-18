@@ -19,7 +19,7 @@
     import {Component, Watch} from "vue-property-decorator"
     import {Action, Getter} from "vuex-class"
     import {BlogDraft} from "@/blogs/api"
-    import Blog from "@/blogs/Blog.vue"
+    import Blog from "@/blogs/BlogContent.vue"
     import VLoading from "@/components/VLoading.vue"
 
     @Component({
