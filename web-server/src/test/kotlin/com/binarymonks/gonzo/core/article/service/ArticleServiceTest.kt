@@ -1,9 +1,9 @@
-package com.binarymonks.gonzo.core.blog.service
+package com.binarymonks.gonzo.core.article.service
 
-import com.binarymonks.gonzo.blogEntryNew
-import com.binarymonks.gonzo.core.blog.api.BlogEntry
-import com.binarymonks.gonzo.core.blog.api.BlogEntryDraft
-import com.binarymonks.gonzo.core.blog.api.BlogDraftEntryNew
+import com.binarymonks.gonzo.articleEntryNew
+import com.binarymonks.gonzo.core.article.api.ArticleEntry
+import com.binarymonks.gonzo.core.article.api.ArticleEntryDraft
+import com.binarymonks.gonzo.core.article.api.ArticleDraftEntryNew
 import com.binarymonks.gonzo.core.common.NotFound
 import com.binarymonks.gonzo.core.test.GonzoTestConfig
 import com.binarymonks.gonzo.core.test.harness.TestDataManager
@@ -32,12 +32,12 @@ import java.time.ZonedDateTime
         ],
         loader = AnnotationConfigContextLoader::class
 )
-class BlogServiceTest {
+class ArticleServiceTest {
 
     lateinit var mockClock: Clock
 
     @Autowired
-    lateinit var blogService: BlogService
+    lateinit var articleService: ArticleService
     @Autowired
     lateinit var userService: UserService
     @Autowired
@@ -55,21 +55,21 @@ class BlogServiceTest {
     }
 
     @Test
-    fun createAndGetBlogEntryDraft() {
+    fun createAndGetArticleEntryDraft() {
         val now = itIsNow()
 
-        val newBlogEntry = BlogDraftEntryNew(
-                title = "Some Blog Entry",
+        val newArticleEntry = ArticleDraftEntryNew(
+                title = "Some Article Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
 
-        val created = blogService.createBlogEntry(newBlogEntry)
+        val created = articleService.createArticleEntry(newArticleEntry)
 
-        val expectedBlogEntry = BlogEntryDraft(
+        val expectedArticleEntry = ArticleEntryDraft(
                 id = created.id,
-                title = newBlogEntry.title,
-                content = newBlogEntry.content,
+                title = newArticleEntry.title,
+                content = newArticleEntry.content,
                 author = user.toPublicHeader(),
                 published = false,
                 unpublishedChanges = true,
@@ -77,39 +77,39 @@ class BlogServiceTest {
                 created = now
         )
 
-        Assertions.assertEquals(expectedBlogEntry, created)
+        Assertions.assertEquals(expectedArticleEntry, created)
 
-        val retrieved = blogService.getBlogEntryDraftByID(created.id)
+        val retrieved = articleService.getArticleEntryDraftByID(created.id)
 
-        Assertions.assertEquals(expectedBlogEntry, retrieved)
+        Assertions.assertEquals(expectedArticleEntry, retrieved)
     }
 
     @Test
-    fun createBlogEntry_GetBlogEntryThatHasNotBeenPublished() {
-        val newBlogEntry = BlogDraftEntryNew(
-                title = "Some Blog Entry",
+    fun createArticleEntry_GetArticleEntryThatHasNotBeenPublished() {
+        val newArticleEntry = ArticleDraftEntryNew(
+                title = "Some Article Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
 
-        val created = blogService.createBlogEntry(newBlogEntry)
+        val created = articleService.createArticleEntry(newArticleEntry)
 
         Assertions.assertThrows(NotFound::class.java) {
-            blogService.getBlogEntryById(created.id)
+            articleService.getArticleEntryById(created.id)
         }
     }
 
     @Test
-    fun updateBlogEntry_Unpublished() {
+    fun updateArticleEntry_Unpublished() {
         val now = itIsNow()
 
-        val newBlogEntry = BlogDraftEntryNew(
-                title = "Some Blog Entry",
+        val newArticleEntry = ArticleDraftEntryNew(
+                title = "Some Article Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
 
-        val createdDraft = blogService.createBlogEntry(newBlogEntry)
+        val createdDraft = articleService.createArticleEntry(newArticleEntry)
 
         val later = itIsNow(now.plusDays(1))
 
@@ -124,33 +124,33 @@ class BlogServiceTest {
                 updated = later
         )
 
-        val updated = blogService.updateBlogEntry(update)
+        val updated = articleService.updateArticleEntry(update)
 
         Assertions.assertEquals(expected, updated)
-        Assertions.assertEquals(expected, blogService.getBlogEntryDraftByID(createdDraft.id))
+        Assertions.assertEquals(expected, articleService.getArticleEntryDraftByID(createdDraft.id))
     }
 
     @Test
-    fun publishBlogEntry() {
+    fun publishArticleEntry() {
         val createdTime = itIsNow()
 
-        val newBlogEntry = BlogDraftEntryNew(
-                title = "Some Blog Entry",
+        val newArticleEntry = ArticleDraftEntryNew(
+                title = "Some Article Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
 
-        val createdDraft = blogService.createBlogEntry(newBlogEntry)
+        val createdDraft = articleService.createArticleEntry(newArticleEntry)
 
         val publishTime = itIsNow(createdTime.plusDays(1))
 
-        blogService.publishBlogEntry(createdDraft.id)
+        articleService.publishArticleEntry(createdDraft.id)
 
         val expectedDraft = createdDraft.copy(
                 published = true,
                 unpublishedChanges = false
         )
-        val expectedBlogEntry = BlogEntry(
+        val expectedArticleEntry = ArticleEntry(
                 id = createdDraft.id,
                 title = createdDraft.title,
                 content = createdDraft.content,
@@ -159,26 +159,26 @@ class BlogServiceTest {
                 lastEdited = publishTime
         )
 
-        Assertions.assertEquals(expectedDraft, blogService.getBlogEntryDraftByID(createdDraft.id))
-        Assertions.assertEquals(expectedBlogEntry, blogService.getBlogEntryById(createdDraft.id))
+        Assertions.assertEquals(expectedDraft, articleService.getArticleEntryDraftByID(createdDraft.id))
+        Assertions.assertEquals(expectedArticleEntry, articleService.getArticleEntryById(createdDraft.id))
 
     }
 
     @Test
-    fun updateBlogEntry_realChanges_AlreadyPublished() {
+    fun updateArticleEntry_realChanges_AlreadyPublished() {
         val createdTime = itIsNow()
 
-        val newBlogEntry = BlogDraftEntryNew(
-                title = "Some Blog Entry",
+        val newArticleEntry = ArticleDraftEntryNew(
+                title = "Some Article Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
 
-        val createdDraft = blogService.createBlogEntry(newBlogEntry)
+        val createdDraft = articleService.createArticleEntry(newArticleEntry)
 
         val publishTime = itIsNow(createdTime.plusDays(1))
 
-        blogService.publishBlogEntry(createdDraft.id)
+        articleService.publishArticleEntry(createdDraft.id)
 
         val updateTime = itIsNow(publishTime.plusDays(1))
 
@@ -187,14 +187,14 @@ class BlogServiceTest {
                 content = "changed${createdDraft.content}"
         )
 
-        val expectedBlogDraft = createdDraft.copy(
+        val expectedArticleDraft = createdDraft.copy(
                 title = update.title,
                 content = update.content,
                 updated = updateTime,
                 published = true,
                 unpublishedChanges = true
         )
-        val expectedBlogEntry = BlogEntry(
+        val expectedArticleEntry = ArticleEntry(
                 id = createdDraft.id,
                 title = createdDraft.title,
                 content = createdDraft.content,
@@ -203,40 +203,40 @@ class BlogServiceTest {
                 lastEdited = publishTime
         )
 
-        val updated = blogService.updateBlogEntry(update)
+        val updated = articleService.updateArticleEntry(update)
 
-        Assertions.assertEquals(expectedBlogDraft, updated)
-        Assertions.assertEquals(expectedBlogEntry, blogService.getBlogEntryById(createdDraft.id))
+        Assertions.assertEquals(expectedArticleDraft, updated)
+        Assertions.assertEquals(expectedArticleEntry, articleService.getArticleEntryById(createdDraft.id))
 
     }
 
     @Test
-    fun updateBlogEntry_noChange_AlreadyPublished() {
+    fun updateArticleEntry_noChange_AlreadyPublished() {
         val createdTime = itIsNow()
 
-        val newBlogEntry = BlogDraftEntryNew(
-                title = "Some Blog Entry",
+        val newArticleEntry = ArticleDraftEntryNew(
+                title = "Some Article Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
 
-        val createdDraft = blogService.createBlogEntry(newBlogEntry)
+        val createdDraft = articleService.createArticleEntry(newArticleEntry)
 
         val publishTime = itIsNow(createdTime.plusDays(1))
 
-        blogService.publishBlogEntry(createdDraft.id)
+        articleService.publishArticleEntry(createdDraft.id)
 
         itIsNow(publishTime.plusDays(1))
 
         val update = createdDraft.toUpdate().copy()
 
-        val expectedBlogDraft = createdDraft.copy(
+        val expectedArticleDraft = createdDraft.copy(
                 title = update.title,
                 content = update.content,
                 published = true,
                 unpublishedChanges = false
         )
-        val expectedBlogEntry = BlogEntry(
+        val expectedArticleEntry = ArticleEntry(
                 id = createdDraft.id,
                 title = createdDraft.title,
                 content = createdDraft.content,
@@ -245,28 +245,28 @@ class BlogServiceTest {
                 lastEdited = publishTime
         )
 
-        val updated = blogService.updateBlogEntry(update)
+        val updated = articleService.updateArticleEntry(update)
 
-        Assertions.assertEquals(expectedBlogDraft, updated)
-        Assertions.assertEquals(expectedBlogEntry, blogService.getBlogEntryById(createdDraft.id))
+        Assertions.assertEquals(expectedArticleDraft, updated)
+        Assertions.assertEquals(expectedArticleEntry, articleService.getArticleEntryById(createdDraft.id))
 
     }
 
     @Test
-    fun publishBlogEntry_withChanges_AlreadyPublished() {
+    fun publishArticleEntry_withChanges_AlreadyPublished() {
         val createdTime = itIsNow()
 
-        val newBlogEntry = BlogDraftEntryNew(
-                title = "Some Blog Entry",
+        val newArticleEntry = ArticleDraftEntryNew(
+                title = "Some Article Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
 
-        val createdDraft = blogService.createBlogEntry(newBlogEntry)
+        val createdDraft = articleService.createArticleEntry(newArticleEntry)
 
         val publishTime = itIsNow(createdTime.plusDays(1))
 
-        blogService.publishBlogEntry(createdDraft.id)
+        articleService.publishArticleEntry(createdDraft.id)
 
         val updateTime = itIsNow(publishTime.plusDays(1))
 
@@ -275,20 +275,20 @@ class BlogServiceTest {
                 content = "changed${createdDraft.content}"
         )
 
-        val updated = blogService.updateBlogEntry(update)
+        val updated = articleService.updateArticleEntry(update)
 
         val publishedAgainTime = itIsNow(updateTime.plusDays(1))
 
-        blogService.publishBlogEntry(createdDraft.id)
+        articleService.publishArticleEntry(createdDraft.id)
 
-        val expectedBlogDraft = createdDraft.copy(
+        val expectedArticleDraft = createdDraft.copy(
                 title = update.title,
                 content = update.content,
                 updated = updateTime,
                 published = true,
                 unpublishedChanges = false
         )
-        val expectedBlogEntry = BlogEntry(
+        val expectedArticleEntry = ArticleEntry(
                 id = createdDraft.id,
                 title = updated.title,
                 content = updated.content,
@@ -297,35 +297,35 @@ class BlogServiceTest {
                 lastEdited = publishedAgainTime
         )
 
-        Assertions.assertEquals(expectedBlogDraft, blogService.getBlogEntryDraftByID(createdDraft.id))
-        Assertions.assertEquals(expectedBlogEntry, blogService.getBlogEntryById(createdDraft.id))
+        Assertions.assertEquals(expectedArticleDraft, articleService.getArticleEntryDraftByID(createdDraft.id))
+        Assertions.assertEquals(expectedArticleEntry, articleService.getArticleEntryById(createdDraft.id))
     }
 
 
     @Test
-    fun getBlogEntryHeaders_allUsers_onlyPublished() {
-        blogService.createBlogEntry(blogEntryNew().copy(
+    fun getArticleEntryHeaders_allUsers_onlyPublished() {
+        articleService.createArticleEntry(articleEntryNew().copy(
                 title = "Entry1",
                 authorID = user.id
         )).toHeader() // Not published, should not see this one
 
-        val blogEntryUser1_Published = blogService.createBlogEntry(blogEntryNew().copy(
+        val articleEntryUser1_Published = articleService.createArticleEntry(articleEntryNew().copy(
                 title = "Entry2",
                 authorID = user.id
         )).toHeader()
-        blogService.publishBlogEntry(blogEntryUser1_Published.id)
+        articleService.publishArticleEntry(articleEntryUser1_Published.id)
 
         val user2 = userService.createUser(newUser().copy("another@blah.com", "another"))
-        val blogEntryUser2_Published = blogService.createBlogEntry(blogEntryNew().copy(
+        val articleEntryUser2_Published = articleService.createArticleEntry(articleEntryNew().copy(
                 title = "Entry3",
                 authorID = user2.id
         )).toHeader()
-        blogService.publishBlogEntry(blogEntryUser2_Published.id)
+        articleService.publishArticleEntry(articleEntryUser2_Published.id)
 
-        val expectedHeaders = listOf(blogEntryUser1_Published, blogEntryUser2_Published)
+        val expectedHeaders = listOf(articleEntryUser1_Published, articleEntryUser2_Published)
 
 
-        val actual = blogService.getBlogEntryHeaders()
+        val actual = articleService.getArticleEntryHeaders()
         Assertions.assertEquals(actual.size, expectedHeaders.size)
         for (header in expectedHeaders) {
             Assertions.assertTrue(actual.contains(header))
@@ -333,29 +333,29 @@ class BlogServiceTest {
     }
 
     @Test
-    fun getBlogEntryHeadersByAuthor_onlyAuthor_onlyPublished() {
-        blogService.createBlogEntry(blogEntryNew().copy(
+    fun getArticleEntryHeadersByAuthor_onlyAuthor_onlyPublished() {
+        articleService.createArticleEntry(articleEntryNew().copy(
                 title = "Entry1",
                 authorID = user.id
         )).toHeader() // Not published, should not see this one
 
-        val draftUser1Published = blogService.createBlogEntry(blogEntryNew().copy(
+        val draftUser1Published = articleService.createArticleEntry(articleEntryNew().copy(
                 title = "User1Published",
                 authorID = user.id
         )).toHeader()
-        blogService.publishBlogEntry(draftUser1Published.id)
-        val user1PublishedHeader = blogService.getBlogEntryById(draftUser1Published.id).toHeader()
+        articleService.publishArticleEntry(draftUser1Published.id)
+        val user1PublishedHeader = articleService.getArticleEntryById(draftUser1Published.id).toHeader()
 
         val user2 = userService.createUser(newUser().copy("another@blah.com", "another"))
-        val draftUser2Created = blogService.createBlogEntry(blogEntryNew().copy(
+        val draftUser2Created = articleService.createArticleEntry(articleEntryNew().copy(
                 title = "User2Published",
                 authorID = user2.id
         )) // Not right author, should not see this one
-        blogService.publishBlogEntry(draftUser2Created.id)
+        articleService.publishArticleEntry(draftUser2Created.id)
 
         val expectedHeaders = listOf(user1PublishedHeader)
 
-        val actual = blogService.getBlogEntryHeadersByAuthor(user.id)
+        val actual = articleService.getArticleEntryHeadersByAuthor(user.id)
         Assertions.assertEquals(actual.size, expectedHeaders.size)
         for (header in expectedHeaders) {
             Assertions.assertTrue(actual.contains(header))
@@ -363,29 +363,29 @@ class BlogServiceTest {
     }
 
     @Test
-    fun getBlogEntryDraftHeaders_allAuthorsBlogs() {
-        val blogEntryUser1_UnPublished = blogService.createBlogEntry(blogEntryNew().copy(
+    fun getArticleEntryDraftHeaders_allAuthorsArticles() {
+        val articleEntryUser1_UnPublished = articleService.createArticleEntry(articleEntryNew().copy(
                 title = "Entry1",
                 authorID = user.id
         )).toHeader()
 
-        val blogEntryUser1_Published = blogService.createBlogEntry(blogEntryNew().copy(
+        val articleEntryUser1_Published = articleService.createArticleEntry(articleEntryNew().copy(
                 title = "Entry2",
                 authorID = user.id
         )).toHeader()
-        blogService.publishBlogEntry(blogEntryUser1_Published.id)
+        articleService.publishArticleEntry(articleEntryUser1_Published.id)
 
         val user2 = userService.createUser(newUser().copy("another@blah.com", "another"))
-        val blogEntryUser2_Published = blogService.createBlogEntry(blogEntryNew().copy(
+        val articleEntryUser2_Published = articleService.createArticleEntry(articleEntryNew().copy(
                 title = "Entry3",
                 authorID = user2.id
         )).toHeader() // Not right author, should not see this one
-        blogService.publishBlogEntry(blogEntryUser2_Published.id)
+        articleService.publishArticleEntry(articleEntryUser2_Published.id)
 
-        val expectedHeaders = listOf(blogEntryUser1_Published, blogEntryUser1_UnPublished)
+        val expectedHeaders = listOf(articleEntryUser1_Published, articleEntryUser1_UnPublished)
 
 
-        val actual = blogService.getBlogEntryDraftHeaders(user.id)
+        val actual = articleService.getArticleEntryDraftHeaders(user.id)
         Assertions.assertEquals(actual.size, expectedHeaders.size)
         for (header in expectedHeaders) {
             Assertions.assertTrue(actual.contains(header))
@@ -393,19 +393,19 @@ class BlogServiceTest {
     }
 
     @Test
-    fun deleteBlogEntry_alreadyPublished(){
-        val newBlogEntry = BlogDraftEntryNew(
-                title = "Some Blog Entry",
+    fun deleteArticleEntry_alreadyPublished(){
+        val newArticleEntry = ArticleDraftEntryNew(
+                title = "Some Article Entry",
                 content = "A bit of content",
                 authorID = user.id
         )
-        val createdDraft = blogService.createBlogEntry(newBlogEntry)
-        blogService.publishBlogEntry(createdDraft.id)
+        val createdDraft = articleService.createArticleEntry(newArticleEntry)
+        articleService.publishArticleEntry(createdDraft.id)
 
-        blogService.deleteBlogEntry(createdDraft.id)
+        articleService.deleteArticleEntry(createdDraft.id)
 
         Assertions.assertThrows(NoSuchElementException::class.java) {
-            blogService.getBlogEntryDraftByID(createdDraft.id)
+            articleService.getArticleEntryDraftByID(createdDraft.id)
         }
     }
 

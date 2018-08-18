@@ -20,7 +20,7 @@
     @Component({
         components: {"vue-markdown": VueMarkdown}
     })
-    export default class BlogContent extends Vue {
+    export default class ArticleContent extends Vue {
         @Prop() title!: string
         @Prop() content!: string
     }

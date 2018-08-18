@@ -1,7 +1,7 @@
-package com.binarymonks.gonzo.core.blog.service
+package com.binarymonks.gonzo.core.article.service
 
-import com.binarymonks.gonzo.core.blog.api.BlogDraftEntryNew
-import com.binarymonks.gonzo.core.blog.persistence.BlogRepo
+import com.binarymonks.gonzo.core.article.api.ArticleDraftEntryNew
+import com.binarymonks.gonzo.core.article.persistence.ArticleRepo
 import com.binarymonks.gonzo.core.common.ValidationException
 import com.binarymonks.gonzo.core.common.ValidationMessage
 import com.binarymonks.gonzo.core.users.persistence.UserRepo
@@ -12,29 +12,29 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 
 
-class BlogServiceValidationTest {
+class ArticleServiceValidationTest {
 
 
-    lateinit var blogService: BlogService
+    lateinit var articleService: ArticleService
 
     @BeforeEach
     fun setUp() {
-        blogService = BlogService(
-                Mockito.mock(BlogRepo::class.java),
+        articleService = ArticleService(
+                Mockito.mock(ArticleRepo::class.java),
                 Mockito.mock(UserRepo::class.java)
         )
     }
 
     @Test
-    fun testCreateBlog_titleNotEmpty() {
-        val newBlogEntry = BlogDraftEntryNew(
+    fun testCreateArticle_titleNotEmpty() {
+        val newArticleEntry = ArticleDraftEntryNew(
                 title = "",
                 content = "A bit of content",
                 authorID = 1
         )
 
         val exception = assertThrows<ValidationException> {
-            blogService.createBlogEntry(newBlogEntry)
+            articleService.createArticleEntry(newArticleEntry)
         }
 
         Assertions.assertEquals(

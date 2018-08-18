@@ -1,7 +1,7 @@
-package com.binarymonks.gonzo.core.blog.persistence
+package com.binarymonks.gonzo.core.article.persistence
 
-import com.binarymonks.gonzo.core.blog.api.BlogEntry
-import com.binarymonks.gonzo.core.blog.api.BlogEntryDraft
+import com.binarymonks.gonzo.core.article.api.ArticleEntry
+import com.binarymonks.gonzo.core.article.api.ArticleEntryDraft
 import com.binarymonks.gonzo.core.common.NotFound
 import com.binarymonks.gonzo.core.extensions.time.normalise
 import com.binarymonks.gonzo.core.users.persistence.UserEntity
@@ -11,7 +11,7 @@ import javax.persistence.*
 
 
 @Entity
-data class BlogEntryPublished(
+data class ArticleEntryPublished(
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,7 @@ data class BlogEntryPublished(
 )
 
 @Entity
-data class BlogEntryDraftEntity(
+data class ArticleEntryDraftEntity(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         var id: Long? = null,
@@ -58,39 +58,39 @@ data class BlogEntryDraftEntity(
         var deleted: ZonedDateTime? = null,
 
         @OneToOne(cascade = [CascadeType.ALL])
-        @JoinColumn(name="BlogEntryPublishedID")
-        var publishedBlog: BlogEntryPublished? = null,
+        @JoinColumn(name="ArticleEntryPublishedID")
+        var publishedArticle: ArticleEntryPublished? = null,
 
         @Column(nullable = false)
         var unpublishedChanges: Boolean = true
 
         ) {
-    fun toBlogEntryDraft() = BlogEntryDraft(
+    fun toArticleEntryDraft() = ArticleEntryDraft(
             id = id!!,
             title = title,
             content = content,
             author = author!!.toUser().toPublicHeader(),
-            published = publishedBlog != null,
+            published = publishedArticle != null,
             unpublishedChanges = unpublishedChanges,
             created = checkNotNull(created).normalise(),
             updated = updated!!.normalise()
     )
 
-    fun toBlogEntry(): BlogEntry {
-        if (publishedBlog == null) {
+    fun toArticleEntry(): ArticleEntry {
+        if (publishedArticle == null) {
             throw NotFound()
         }
-        return BlogEntry(
+        return ArticleEntry(
                 id = id!!,
-                title = publishedBlog!!.title,
-                content = publishedBlog!!.content,
+                title = publishedArticle!!.title,
+                content = publishedArticle!!.content,
                 author = author!!.toUser().toPublicHeader(),
-                lastEdited = publishedBlog!!.updated!!.normalise(),
-                publishedOn = publishedBlog!!.created!!.normalise()
+                lastEdited = publishedArticle!!.updated!!.normalise(),
+                publishedOn = publishedArticle!!.created!!.normalise()
         )
     }
 }
 
-interface BlogRepo : CrudRepository<BlogEntryDraftEntity, Long>{
-    fun findAllByAuthor(user: UserEntity): Iterable<BlogEntryDraftEntity>
+interface ArticleRepo : CrudRepository<ArticleEntryDraftEntity, Long>{
+    fun findAllByAuthor(user: UserEntity): Iterable<ArticleEntryDraftEntity>
 }

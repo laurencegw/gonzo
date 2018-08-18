@@ -32,22 +32,22 @@ val USER_POLICIES = listOf(
         }
 )
 
-val BLOG_POLICIES = listOf(
-        // ANYONE CAN READ PUBLISHED BLOGS
+val ARTICLE_POLICIES = listOf(
+        // ANYONE CAN READ PUBLISHED ARTICLES
         allOf{
-            resource("type").equalTo().value(Types.BLOG)
+            resource("type").equalTo().value(Types.ARTICLE)
             action().equalTo().value(Actions.READ)
         },
         // ONLY AUTHORS AND ADMINS CAN CREATE
         allOf {
-            resource("type").equalTo().value(Types.BLOG_DRAFT)
+            resource("type").equalTo().value(Types.ARTICLE_DRAFT)
             subject("role").isIn().value(listOf(Role.ADMIN, Role.AUTHOR))
             subject("id").equalTo().resource("authorID")
             action().equalTo().value(Actions.CREATE)
         },
         // READ MODIFY DELETE OWN DRAFT
         allOf {
-            resource("type").equalTo().value(Types.BLOG_DRAFT)
+            resource("type").equalTo().value(Types.ARTICLE_DRAFT)
             subject("id").equalTo().resource("authorID")
             action().isIn().value(listOf(Actions.MODIFY, Actions.READ, Actions.DELETE))
         }
@@ -60,7 +60,7 @@ class AuthorizationConfig {
     @Bean
     fun accessDecisionService(): AccessDecisionService {
         return AccessDecisionService(
-            USER_POLICIES + BLOG_POLICIES
+            USER_POLICIES + ARTICLE_POLICIES
         )
     }
 }

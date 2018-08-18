@@ -16,26 +16,26 @@
     import Vue from "vue"
     import Component from "vue-class-component"
     import VButton from "@/components/VButton.vue"
-    import {BlogDraftNew} from "../blogs/api"
+    import {ArticleDraftNew} from "../articles/api"
 
     @Component({
         components: {
             VButton
         }
     })
-    export default class NewBlog extends Vue {
+    export default class NewArticle extends Vue {
 
         title = ""
         content = ""
 
         save() {
             const userID = this.$store.getters.user.id
-            this.$store.dispatch("createBlog", new BlogDraftNew(
+            this.$store.dispatch("createArticle", new ArticleDraftNew(
                 this.title,
                 this.content,
                 userID
-            )).then(blogDraft => {
-                this.$router.push({name: "draft", params: {id: blogDraft.id}})
+            )).then(articleDraft => {
+                this.$router.push({name: "draft", params: {id: articleDraft.id}})
             })
         }
 

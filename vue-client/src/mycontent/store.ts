@@ -1,134 +1,134 @@
-import {Blog, BlogDraft, BlogDraftNew, BlogHeader, Blogs} from "@/blogs/api"
+import {Article, ArticleDraft, ArticleDraftNew, ArticleHeader, Articles} from "@/articles/api"
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex"
 import {cloneDeep} from "lodash"
 import {isDev} from "@/utils"
-import {BlogsClient} from "@/blogs/clients"
+import {ArticlesClient} from "@/articles/clients"
 import Vue from "vue"
 
 class MyContentState {
-    blogHeadersByID: { [id: number]: BlogHeader } = {}
-    blogIDs: Array<number> = []
-    publishedBlog?: Blog
-    blogDraft?: BlogDraft
-    modifiedBlogDraft?: BlogDraft
+    articleHeadersByID: { [id: number]: ArticleHeader } = {}
+    articleIDs: Array<number> = []
+    publishedArticle?: Article
+    articleDraft?: ArticleDraft
+    modifiedArticleDraft?: ArticleDraft
 }
 
 const getters: GetterTree<MyContentState, any> = {
-    blogIDs(state: MyContentState): Array<number> {
-        return cloneDeep(state.blogIDs)
+    articleIDs(state: MyContentState): Array<number> {
+        return cloneDeep(state.articleIDs)
     },
-    blogHeader(state: MyContentState, blogID: number): BlogHeader {
-        return cloneDeep(state.blogHeadersByID[blogID])
+    articleHeader(state: MyContentState, articleID: number): ArticleHeader {
+        return cloneDeep(state.articleHeadersByID[articleID])
     },
-    blogHeaders(state: MyContentState): Array<BlogHeader> {
-        return cloneDeep(state.blogIDs.map(id => state.blogHeadersByID[id]))
+    articleHeaders(state: MyContentState): Array<ArticleHeader> {
+        return cloneDeep(state.articleIDs.map(id => state.articleHeadersByID[id]))
     },
-    blogDraft(state: MyContentState): BlogDraft | undefined {
-        return cloneDeep(state.blogDraft)
+    articleDraft(state: MyContentState): ArticleDraft | undefined {
+        return cloneDeep(state.articleDraft)
     },
-    modifiedBlogDraft(state: MyContentState): BlogDraft | undefined {
-        return cloneDeep(state.modifiedBlogDraft)
+    modifiedArticleDraft(state: MyContentState): ArticleDraft | undefined {
+        return cloneDeep(state.modifiedArticleDraft)
     },
-    publishedBlog(state: MyContentState): Blog | undefined {
-        return cloneDeep(state.publishedBlog)
+    publishedArticle(state: MyContentState): Article | undefined {
+        return cloneDeep(state.publishedArticle)
     }
 }
 
 const mutations: MutationTree<MyContentState> = {
-    setBlogHeaders(state: MyContentState, blogHeaders: Array<BlogHeader>) {
+    setArticleHeaders(state: MyContentState, articleHeaders: Array<ArticleHeader>) {
         const IDs: Array<number> = []
-        const headersByID: { [id: number]: BlogHeader } = {}
-        for (const header of blogHeaders) {
+        const headersByID: { [id: number]: ArticleHeader } = {}
+        for (const header of articleHeaders) {
             IDs.push(header.id)
             headersByID[header.id] = header
         }
-        Vue.set(state, "blogIDs", IDs)
-        Vue.set(state, "blogHeadersByID", headersByID)
+        Vue.set(state, "articleIDs", IDs)
+        Vue.set(state, "articleHeadersByID", headersByID)
     },
-    refreshBlogHeader(state: MyContentState, blogHeader: BlogHeader) {
-        const headersByID: { [id: number]: BlogHeader } = state.blogHeadersByID
-        headersByID[blogHeader.id] = blogHeader
-        Vue.set(state, "blogHeadersByID", headersByID)
+    refreshArticleHeader(state: MyContentState, articleHeader: ArticleHeader) {
+        const headersByID: { [id: number]: ArticleHeader } = state.articleHeadersByID
+        headersByID[articleHeader.id] = articleHeader
+        Vue.set(state, "articleHeadersByID", headersByID)
     },
-    workOnBlog(state: MyContentState, blog: BlogDraft) {
-        Vue.set(state, "blogDraft", cloneDeep(blog))
-        Vue.set(state, "modifiedBlogDraft", cloneDeep(blog))
+    workOnArticle(state: MyContentState, article: ArticleDraft) {
+        Vue.set(state, "articleDraft", cloneDeep(article))
+        Vue.set(state, "modifiedArticleDraft", cloneDeep(article))
     },
-    setPublishedBlog(state: MyContentState, blog: Blog) {
-        Vue.set(state, "publishedBlog", blog)
+    setPublishedArticle(state: MyContentState, article: Article) {
+        Vue.set(state, "publishedArticle", article)
     },
-    addBlogHeader(state: MyContentState, blogHeader: BlogHeader) {
-        state.blogIDs.unshift(blogHeader.id)
-        Vue.set(state, "blogIDs", state.blogIDs)
-        state.blogHeadersByID[blogHeader.id] = blogHeader
-        Vue.set(state, "blogHeadersByID", state.blogHeadersByID)
+    addArticleHeader(state: MyContentState, articleHeader: ArticleHeader) {
+        state.articleIDs.unshift(articleHeader.id)
+        Vue.set(state, "articleIDs", state.articleIDs)
+        state.articleHeadersByID[articleHeader.id] = articleHeader
+        Vue.set(state, "articleHeadersByID", state.articleHeadersByID)
     },
-    updateBlogDraftAttribute(state: MyContentState, payload: { attributeName: string, value: any }) {
-        Vue.set(state.modifiedBlogDraft!, payload.attributeName, payload.value)
+    updateArticleDraftAttribute(state: MyContentState, payload: { attributeName: string, value: any }) {
+        Vue.set(state.modifiedArticleDraft!, payload.attributeName, payload.value)
     },
-    deleteBlog(state: MyContentState, blogID) {
-        const currentIDs = state.blogIDs
-        const index = currentIDs.indexOf(blogID)
+    deleteArticle(state: MyContentState, articleID) {
+        const currentIDs = state.articleIDs
+        const index = currentIDs.indexOf(articleID)
         if (index !== -1) {
             currentIDs.splice(index, 1)
         }
-        Vue.set(state, "blogIDs", currentIDs)
+        Vue.set(state, "articleIDs", currentIDs)
     }
 }
 
-const buildActions = function (blogClient: Blogs): ActionTree<MyContentState, any> {
+const buildActions = function (articleClient: Articles): ActionTree<MyContentState, any> {
     const actions: ActionTree<MyContentState, any> = {
         loadDraftHeadersForAuthor(store: ActionContext<MyContentState, any>, authorID: number) {
-            return blogClient.getBlogDraftHeaders(authorID).then((headers) => {
-                store.commit("setBlogHeaders", headers)
+            return articleClient.getArticleDraftHeaders(authorID).then((headers) => {
+                store.commit("setArticleHeaders", headers)
                 return headers
             })
         },
-        createBlog(store: ActionContext<MyContentState, any>, newBlog: BlogDraftNew) {
-            return blogClient.createBlogDraft(newBlog).then((blogDraft) => {
-                store.commit("addBlogHeader", blogDraft.toHeader())
-                store.commit("workOnBlog", blogDraft)
-                return blogDraft
+        createArticle(store: ActionContext<MyContentState, any>, newArticle: ArticleDraftNew) {
+            return articleClient.createArticleDraft(newArticle).then((articleDraft) => {
+                store.commit("addArticleHeader", articleDraft.toHeader())
+                store.commit("workOnArticle", articleDraft)
+                return articleDraft
             })
         },
-        deleteBlog(store: ActionContext<MyContentState, any>) {
-            const currentBlogID = store.getters.blogDraft.id
-            return blogClient.deleteBlog(currentBlogID).then((blogDraft) => {
-                store.commit("deleteBlog", currentBlogID)
-                store.commit("workOnBlog", null)
+        deleteArticle(store: ActionContext<MyContentState, any>) {
+            const currentArticleID = store.getters.articleDraft.id
+            return articleClient.deleteArticle(currentArticleID).then((articleDraft) => {
+                store.commit("deleteArticle", currentArticleID)
+                store.commit("workOnArticle", null)
             })
         },
-        publishBlog(store: ActionContext<MyContentState, any>) {
-            const currentBlogID = store.getters.blogDraft.id
-            return blogClient.publishBlog(currentBlogID).then(() => {
-                return store.dispatch("loadBlogDraft", currentBlogID).then((blogDraft: BlogDraft) => {
-                    store.commit("refreshBlogHeader", blogDraft.toHeader())
-                    return blogDraft
+        publishArticle(store: ActionContext<MyContentState, any>) {
+            const currentArticleID = store.getters.articleDraft.id
+            return articleClient.publishArticle(currentArticleID).then(() => {
+                return store.dispatch("loadArticleDraft", currentArticleID).then((articleDraft: ArticleDraft) => {
+                    store.commit("refreshArticleHeader", articleDraft.toHeader())
+                    return articleDraft
                 })
             })
         },
-        loadBlogDraft(store: ActionContext<MyContentState, any>, blogID: number) {
-            return blogClient.getBlogDraftByID(blogID).then((blogDraft) => {
-                store.commit("workOnBlog", blogDraft)
-                if (blogDraft.published) {
-                    return blogClient.getBlogByID(blogID).then((blog) => {
-                        store.commit("setPublishedBlog", blog)
-                        return blogDraft
+        loadArticleDraft(store: ActionContext<MyContentState, any>, articleID: number) {
+            return articleClient.getArticleDraftByID(articleID).then((articleDraft) => {
+                store.commit("workOnArticle", articleDraft)
+                if (articleDraft.published) {
+                    return articleClient.getArticleByID(articleID).then((article) => {
+                        store.commit("setPublishedArticle", article)
+                        return articleDraft
                     })
                 } else {
-                    store.commit("setPublishedBlog", null)
-                    return blogDraft
+                    store.commit("setPublishedArticle", null)
+                    return articleDraft
                 }
             })
         },
-        updateBlogDraftAttribute(store: ActionContext<MyContentState, any>, payload: { attributeName: string, value: any }) {
-            store.commit("updateBlogDraftAttribute", payload)
+        updateArticleDraftAttribute(store: ActionContext<MyContentState, any>, payload: { attributeName: string, value: any }) {
+            store.commit("updateArticleDraftAttribute", payload)
         },
-        saveBlogDraft(store: ActionContext<MyContentState, any>) {
-            return blogClient.updateBlogDraft(store.getters.modifiedBlogDraft).then((blogDraft) => {
-                store.commit("workOnBlog", blogDraft)
-                store.commit("refreshBlogHeader", blogDraft.toHeader())
-                return blogDraft
+        saveArticleDraft(store: ActionContext<MyContentState, any>) {
+            return articleClient.updateArticleDraft(store.getters.modifiedArticleDraft).then((articleDraft) => {
+                store.commit("workOnArticle", articleDraft)
+                store.commit("refreshArticleHeader", articleDraft.toHeader())
+                return articleDraft
             })
         }
     }
@@ -139,21 +139,21 @@ const buildActions = function (blogClient: Blogs): ActionTree<MyContentState, an
  * Constructor function that allows injection of the user client.
  * @param userClient
  */
-const createStore = function (blogClient: Blogs): any {
+const createStore = function (articleClient: Articles): any {
     return {
         state: new MyContentState(),
         getters: getters,
         mutations: mutations,
-        actions: buildActions(blogClient)
+        actions: buildActions(articleClient)
     }
 }
 
-const client = function (): Blogs {
+const client = function (): Articles {
     if (isDev()) {
-        // return new BlogsClientFake()
-        return new BlogsClient()
+        // return new ArticlesClientFake()
+        return new ArticlesClient()
     }
-    return new BlogsClient()
+    return new ArticlesClient()
 }
 
 export const MyContentStore = createStore(client())

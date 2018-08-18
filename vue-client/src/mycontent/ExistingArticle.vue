@@ -7,7 +7,7 @@
             </b-row>
             <b-row>
                 <b-col>
-                    <blog :title="title" :content="content"></blog>
+                    <article :title="title" :content="content"></article>
                 </b-col>
             </b-row>
         </v-loading>
@@ -18,20 +18,20 @@
     import Vue from "vue"
     import {Component, Watch} from "vue-property-decorator"
     import {Action, Getter} from "vuex-class"
-    import {BlogDraft} from "@/blogs/api"
-    import Blog from "@/blogs/BlogContent.vue"
+    import {ArticleDraft} from "@/articles/api"
+    import Article from "@/articles/ArticleContent.vue"
     import VLoading from "@/components/VLoading.vue"
 
     @Component({
-        components: {VLoading, Blog}
+        components: {VLoading, Article}
     })
-    export default class ExistingBlog extends Vue {
+    export default class ExistingArticle extends Vue {
         loaded = false
         showDraft = true
 
-        @Getter blogDraft?: BlogDraft
-        @Getter publishedBlog?: Blog
-        @Action loadBlogDraft
+        @Getter articleDraft?: ArticleDraft
+        @Getter publishedArticle?: Article
+        @Action loadArticleDraft
 
         mounted() {
             this.load()
@@ -44,10 +44,10 @@
 
         load() {
             this.loaded = false
-            const blogID = Number(this.$route.params.id)
-            this.loadBlogDraft(blogID).then((blogDraft) => {
+            const articleID = Number(this.$route.params.id)
+            this.loadArticleDraft(articleID).then((articleDraft) => {
                 this.loaded = true
-                if (!this.blogDraft!.published) {
+                if (!this.articleDraft!.published) {
                     this.showDraft = true
                 }
             })
@@ -55,24 +55,24 @@
 
         get title(): string {
             if (this.showDraft) {
-                return this.blogDraft ? this.blogDraft.title : ""
+                return this.articleDraft ? this.articleDraft.title : ""
             }
-            return this.publishedBlog ? this.publishedBlog.title : ""
+            return this.publishedArticle ? this.publishedArticle.title : ""
         }
 
         get content(): string {
             if (this.showDraft) {
-                return this.blogDraft ? this.blogDraft.content : ""
+                return this.articleDraft ? this.articleDraft.content : ""
             }
-            return this.publishedBlog ? this.publishedBlog.content : ""
+            return this.publishedArticle ? this.publishedArticle.content : ""
         }
 
         get status(): string {
-            if (this.blogDraft) {
-                if (this.blogDraft.published && this.blogDraft.unpublishedChanges) {
+            if (this.articleDraft) {
+                if (this.articleDraft.published && this.articleDraft.unpublishedChanges) {
                     return "Changes"
                 }
-                if (!this.blogDraft.unpublishedChanges) {
+                if (!this.articleDraft.unpublishedChanges) {
                     return "Published"
                 }
                 return "Draft"

@@ -6,9 +6,9 @@ import Authors from "@/views/Coders.vue"
 import Me from "@/views/Me.vue"
 import MyContent from "@/views/MyContent.vue"
 import Login from "@/views/Login.vue"
-import NewBlog from "@/mycontent/NewBlog.vue"
-import ExistingBlog from "@/mycontent/ExistingBlog.vue"
-import EditBlog from "@/mycontent/EditBlog.vue"
+import NewArticle from "@/mycontent/NewArticle.vue"
+import ExistingArticle from "@/mycontent/ExistingArticle.vue"
+import EditArticle from "@/mycontent/EditArticle.vue"
 import store from "@/store"
 import {LoginState} from "@/users/store"
 
@@ -60,17 +60,17 @@ export default new Router({
                 {
                     path: "new-entry",
                     name: "new-entry",
-                    component: NewBlog,
+                    component: NewArticle,
                 },
                 {
                     path: "draft/:id",
                     name: "draft",
-                    component: ExistingBlog,
+                    component: ExistingArticle,
                 },
                 {
                     path: "edit/:id",
                     name: "edit",
-                    component: EditBlog,
+                    component: EditArticle,
                 },
             ]
         },

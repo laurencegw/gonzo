@@ -78,7 +78,7 @@ class UsersAuthorizedPermissionsTest {
                 arrayOf("Author set roles", Role.AUTHOR, false),
                 arrayOf("Admin can set roles", Role.ADMIN, true)
         ).map {
-            dynamicTest(it[0] as String, {
+            dynamicTest(it[0] as String) {
                 testDataManager.clearData()
                 val userRole: Role = it[1] as Role
                 val allowed: Boolean = it[2] as Boolean
@@ -101,7 +101,7 @@ class UsersAuthorizedPermissionsTest {
                         userClient.setUserRole(UserRoleUpdate(targetUser.id, newRole))
                     })
                 }
-            })
+            }
         }.toList()
     }
 
@@ -210,7 +210,7 @@ class TestUsers {
 
     @Test
     @Disabled("Need To do more work here")
-    fun requestResetEmailAndReset(){
+    fun requestResetEmailAndReset() {
 
     }
 }

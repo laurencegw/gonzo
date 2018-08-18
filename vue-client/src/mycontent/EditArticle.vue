@@ -35,7 +35,7 @@
     import {Component, Watch} from "vue-property-decorator"
     import {Action, Getter} from "vuex-class"
     import VButton from "@/components/VButton.vue"
-    import {BlogDraft} from "@/blogs/api"
+    import {ArticleDraft} from "@/articles/api"
     import VLoading from "@/components/VLoading.vue"
     import VInput from "@/components/VInput.vue"
     import VTextArea from "../components/VTextArea.vue"
@@ -48,18 +48,18 @@
             VInput
         }
     })
-    export default class EditBlog extends Vue {
+    export default class EditArticle extends Vue {
         loaded = false
 
-        @Getter modifiedBlogDraft?: BlogDraft
-        @Action loadBlogDraft
-        @Action updateBlogDraftAttribute
-        @Action saveBlogDraft
+        @Getter modifiedArticleDraft?: ArticleDraft
+        @Action loadArticleDraft
+        @Action updateArticleDraftAttribute
+        @Action saveArticleDraft
 
         mounted() {
             this.loaded = false
-            const blogID = Number(this.$route.params.id)
-            this.loadBlogDraft(blogID).then((blogDraft) => {
+            const articleID = Number(this.$route.params.id)
+            this.loadArticleDraft(articleID).then((articleDraft) => {
                 this.loaded = true
             })
         }
@@ -67,26 +67,26 @@
         @Watch("$route")
         routeChanged() {
             this.loaded = false
-            const blogID = Number(this.$route.params.id)
-            this.loadBlogDraft(blogID).then((blogDraft) => {
+            const articleID = Number(this.$route.params.id)
+            this.loadArticleDraft(articleID).then((articleDraft) => {
                 this.loaded = true
             })
         }
 
         get title(): string {
-            return this.modifiedBlogDraft ? this.modifiedBlogDraft.title : ""
+            return this.modifiedArticleDraft ? this.modifiedArticleDraft.title : ""
         }
 
         get content(): string {
-            return this.modifiedBlogDraft ? this.modifiedBlogDraft.content : ""
+            return this.modifiedArticleDraft ? this.modifiedArticleDraft.content : ""
         }
 
         attributeChange(change: { attributeName: string, value: any }) {
-            this.updateBlogDraftAttribute(change)
+            this.updateArticleDraftAttribute(change)
         }
 
         save() {
-            this.saveBlogDraft()
+            this.saveArticleDraft()
         }
 
     }

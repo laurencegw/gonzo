@@ -1,42 +1,42 @@
-import {Blog, BlogDraft, BlogDraftNew, BlogDraftUpdate, BlogHeader, Blogs} from "@/blogs/api"
+import {Article, ArticleDraft, ArticleDraftNew, ArticleDraftUpdate, ArticleHeader, Articles} from "@/articles/api"
 import {UserPublicHeader} from "@/users/api"
 import axios from "axios"
 import {getToken} from "@/common/token"
 
 
-export class BlogsClient implements Blogs {
-    private blogsBasePath = "api/blogs"
+export class ArticlesClient implements Articles {
+    private articlesBasePath = "api/articles"
     private usersBasePath = "api/users"
 
     private headers(token: string | String): any {
         return {Authorization: `Bearer ${token}`}
     }
 
-    createBlogDraft(blogDraftNew: BlogDraftNew): Promise<BlogDraft> {
+    createArticleDraft(articleDraftNew: ArticleDraftNew): Promise<ArticleDraft> {
         return getToken().then((token) => {
-            return axios.post<string>(this.blogsBasePath, blogDraftNew, {
+            return axios.post<string>(this.articlesBasePath, articleDraftNew, {
                 headers: this.headers(token),
                 responseType: "json"
             })
         }).then((response) => {
-                return new BlogDraft(response.data)
+                return new ArticleDraft(response.data)
             }
         )
     }
 
-    deleteBlog(blogID: number): Promise<any> {
+    deleteArticle(articleID: number): Promise<any> {
         return getToken().then((token) => {
-            return axios.delete(`${this.blogsBasePath}/${blogID}`, {
+            return axios.delete(`${this.articlesBasePath}/${articleID}`, {
                 headers: this.headers(token),
                 responseType: "json"
             })
         })
     }
 
-    publishBlog(blogID: number): Promise<any> {
+    publishArticle(articleID: number): Promise<any> {
         return getToken().then((token) => {
             return axios.put<string>(
-                `${this.blogsBasePath}/${blogID}/publish`,
+                `${this.articlesBasePath}/${articleID}/publish`,
                 null,
                 {
                     headers: this.headers(token),
@@ -45,60 +45,60 @@ export class BlogsClient implements Blogs {
         })
     }
 
-    getBlogDraftByID(blogID: number): Promise<BlogDraft> {
+    getArticleDraftByID(articleID: number): Promise<ArticleDraft> {
         return getToken().then((token) => {
-            return axios.get<BlogDraft>(`${this.blogsBasePath}/${blogID}/draft`, {
+            return axios.get<ArticleDraft>(`${this.articlesBasePath}/${articleID}/draft`, {
                 headers: this.headers(token),
                 responseType: "json"
             })
         }).then((response) => {
-            return new BlogDraft(response.data)
+            return new ArticleDraft(response.data)
         })
     }
 
-    getBlogByID(blogID: number): Promise<Blog> {
+    getArticleByID(articleID: number): Promise<Article> {
         return getToken().then((token) => {
-            return axios.get<Blog>(`${this.blogsBasePath}/${blogID}`, {
+            return axios.get<Article>(`${this.articlesBasePath}/${articleID}`, {
                 headers: this.headers(token),
                 responseType: "json"
             })
         }).then((response) => {
-            return new Blog(response.data)
+            return new Article(response.data)
         })
     }
 
-    getBlogDraftHeaders(authorID: number): Promise<Array<BlogHeader>> {
+    getArticleDraftHeaders(authorID: number): Promise<Array<ArticleHeader>> {
         return getToken().then((token) => {
             return axios.get<Array<any>>(`${this.usersBasePath}/${authorID}/drafts`, {
                 headers: this.headers(token),
                 responseType: "json"
             })
         }).then((response) => {
-            const blogHeaders: Array<any> = response.data
-            return blogHeaders.map((blogHeaderObj) => new BlogHeader(blogHeaderObj))
+            const articleHeaders: Array<any> = response.data
+            return articleHeaders.map((articleHeaderObj) => new ArticleHeader(articleHeaderObj))
         })
     }
 
-    updateBlogDraft(blogDraftUpdate: BlogDraftUpdate): Promise<BlogDraft> {
+    updateArticleDraft(articleDraftUpdate: ArticleDraftUpdate): Promise<ArticleDraft> {
         return getToken().then((token) => {
-            return axios.put<string>(`${this.blogsBasePath}/${blogDraftUpdate.id}/`, blogDraftUpdate, {
+            return axios.put<string>(`${this.articlesBasePath}/${articleDraftUpdate.id}/`, articleDraftUpdate, {
                 headers: this.headers(token),
                 responseType: "json"
             })
         }).then((response) => {
-                return new BlogDraft(response.data)
+                return new ArticleDraft(response.data)
             }
         )
     }
 }
 
-export class BlogsClientFake implements Blogs {
+export class ArticlesClientFake implements Articles {
 
-    createBlogDraft(blogDraftNew: BlogDraftNew): Promise<BlogDraft> {
-        return Promise.resolve(new BlogDraft({
+    createArticleDraft(articleDraftNew: ArticleDraftNew): Promise<ArticleDraft> {
+        return Promise.resolve(new ArticleDraft({
             id: 1,
-            title: blogDraftNew.title,
-            content: blogDraftNew.content,
+            title: articleDraftNew.title,
+            content: articleDraftNew.content,
             author: new UserPublicHeader(
                 2,
                 "user1",
@@ -112,27 +112,27 @@ export class BlogsClientFake implements Blogs {
         }))
     }
 
-    deleteBlog(blogID: number): Promise<any> {
+    deleteArticle(articleID: number): Promise<any> {
         throw Error("Not Implemented")
     }
 
-    publishBlog(blogID: number): Promise<any> {
+    publishArticle(articleID: number): Promise<any> {
         throw Error("Not Implemented")
     }
 
-    getBlogDraftByID(blogID: number): Promise<BlogDraft> {
+    getArticleDraftByID(articleID: number): Promise<ArticleDraft> {
         throw Error("Not Implemented")
     }
 
-    getBlogDraftHeaders(authorID: number): Promise<Array<BlogHeader>> {
+    getArticleDraftHeaders(authorID: number): Promise<Array<ArticleHeader>> {
         throw Error("Not Implemented")
     }
 
-    updateBlogDraft(blogDraftUpdate: BlogDraftUpdate): Promise<BlogDraft> {
+    updateArticleDraft(articleDraftUpdate: ArticleDraftUpdate): Promise<ArticleDraft> {
         throw Error("Not Implemented")
     }
 
-    getBlogByID(blogID: number): Promise<Blog> {
+    getArticleByID(articleID: number): Promise<Article> {
         throw Error("Not Implemented")
     }
 }

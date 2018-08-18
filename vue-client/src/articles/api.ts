@@ -1,6 +1,6 @@
 import {UserPublicHeader} from "@/users/api"
 
-export class BlogDraftNew {
+export class ArticleDraftNew {
     title: string
     content: string
     authorID: number
@@ -12,7 +12,7 @@ export class BlogDraftNew {
     }
 }
 
-export class BlogDraftUpdate {
+export class ArticleDraftUpdate {
     id: number
     title: string
     content: string
@@ -24,7 +24,7 @@ export class BlogDraftUpdate {
     }
 }
 
-export class BlogHeader {
+export class ArticleHeader {
     id: number
     title: string
     author: UserPublicHeader
@@ -43,9 +43,9 @@ export class BlogHeader {
 
 
 /**
- * Publicly viewable info for a  published blog
+ * Publicly viewable info for a  published article
  */
-export class Blog {
+export class Article {
     id: number
     title: string
     content: string
@@ -64,9 +64,9 @@ export class Blog {
 }
 
 /**
- * Representation of a blog for the Author.
+ * Representation of a article for the Author.
  */
-export class BlogDraft {
+export class ArticleDraft {
     id: number
     title: string
     content: string
@@ -87,25 +87,25 @@ export class BlogDraft {
         this.updated = obj.updated
     }
 
-    toHeader(): BlogHeader {
-        return new BlogHeader(this)
+    toHeader(): ArticleHeader {
+        return new ArticleHeader(this)
     }
 }
 
 
-export interface Blogs {
-    createBlogDraft(blogDraftNew: BlogDraftNew): Promise<BlogDraft>
+export interface Articles {
+    createArticleDraft(articleDraftNew: ArticleDraftNew): Promise<ArticleDraft>
 
-    deleteBlog(blogID: number): Promise<null>
+    deleteArticle(articleID: number): Promise<null>
 
-    publishBlog(blogID: number): Promise<null>
+    publishArticle(articleID: number): Promise<null>
 
-    updateBlogDraft(blogDraftUpdate: BlogDraftUpdate): Promise<BlogDraft>
+    updateArticleDraft(articleDraftUpdate: ArticleDraftUpdate): Promise<ArticleDraft>
 
-    getBlogDraftHeaders(authorID: number): Promise<Array<BlogHeader>>
+    getArticleDraftHeaders(authorID: number): Promise<Array<ArticleHeader>>
 
-    getBlogDraftByID(blogID: number): Promise<BlogDraft>
+    getArticleDraftByID(articleID: number): Promise<ArticleDraft>
 
-    getBlogByID(blogID: number): Promise<Blog>
+    getArticleByID(articleID: number): Promise<Article>
 }
 

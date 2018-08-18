@@ -1,14 +1,14 @@
 package com.binarymonks.gonzo.core
 
 import com.binarymonks.gonzo.core.authz.AuthorizationConfig
-import com.binarymonks.gonzo.core.blog.BlogConfig
+import com.binarymonks.gonzo.core.article.ArticleConfig
 import com.binarymonks.gonzo.core.users.UsersConfig
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 
 @Configuration
 @Import(
-        BlogConfig::class,
+        ArticleConfig::class,
         UsersConfig::class,
         AuthorizationConfig::class
 )

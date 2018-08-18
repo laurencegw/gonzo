@@ -1,6 +1,6 @@
 package com.binarymonks.gonzo.core.test.harness
 
-import com.binarymonks.gonzo.core.blog.persistence.BlogRepo
+import com.binarymonks.gonzo.core.article.persistence.ArticleRepo
 import com.binarymonks.gonzo.core.users.api.Role
 import com.binarymonks.gonzo.core.users.api.User
 import com.binarymonks.gonzo.core.users.api.UserNew
@@ -21,7 +21,7 @@ class TestDataManager {
     lateinit var userRepo: UserRepo
 
     @Autowired
-    lateinit var blogRepo: BlogRepo
+    lateinit var articleRepo: ArticleRepo
 
     fun forceCreateUser(newUser:UserNew, role: Role = Role.READER): User {
         val user = userService.createUser(newUser)
@@ -30,7 +30,7 @@ class TestDataManager {
     }
 
     fun clearData() {
-        blogRepo.deleteAll()
+        articleRepo.deleteAll()
         userRepo.deleteAll()
     }
 

@@ -1,6 +1,6 @@
 <template>
     <b-container>
-        <blog-content :title="title" :content="content"></blog-content>
+        <article-content :title="title" :content="content"></article-content>
     </b-container>
 </template>
 
@@ -8,12 +8,12 @@
     import Vue from "vue"
     import Component from "vue-class-component"
     import {Prop} from "vue-property-decorator"
-    import BlogContent from "./BlogContent"
+    import ArticleContent from "@/articles/ArticleContent.vue"
 
     @Component({
-        components: {BlogContent}
+        components: {ArticleContent}
     })
-    export default class Blog extends Vue {
+    export default class Article extends Vue {
         @Prop() title!: string
         @Prop() content!: string
     }

@@ -1,7 +1,7 @@
 package com.binarymonks.gonzo.core.users
 
-import com.binarymonks.gonzo.core.blog.api.BlogDraftEntryNew
-import com.binarymonks.gonzo.core.blog.service.BlogService
+import com.binarymonks.gonzo.core.article.api.ArticleDraftEntryNew
+import com.binarymonks.gonzo.core.article.service.ArticleService
 import com.binarymonks.gonzo.core.users.api.Role
 import com.binarymonks.gonzo.core.users.api.UserNew
 import com.binarymonks.gonzo.core.users.api.UserRoleUpdate
@@ -18,7 +18,7 @@ class TestUserLoader {
     lateinit var userService:UserService
 
     @Autowired
-    lateinit var blogService:BlogService
+    lateinit var articleService:ArticleService
 
     @EventListener
     fun onApplicationEvent(event: ApplicationStartedEvent){
@@ -29,10 +29,10 @@ class TestUserLoader {
         ))
         userService.setUserRole(UserRoleUpdate(user.id, Role.ADMIN))
 
-        blogService.createBlogEntry(BlogDraftEntryNew(
+        articleService.createArticleEntry(ArticleDraftEntryNew(
                 "Never published",
                 "## Markdown is supported\n" +
-                        "This **blog** is only in draft state - no published content\n" +
+                        "This **article** is only in draft state - no published content\n" +
                         "\n" +
                         "Still working on this draft\n" +
                         "\n" +
@@ -42,27 +42,27 @@ class TestUserLoader {
                 user.id
         ))
 
-        var blog = blogService.createBlogEntry(BlogDraftEntryNew(
+        var article = articleService.createArticleEntry(ArticleDraftEntryNew(
                 "Published, No Changes",
-                "This blog is published and no current changes",
+                "This article is published and no current changes",
                 user.id
         ))
-        blogService.publishBlogEntry(blog.id)
+        articleService.publishArticleEntry(article.id)
 
-        blog = blogService.createBlogEntry(BlogDraftEntryNew(
+        article = articleService.createArticleEntry(ArticleDraftEntryNew(
                 "Published, Unpublished Changes",
                 "This is content that has been published",
                 user.id
         ))
-        blogService.publishBlogEntry(blog.id)
-        blogService.updateBlogEntry(blog.toUpdate().copy(
+        articleService.publishArticleEntry(article.id)
+        articleService.updateArticleEntry(article.toUpdate().copy(
                 content = "This is content that has not been published"
         ))
 
 //        for (i in (0..5)){
-//            blogService.createBlogEntry(BlogDraftEntryNew(
-//                    "My Blog $i",
-//                    "This is the content for blog number $i",
+//            articleService.createArticleEntry(ArticleDraftEntryNew(
+//                    "My Article $i",
+//                    "This is the content for article number $i",
 //                    user.id
 //            ))
 //        }

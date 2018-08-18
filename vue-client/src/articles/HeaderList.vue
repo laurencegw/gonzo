@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-row v-for="(header, index) in blogHeaders">
+    <b-row v-for="(header, index) in articleHeaders">
       <b-col :class="myStyle(index)">
         <div @click="select(index)">
           <div>{{header.title}}</div>
@@ -17,7 +17,7 @@
     import Component from "vue-class-component"
     import {Prop} from "vue-property-decorator"
     import VButton from "@/components/VButton.vue"
-    import {BlogHeader} from "./api"
+    import {ArticleHeader} from "./api"
 
     @Component({
         components: {
@@ -26,11 +26,11 @@
     })
     export default class EntryList extends Vue {
         selected = -1
-        @Prop() blogHeaders!: Array<BlogHeader>
+        @Prop() articleHeaders!: Array<ArticleHeader>
 
         select(index: number) {
             this.selected = index
-            this.$emit("selected", this.blogHeaders[index])
+            this.$emit("selected", this.articleHeaders[index])
         }
 
         myStyle(index: number): Array<String> {

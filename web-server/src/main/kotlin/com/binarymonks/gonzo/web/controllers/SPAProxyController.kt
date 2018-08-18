@@ -10,7 +10,7 @@ class SPAProxyController {
 
     @RequestMapping(
             "/home/**",
-            "/blog/**"
+            "/article/**"
     )
     fun forward(model: ModelMap): ModelAndView {
         return ModelAndView("forward:/")

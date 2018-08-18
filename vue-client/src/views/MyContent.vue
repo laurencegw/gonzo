@@ -11,7 +11,7 @@
                 <v-loading :is-loading="isLoading">
                     <b-row class="vertical-scroll max-height-75">
                         <b-col>
-                            <header-list :blog-headers="blogHeaders" @selected="selected"></header-list>
+                            <header-list :article-headers="articleHeaders" @selected="selected"></header-list>
                         </b-col>
                     </b-row>
                 </v-loading>
@@ -44,8 +44,8 @@
     import {Component, Vue, Watch} from "vue-property-decorator"
     import {Action, Getter} from "vuex-class"
     import VButton from "@/components/VButton.vue"
-    import HeaderList from "@/blogs/HeaderList.vue"
-    import {BlogDraft, BlogDraftNew, BlogHeader} from "../blogs/api"
+    import HeaderList from "@/articles/HeaderList.vue"
+    import {ArticleDraft, ArticleDraftNew, ArticleHeader} from "../articles/api"
     import {User} from "@/users/api"
     import VLoading from "@/components/VLoading.vue"
     import {nowString} from "@/common/time"
@@ -66,16 +66,16 @@
         notModifying = true
         viewing = false
         state = STATE_LOADING
-        selectedBlogHeader?: BlogHeader
+        selectedArticleHeader?: ArticleHeader
 
         @Getter user!: User
-        @Getter blogHeaders!: Array<BlogHeader>
-        @Getter blogDraft!: BlogDraft
+        @Getter articleHeaders!: Array<ArticleHeader>
+        @Getter articleDraft!: ArticleDraft
 
         @Action loadDraftHeadersForAuthor
-        @Action deleteBlog
-        @Action createBlog
-        @Action publishBlog
+        @Action deleteArticle
+        @Action createArticle
+        @Action publishArticle
 
         mounted() {
             this.checkCurrentActivity()
@@ -95,28 +95,28 @@
         }
 
         get unpublishedChanges() {
-            return this.blogDraft ? this.blogDraft.unpublishedChanges : false
+            return this.articleDraft ? this.articleDraft.unpublishedChanges : false
         }
 
-        selected(blogHeader: BlogHeader) {
-            this.selectedBlogHeader = blogHeader
-            this.$router.push({name: "draft", params: {id: `${blogHeader.id}`}})
+        selected(articleHeader: ArticleHeader) {
+            this.selectedArticleHeader = articleHeader
+            this.$router.push({name: "draft", params: {id: `${articleHeader.id}`}})
         }
 
         newHandler() {
             const userID = this.$store.getters.user.id
             const now = nowString()
-            this.createBlog(new BlogDraftNew(
-                `New Blog ${now}`,
+            this.createArticle(new ArticleDraftNew(
+                `New Article ${now}`,
                 "",
                 userID
-            )).then(blogDraft => {
-                this.$router.push({name: "edit", params: {id: blogDraft.id}})
+            )).then(articleDraft => {
+                this.$router.push({name: "edit", params: {id: articleDraft.id}})
             })
         }
 
         deleteHandler() {
-            this.deleteBlog().then(
+            this.deleteArticle().then(
                 () => {
                     this.$router.push({name: "my-content"})
                 }
@@ -124,7 +124,7 @@
         }
 
         publishHandler() {
-            this.publishBlog()
+            this.publishArticle()
         }
     }
 </script>
