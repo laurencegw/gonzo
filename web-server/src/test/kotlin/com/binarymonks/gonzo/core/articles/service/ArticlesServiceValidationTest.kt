@@ -34,7 +34,7 @@ class ArticlesServiceValidationTest {
         )
 
         val exception = assertThrows<ValidationException> {
-            articleService.createArticleEntry(newArticleEntry)
+            articleService.createArticle(newArticleEntry)
         }
 
         Assertions.assertEquals(

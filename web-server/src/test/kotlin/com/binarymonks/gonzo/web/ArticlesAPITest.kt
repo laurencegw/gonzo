@@ -60,10 +60,10 @@ class ArticlesAPITest {
                 val newArticle = articleEntryNew().copy(authorID = user.id)
 
                 if (allowed) {
-                    articleClient.createArticleEntry(newArticle)
+                    articleClient.createArticle(newArticle)
                 } else {
                     Assertions.assertThrows(NotAuthorized::class.java) {
-                        articleClient.createArticleEntry(newArticle)
+                        articleClient.createArticle(newArticle)
                     }
                 }
 
@@ -84,7 +84,7 @@ class ArticlesAPITest {
         )
 
         val exception = assertThrows<ValidationException> {
-            articleClient.createArticleEntry(newArticle)
+            articleClient.createArticle(newArticle)
         }
         Assertions.assertEquals(
                 listOf(
@@ -119,10 +119,10 @@ class ArticlesAPITest {
 
                 if (allowed) {
                     val newArticleEntry = articleEntryNew().copy(authorID = targetUser.id)
-                    articleClient.createArticleEntry(newArticleEntry)
+                    articleClient.createArticle(newArticleEntry)
                 } else {
                     Assertions.assertThrows(NotAuthorized::class.java) {
-                        articleClient.createArticleEntry(articleEntryNew())
+                        articleClient.createArticle(articleEntryNew())
                     }
                 }
 
@@ -146,14 +146,14 @@ class ArticlesAPITest {
                 articleClient.signIn(requestUser.email, requestUser.password)
 
                 val newArticle = articleEntryNew().copy(authorID = user.id)
-                val myArticle = articleService.createArticleEntry(newArticle)
+                val myArticle = articleService.createArticle(newArticle)
 
                 val update = articleEntryUpdate().copy(id = myArticle.id)
-                articleClient.updateArticleEntry(update)
-                articleClient.publishArticleEntry(myArticle.id)
-                articleClient.getArticleEntryDraftByID(myArticle.id)
-                articleClient.getArticleEntryDraftHeaders(user.id)
-                articleClient.deleteArticleEntry(myArticle.id)
+                articleClient.updateArticle(update)
+                articleClient.publishArticle(myArticle.id)
+                articleClient.getArticleDraftByID(myArticle.id)
+                articleClient.getArticleDraftHeaders(user.id)
+                articleClient.deleteArticle(myArticle.id)
             }
         }.toList()
     }
@@ -178,24 +178,24 @@ class ArticlesAPITest {
                 )
 
                 val newArticle = articleEntryNew().copy(authorID = targetUser.id)
-                val someOneElseArticle = articleService.createArticleEntry(newArticle)
-                articleService.publishArticleEntry(someOneElseArticle.id)
+                val someOneElseArticle = articleService.createArticle(newArticle)
+                articleService.publishArticle(someOneElseArticle.id)
 
                 val update = articleEntryUpdate().copy(id = someOneElseArticle.id)
                 Assertions.assertThrows(NotAuthorized::class.java) {
-                    articleClient.deleteArticleEntry(someOneElseArticle.id)
+                    articleClient.deleteArticle(someOneElseArticle.id)
                 }
                 Assertions.assertThrows(NotAuthorized::class.java) {
-                    articleClient.updateArticleEntry(update)
+                    articleClient.updateArticle(update)
                 }
                 Assertions.assertThrows(NotAuthorized::class.java) {
-                    articleClient.publishArticleEntry(someOneElseArticle.id)
+                    articleClient.publishArticle(someOneElseArticle.id)
                 }
                 Assertions.assertThrows(NotAuthorized::class.java) {
-                    articleClient.getArticleEntryDraftByID(someOneElseArticle.id)
+                    articleClient.getArticleDraftByID(someOneElseArticle.id)
                 }
                 Assertions.assertThrows(NotAuthorized::class.java) {
-                    articleClient.getArticleEntryDraftHeaders(targetUser.id)
+                    articleClient.getArticleDraftHeaders(targetUser.id)
                 }
             }
         }.toList()
@@ -210,13 +210,13 @@ class ArticlesAPITest {
         )
 
         val otherNewArticle = articleEntryNew().copy(authorID = targetUser.id)
-        val otherArticle = articleService.createArticleEntry(otherNewArticle)
-        articleService.publishArticleEntry(otherArticle.id)
+        val otherArticle = articleService.createArticle(otherNewArticle)
+        articleService.publishArticle(otherArticle.id)
 
 
-        articleClient.getArticleEntryById(otherArticle.id)
-        articleClient.getArticleEntryHeaders()
-        articleClient.getArticleEntryHeadersByAuthor(targetUser.id)
+        articleClient.getArticleById(otherArticle.id)
+        articleClient.getArticleHeaders()
+        articleClient.getArticleHeadersByAuthor(targetUser.id)
 
     }
 

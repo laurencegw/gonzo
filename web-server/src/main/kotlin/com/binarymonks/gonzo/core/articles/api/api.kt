@@ -13,71 +13,71 @@ interface Articles {
     /**
      * Creates a new articles that is not initially published.
      */
-    fun createArticleEntry(articleNew: ArticleDraftNew): ArticleDraft
+    fun createArticle(articleNew: ArticleDraftNew): ArticleDraft
 
     /**
      * Updates the draft state of a articles. Changes will still need to be published.
      */
-    fun updateArticleEntry(update: ArticleDraftUpdate): ArticleDraft
+    fun updateArticle(update: ArticleDraftUpdate): ArticleDraft
 
     /**
      * Permanently delete a articles (published or unpublished)
      */
-    fun deleteArticleEntry(articleID: Long)
+    fun deleteArticle(articleID: Long)
 
     /**
      * Retrieves the draft state of a articles.
      */
-    fun getArticleEntryDraftByID(articleID: Long): ArticleDraft
+    fun getArticleDraftByID(articleID: Long): ArticleDraft
 
     /**
      * Publishes any unpublished changes in the draft state of the articles.
      */
-    fun publishArticleEntry(articleID: Long)
+    fun publishArticle(articleID: Long)
 
     /**
      * Get the published state of a articles.
      */
-    fun getArticleEntryById(id: Long): Article
+    fun getArticleById(id: Long): Article
 
     /**
      * Retrieves headers for published articles
      */
-    fun getArticleEntryHeaders(): List<ArticleHeader>
+    fun getArticleHeaders(): List<ArticleHeader>
 
     /**
      * Retrieves headers for an authors published articles
      *
      * @param authorID: [com.binarymonks.gonzo.core.users.api.User.id]
      */
-    fun getArticleEntryHeadersByAuthor(authorID: Long): List<ArticleHeader>
+    fun getArticleHeadersByAuthor(authorID: Long): List<ArticleHeader>
 
     /**
      * Retrieves headers for all of an Authors articles (published/unpublished).
      *
      * @param authorID: [com.binarymonks.gonzo.core.users.api.User.id]
      */
-    fun getArticleEntryDraftHeaders(authorID: Long): List<ArticleHeader>
+    fun getArticleDraftHeaders(authorID: Long): List<ArticleHeader>
 }
 
 interface ArticleAuth {
-    fun createArticleEntry(credentials: Credentials, articleNew: ArticleDraftNew): ArticleDraft
+    fun createArticle(credentials: Credentials, articleNew: ArticleDraftNew): ArticleDraft
 
-    fun updateArticleEntry(credentials: Credentials, update: ArticleDraftUpdate): ArticleDraft
+    fun updateArticle(credentials: Credentials, update: ArticleDraftUpdate): ArticleDraft
 
-    fun deleteArticleEntry(credentials: Credentials, articleID: Long)
+    fun deleteArticle(credentials: Credentials, articleID: Long)
 
-    fun getArticleEntryDraftByID(credentials: Credentials, articleID: Long): ArticleDraft
+    fun getArticleDraftByID(credentials: Credentials, articleID: Long): ArticleDraft
 
-    fun publishArticleEntry(credentials: Credentials, articleID: Long)
+    fun publishArticle(credentials: Credentials, articleID: Long)
 
-    fun getArticleEntryById(credentials: Credentials, id: Long): Article
+    fun getArticleById(credentials: Credentials, id: Long): Article
 
-    fun getArticleEntryHeaders(credentials: Credentials): List<ArticleHeader>
+    fun getArticleHeaders(credentials: Credentials): List<ArticleHeader>
 
-    fun getArticleEntryHeadersByAuthor(credentials: Credentials, authorID: Long): List<ArticleHeader>
+    fun getArticleHeadersByAuthor(credentials: Credentials, authorID: Long): List<ArticleHeader>
 
-    fun getArticleEntryDraftHeaders(credentials: Credentials, authorID: Long): List<ArticleHeader>
+    fun getArticleDraftHeaders(credentials: Credentials, authorID: Long): List<ArticleHeader>
 }
 
 open class AuthoredResource(type: String) : Resource(type) {

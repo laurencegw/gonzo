@@ -9,7 +9,7 @@ import org.springframework.http.HttpMethod
 
 class ArticlesClient(baseURL: String) : Articles, AuthClient(baseURL) {
 
-    override fun createArticleEntry(articleNew: ArticleDraftNew): ArticleDraft {
+    override fun createArticle(articleNew: ArticleDraftNew): ArticleDraft {
         return restTemplate.postForObject(
                 "$baseURL/${Routes.ARTICLES}",
                 HttpEntity(articleNew, createHeaders()),
@@ -17,7 +17,7 @@ class ArticlesClient(baseURL: String) : Articles, AuthClient(baseURL) {
         )!!
     }
 
-    override fun updateArticleEntry(update: ArticleDraftUpdate): ArticleDraft {
+    override fun updateArticle(update: ArticleDraftUpdate): ArticleDraft {
         val response = restTemplate.exchange(
                 "$baseURL/${Routes.ARTICLES}/${update.id}",
                 HttpMethod.PUT,
@@ -27,14 +27,14 @@ class ArticlesClient(baseURL: String) : Articles, AuthClient(baseURL) {
         return checkNotNull(response.body)
     }
 
-    override fun publishArticleEntry(articleID: Long) {
+    override fun publishArticle(articleID: Long) {
         restTemplate.put(
                 "$baseURL/${Routes.publishArticle(articleID)}",
                 HttpEntity(null,createHeaders())
         )
     }
 
-    override fun deleteArticleEntry(articleID: Long) {
+    override fun deleteArticle(articleID: Long) {
         restTemplate.exchange(
                 "$baseURL/${Routes.articleEntry(articleID)}",
                 HttpMethod.DELETE,
@@ -43,7 +43,7 @@ class ArticlesClient(baseURL: String) : Articles, AuthClient(baseURL) {
         )
     }
 
-    override fun getArticleEntryDraftByID(articleID: Long): ArticleDraft {
+    override fun getArticleDraftByID(articleID: Long): ArticleDraft {
         val response =  restTemplate.exchange(
                 "$baseURL/${Routes.articleDraft(articleID)}",
                 HttpMethod.GET,
@@ -53,7 +53,7 @@ class ArticlesClient(baseURL: String) : Articles, AuthClient(baseURL) {
         return checkNotNull(response.body)
     }
 
-    override fun getArticleEntryHeadersByAuthor(authorID: Long): List<ArticleHeader> {
+    override fun getArticleHeadersByAuthor(authorID: Long): List<ArticleHeader> {
         val response =  restTemplate.exchange(
                 "$baseURL/${Routes.userArticles(authorID)}",
                 HttpMethod.GET,
@@ -63,7 +63,7 @@ class ArticlesClient(baseURL: String) : Articles, AuthClient(baseURL) {
         return checkNotNull(response.body)
     }
 
-    override fun getArticleEntryDraftHeaders(authorID: Long): List<ArticleHeader> {
+    override fun getArticleDraftHeaders(authorID: Long): List<ArticleHeader> {
         val response =  restTemplate.exchange(
                 "$baseURL/${Routes.userDrafts(authorID)}",
                 HttpMethod.GET,
@@ -73,7 +73,7 @@ class ArticlesClient(baseURL: String) : Articles, AuthClient(baseURL) {
         return checkNotNull(response.body)
     }
 
-    override fun getArticleEntryHeaders(): List<ArticleHeader> {
+    override fun getArticleHeaders(): List<ArticleHeader> {
         val response = restTemplate.exchange(
                 "$baseURL/${Routes.ARTICLES}",
                 HttpMethod.GET,
@@ -83,7 +83,7 @@ class ArticlesClient(baseURL: String) : Articles, AuthClient(baseURL) {
         return checkNotNull(response.body)
     }
 
-    override fun getArticleEntryById(id: Long): Article {
+    override fun getArticleById(id: Long): Article {
         return restTemplate.getForObject(
                 "$baseURL/${Routes.articleEntry(id)}",
                 Article::class.java

@@ -24,7 +24,6 @@
 
         @Emit()
         headerClicked(header: ArticleHeader) {
-            console.log("Clicked in Header List")
         }
     }
 </script>

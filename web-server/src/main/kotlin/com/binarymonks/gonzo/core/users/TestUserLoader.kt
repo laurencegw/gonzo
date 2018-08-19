@@ -29,7 +29,7 @@ class TestUserLoader {
         ))
         userService.setUserRole(UserRoleUpdate(user.id, Role.ADMIN))
 
-        articleService.createArticleEntry(ArticleDraftNew(
+        articleService.createArticle(ArticleDraftNew(
                 "Never published",
                 "## Markdown is supported\n" +
                         "This **articles** is only in draft state - no published content\n" +
@@ -42,25 +42,25 @@ class TestUserLoader {
                 user.id
         ))
 
-        var article = articleService.createArticleEntry(ArticleDraftNew(
+        var article = articleService.createArticle(ArticleDraftNew(
                 "Published, No Changes",
                 "This articles is published and no current changes",
                 user.id
         ))
-        articleService.publishArticleEntry(article.id)
+        articleService.publishArticle(article.id)
 
-        article = articleService.createArticleEntry(ArticleDraftNew(
+        article = articleService.createArticle(ArticleDraftNew(
                 "Published, Unpublished Changes",
                 "This is content that has been published",
                 user.id
         ))
-        articleService.publishArticleEntry(article.id)
-        articleService.updateArticleEntry(article.toUpdate().copy(
+        articleService.publishArticle(article.id)
+        articleService.updateArticle(article.toUpdate().copy(
                 content = "This is content that has not been published"
         ))
 
 //        for (i in (0..5)){
-//            articleService.createArticleEntry(ArticleDraftNew(
+//            articleService.createArticle(ArticleDraftNew(
 //                    "My Articles $i",
 //                    "This is the content for articles number $i",
 //                    user.id

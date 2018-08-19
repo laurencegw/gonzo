@@ -107,5 +107,7 @@ export interface Articles {
     getArticleDraftByID(articleID: number): Promise<ArticleDraft>
 
     getArticleByID(articleID: number): Promise<Article>
+
+    getAllArticleHeaders(): Promise<Array<ArticleHeader>>
 }
 

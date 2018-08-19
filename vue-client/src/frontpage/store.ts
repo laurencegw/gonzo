@@ -1,35 +1,42 @@
-import {Article, ArticleDraft, ArticleHeader} from "@/articles/api"
-import {GetterTree, MutationTree} from "vuex"
+import {Articles} from "@/articles/api"
+import {ActionContext, ActionTree} from "vuex"
 import {cloneDeep} from "lodash"
-import Vue from "vue"
+import {isDev} from "@/utils"
+import {ArticlesClient} from "@/articles/clients"
 
-
-class MyFrontPageState {
-    articleHeadersByID: { [id: number]: ArticleHeader } = {}
-    articleIDs: Array<number> = []
+class FrontPageState {
 }
 
-const getters: GetterTree<MyFrontPageState, any> = {
-    articleIDs(state: MyFrontPageState): Array<number> {
-        return cloneDeep(state.articleIDs)
-    },
-    articleHeader(state: MyFrontPageState, articleID: number): ArticleHeader {
-        return cloneDeep(state.articleHeadersByID[articleID])
-    },
-    articleHeaders(state: MyFrontPageState): Array<ArticleHeader> {
-        return cloneDeep(state.articleIDs.map(id => state.articleHeadersByID[id]))
-    },
-}
-
-const mutations: MutationTree<MyFrontPageState> = {
-    setArticleHeaders(state: MyFrontPageState, articleHeaders: Array<ArticleHeader>) {
-        const IDs: Array<number> = []
-        const headersByID: { [id: number]: ArticleHeader } = {}
-        for (const header of articleHeaders) {
-            IDs.push(header.id)
-            headersByID[header.id] = header
+const buildActions = function (articleClient: Articles): ActionTree<FrontPageState, any> {
+    const actions: ActionTree<FrontPageState, any> = {
+        loadAllArticleHeaders(store: ActionContext<FrontPageState, any>, authorID: number) {
+            return articleClient.getAllArticleHeaders().then((headers) => {
+                store.commit("setArticleHeaders", headers)
+                return headers
+            })
         }
-        Vue.set(state, "articleIDs", IDs)
-        Vue.set(state, "articleHeadersByID", headersByID)
+    }
+    return actions
+}
+
+/**
+ * Constructor function that allows injection of the client.
+ * @param articleClient
+ */
+const createStore = function (articleClient: Articles): any {
+    return {
+        state: new FrontPageState(),
+        actions: buildActions(articleClient)
     }
 }
+
+const client = function (): Articles {
+    if (isDev()) {
+        // return new ArticlesClientFake()
+        return new ArticlesClient()
+    }
+    return new ArticlesClient()
+}
+
+export const FrontPageStore = createStore(client())
+

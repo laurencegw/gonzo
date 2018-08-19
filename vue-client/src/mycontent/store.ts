@@ -96,8 +96,8 @@ const buildActions = function (articleClient: Articles): ActionTree<MyContentSta
 }
 
 /**
- * Constructor function that allows injection of the user client.
- * @param userClient
+ * Constructor function that allows injection of the client.
+ * @param articleClient
  */
 const createStore = function (articleClient: Articles): any {
     return {

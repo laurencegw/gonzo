@@ -18,7 +18,7 @@ class ArticlesService(
         var userRepo: UserRepo
 ) : Articles {
 
-    override fun createArticleEntry(articleNew: ArticleDraftNew): ArticleDraft {
+    override fun createArticle(articleNew: ArticleDraftNew): ArticleDraft {
         articleNew.validate()
         return articleRepo.save(ArticleDraftEntity(
                 title = articleNew.title,
@@ -29,7 +29,7 @@ class ArticlesService(
         )).toArticleEntryDraft()
     }
 
-    override fun updateArticleEntry(update: ArticleDraftUpdate): ArticleDraft {
+    override fun updateArticle(update: ArticleDraftUpdate): ArticleDraft {
         val entry = articleRepo.findById(update.id).get()
         val changed = listOf(
                 entry.publishedArticle?.content != update.content,
@@ -44,18 +44,18 @@ class ArticlesService(
         return articleRepo.save(entry).toArticleEntryDraft()
     }
 
-    override fun deleteArticleEntry(articleID: Long){
+    override fun deleteArticle(articleID: Long){
         articleRepo.deleteById(articleID)
     }
 
-    override fun getArticleEntryDraftByID(articleID: Long) = articleRepo.findById(articleID).get().toArticleEntryDraft()
+    override fun getArticleDraftByID(articleID: Long) = articleRepo.findById(articleID).get().toArticleEntryDraft()
 
-    override fun getArticleEntryDraftHeaders(authorID: Long): List<ArticleHeader> {
+    override fun getArticleDraftHeaders(authorID: Long): List<ArticleHeader> {
         val userEntity = userRepo.findById(authorID).get()
         return articleRepo.findAllByAuthor(userEntity).map { it.toArticleEntryDraft().toHeader() }
     }
 
-    override fun getArticleEntryHeadersByAuthor(authorID: Long): List<ArticleHeader> {
+    override fun getArticleHeadersByAuthor(authorID: Long): List<ArticleHeader> {
         val userEntity = userRepo.findById(authorID).get()
         val userArticleEntries = articleRepo.findAllByAuthor(userEntity).filter {
             it.publishedArticle != null
@@ -64,7 +64,7 @@ class ArticlesService(
         return userHeaders
     }
 
-    override fun publishArticleEntry(articleID: Long) {
+    override fun publishArticle(articleID: Long) {
         val now = nowUTC()
         val entity = articleRepo.findById(articleID).get()
         if (entity.publishedArticle != null) {
@@ -83,12 +83,12 @@ class ArticlesService(
         articleRepo.save(entity)
     }
 
-    override fun getArticleEntryHeaders(): List<ArticleHeader> = articleRepo.findAll().filter {
+    override fun getArticleHeaders(): List<ArticleHeader> = articleRepo.findAll().filter {
         it.publishedArticle != null
     }.map {
         it.toArticleEntry().toHeader()
     }
 
-    override fun getArticleEntryById(id: Long): Article = articleRepo.findById(id).get().toArticleEntry()
+    override fun getArticleById(id: Long): Article = articleRepo.findById(id).get().toArticleEntry()
 
 }

@@ -90,6 +90,15 @@ export class ArticlesClient implements Articles {
             }
         )
     }
+
+    getAllArticleHeaders(): Promise<Array<ArticleHeader>> {
+        return axios.get<Array<any>>(this.articlesBasePath, {
+            responseType: "json"
+        }).then((response) => {
+            const articleHeaders: Array<any> = response.data
+            return articleHeaders.map((articleHeaderObj) => new ArticleHeader(articleHeaderObj))
+        })
+    }
 }
 
 export class ArticlesClientFake implements Articles {
@@ -133,6 +142,10 @@ export class ArticlesClientFake implements Articles {
     }
 
     getArticleByID(articleID: number): Promise<Article> {
+        throw Error("Not Implemented")
+    }
+
+    getAllArticleHeaders(): Promise<Array<ArticleHeader>> {
         throw Error("Not Implemented")
     }
 }

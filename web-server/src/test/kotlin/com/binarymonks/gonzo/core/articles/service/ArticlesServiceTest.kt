@@ -64,7 +64,7 @@ class ArticlesServiceTest {
                 authorID = user.id
         )
 
-        val created = articleService.createArticleEntry(newArticleEntry)
+        val created = articleService.createArticle(newArticleEntry)
 
         val expectedArticleEntry = ArticleDraft(
                 id = created.id,
@@ -79,7 +79,7 @@ class ArticlesServiceTest {
 
         Assertions.assertEquals(expectedArticleEntry, created)
 
-        val retrieved = articleService.getArticleEntryDraftByID(created.id)
+        val retrieved = articleService.getArticleDraftByID(created.id)
 
         Assertions.assertEquals(expectedArticleEntry, retrieved)
     }
@@ -92,10 +92,10 @@ class ArticlesServiceTest {
                 authorID = user.id
         )
 
-        val created = articleService.createArticleEntry(newArticleEntry)
+        val created = articleService.createArticle(newArticleEntry)
 
         Assertions.assertThrows(NotFound::class.java) {
-            articleService.getArticleEntryById(created.id)
+            articleService.getArticleById(created.id)
         }
     }
 
@@ -109,7 +109,7 @@ class ArticlesServiceTest {
                 authorID = user.id
         )
 
-        val createdDraft = articleService.createArticleEntry(newArticleEntry)
+        val createdDraft = articleService.createArticle(newArticleEntry)
 
         val later = itIsNow(now.plusDays(1))
 
@@ -124,10 +124,10 @@ class ArticlesServiceTest {
                 updated = later
         )
 
-        val updated = articleService.updateArticleEntry(update)
+        val updated = articleService.updateArticle(update)
 
         Assertions.assertEquals(expected, updated)
-        Assertions.assertEquals(expected, articleService.getArticleEntryDraftByID(createdDraft.id))
+        Assertions.assertEquals(expected, articleService.getArticleDraftByID(createdDraft.id))
     }
 
     @Test
@@ -140,11 +140,11 @@ class ArticlesServiceTest {
                 authorID = user.id
         )
 
-        val createdDraft = articleService.createArticleEntry(newArticleEntry)
+        val createdDraft = articleService.createArticle(newArticleEntry)
 
         val publishTime = itIsNow(createdTime.plusDays(1))
 
-        articleService.publishArticleEntry(createdDraft.id)
+        articleService.publishArticle(createdDraft.id)
 
         val expectedDraft = createdDraft.copy(
                 published = true,
@@ -159,8 +159,8 @@ class ArticlesServiceTest {
                 lastEdited = publishTime
         )
 
-        Assertions.assertEquals(expectedDraft, articleService.getArticleEntryDraftByID(createdDraft.id))
-        Assertions.assertEquals(expectedArticleEntry, articleService.getArticleEntryById(createdDraft.id))
+        Assertions.assertEquals(expectedDraft, articleService.getArticleDraftByID(createdDraft.id))
+        Assertions.assertEquals(expectedArticleEntry, articleService.getArticleById(createdDraft.id))
 
     }
 
@@ -174,11 +174,11 @@ class ArticlesServiceTest {
                 authorID = user.id
         )
 
-        val createdDraft = articleService.createArticleEntry(newArticleEntry)
+        val createdDraft = articleService.createArticle(newArticleEntry)
 
         val publishTime = itIsNow(createdTime.plusDays(1))
 
-        articleService.publishArticleEntry(createdDraft.id)
+        articleService.publishArticle(createdDraft.id)
 
         val updateTime = itIsNow(publishTime.plusDays(1))
 
@@ -203,10 +203,10 @@ class ArticlesServiceTest {
                 lastEdited = publishTime
         )
 
-        val updated = articleService.updateArticleEntry(update)
+        val updated = articleService.updateArticle(update)
 
         Assertions.assertEquals(expectedArticleDraft, updated)
-        Assertions.assertEquals(expectedArticleEntry, articleService.getArticleEntryById(createdDraft.id))
+        Assertions.assertEquals(expectedArticleEntry, articleService.getArticleById(createdDraft.id))
 
     }
 
@@ -220,11 +220,11 @@ class ArticlesServiceTest {
                 authorID = user.id
         )
 
-        val createdDraft = articleService.createArticleEntry(newArticleEntry)
+        val createdDraft = articleService.createArticle(newArticleEntry)
 
         val publishTime = itIsNow(createdTime.plusDays(1))
 
-        articleService.publishArticleEntry(createdDraft.id)
+        articleService.publishArticle(createdDraft.id)
 
         itIsNow(publishTime.plusDays(1))
 
@@ -245,10 +245,10 @@ class ArticlesServiceTest {
                 lastEdited = publishTime
         )
 
-        val updated = articleService.updateArticleEntry(update)
+        val updated = articleService.updateArticle(update)
 
         Assertions.assertEquals(expectedArticleDraft, updated)
-        Assertions.assertEquals(expectedArticleEntry, articleService.getArticleEntryById(createdDraft.id))
+        Assertions.assertEquals(expectedArticleEntry, articleService.getArticleById(createdDraft.id))
 
     }
 
@@ -262,11 +262,11 @@ class ArticlesServiceTest {
                 authorID = user.id
         )
 
-        val createdDraft = articleService.createArticleEntry(newArticleEntry)
+        val createdDraft = articleService.createArticle(newArticleEntry)
 
         val publishTime = itIsNow(createdTime.plusDays(1))
 
-        articleService.publishArticleEntry(createdDraft.id)
+        articleService.publishArticle(createdDraft.id)
 
         val updateTime = itIsNow(publishTime.plusDays(1))
 
@@ -275,11 +275,11 @@ class ArticlesServiceTest {
                 content = "changed${createdDraft.content}"
         )
 
-        val updated = articleService.updateArticleEntry(update)
+        val updated = articleService.updateArticle(update)
 
         val publishedAgainTime = itIsNow(updateTime.plusDays(1))
 
-        articleService.publishArticleEntry(createdDraft.id)
+        articleService.publishArticle(createdDraft.id)
 
         val expectedArticleDraft = createdDraft.copy(
                 title = update.title,
@@ -297,35 +297,35 @@ class ArticlesServiceTest {
                 lastEdited = publishedAgainTime
         )
 
-        Assertions.assertEquals(expectedArticleDraft, articleService.getArticleEntryDraftByID(createdDraft.id))
-        Assertions.assertEquals(expectedArticleEntry, articleService.getArticleEntryById(createdDraft.id))
+        Assertions.assertEquals(expectedArticleDraft, articleService.getArticleDraftByID(createdDraft.id))
+        Assertions.assertEquals(expectedArticleEntry, articleService.getArticleById(createdDraft.id))
     }
 
 
     @Test
     fun getArticleEntryHeaders_allUsers_onlyPublished() {
-        articleService.createArticleEntry(articleEntryNew().copy(
+        articleService.createArticle(articleEntryNew().copy(
                 title = "Entry1",
                 authorID = user.id
         )).toHeader() // Not published, should not see this one
 
-        val articleEntryUser1_Published = articleService.createArticleEntry(articleEntryNew().copy(
+        val articleEntryUser1_Published = articleService.createArticle(articleEntryNew().copy(
                 title = "Entry2",
                 authorID = user.id
         )).toHeader()
-        articleService.publishArticleEntry(articleEntryUser1_Published.id)
+        articleService.publishArticle(articleEntryUser1_Published.id)
 
         val user2 = userService.createUser(newUser().copy("another@blah.com", "another"))
-        val articleEntryUser2_Published = articleService.createArticleEntry(articleEntryNew().copy(
+        val articleEntryUser2_Published = articleService.createArticle(articleEntryNew().copy(
                 title = "Entry3",
                 authorID = user2.id
         )).toHeader()
-        articleService.publishArticleEntry(articleEntryUser2_Published.id)
+        articleService.publishArticle(articleEntryUser2_Published.id)
 
         val expectedHeaders = listOf(articleEntryUser1_Published, articleEntryUser2_Published)
 
 
-        val actual = articleService.getArticleEntryHeaders()
+        val actual = articleService.getArticleHeaders()
         Assertions.assertEquals(actual.size, expectedHeaders.size)
         for (header in expectedHeaders) {
             Assertions.assertTrue(actual.contains(header))
@@ -334,28 +334,28 @@ class ArticlesServiceTest {
 
     @Test
     fun getArticleEntryHeadersByAuthor_onlyAuthor_onlyPublished() {
-        articleService.createArticleEntry(articleEntryNew().copy(
+        articleService.createArticle(articleEntryNew().copy(
                 title = "Entry1",
                 authorID = user.id
         )).toHeader() // Not published, should not see this one
 
-        val draftUser1Published = articleService.createArticleEntry(articleEntryNew().copy(
+        val draftUser1Published = articleService.createArticle(articleEntryNew().copy(
                 title = "User1Published",
                 authorID = user.id
         )).toHeader()
-        articleService.publishArticleEntry(draftUser1Published.id)
-        val user1PublishedHeader = articleService.getArticleEntryById(draftUser1Published.id).toHeader()
+        articleService.publishArticle(draftUser1Published.id)
+        val user1PublishedHeader = articleService.getArticleById(draftUser1Published.id).toHeader()
 
         val user2 = userService.createUser(newUser().copy("another@blah.com", "another"))
-        val draftUser2Created = articleService.createArticleEntry(articleEntryNew().copy(
+        val draftUser2Created = articleService.createArticle(articleEntryNew().copy(
                 title = "User2Published",
                 authorID = user2.id
         )) // Not right author, should not see this one
-        articleService.publishArticleEntry(draftUser2Created.id)
+        articleService.publishArticle(draftUser2Created.id)
 
         val expectedHeaders = listOf(user1PublishedHeader)
 
-        val actual = articleService.getArticleEntryHeadersByAuthor(user.id)
+        val actual = articleService.getArticleHeadersByAuthor(user.id)
         Assertions.assertEquals(actual.size, expectedHeaders.size)
         for (header in expectedHeaders) {
             Assertions.assertTrue(actual.contains(header))
@@ -364,28 +364,28 @@ class ArticlesServiceTest {
 
     @Test
     fun getArticleEntryDraftHeaders_allAuthorsArticles() {
-        val articleEntryUser1_UnPublished = articleService.createArticleEntry(articleEntryNew().copy(
+        val articleEntryUser1_UnPublished = articleService.createArticle(articleEntryNew().copy(
                 title = "Entry1",
                 authorID = user.id
         )).toHeader()
 
-        val articleEntryUser1_Published = articleService.createArticleEntry(articleEntryNew().copy(
+        val articleEntryUser1_Published = articleService.createArticle(articleEntryNew().copy(
                 title = "Entry2",
                 authorID = user.id
         )).toHeader()
-        articleService.publishArticleEntry(articleEntryUser1_Published.id)
+        articleService.publishArticle(articleEntryUser1_Published.id)
 
         val user2 = userService.createUser(newUser().copy("another@blah.com", "another"))
-        val articleEntryUser2_Published = articleService.createArticleEntry(articleEntryNew().copy(
+        val articleEntryUser2_Published = articleService.createArticle(articleEntryNew().copy(
                 title = "Entry3",
                 authorID = user2.id
         )).toHeader() // Not right author, should not see this one
-        articleService.publishArticleEntry(articleEntryUser2_Published.id)
+        articleService.publishArticle(articleEntryUser2_Published.id)
 
         val expectedHeaders = listOf(articleEntryUser1_Published, articleEntryUser1_UnPublished)
 
 
-        val actual = articleService.getArticleEntryDraftHeaders(user.id)
+        val actual = articleService.getArticleDraftHeaders(user.id)
         Assertions.assertEquals(actual.size, expectedHeaders.size)
         for (header in expectedHeaders) {
             Assertions.assertTrue(actual.contains(header))
@@ -399,13 +399,13 @@ class ArticlesServiceTest {
                 content = "A bit of content",
                 authorID = user.id
         )
-        val createdDraft = articleService.createArticleEntry(newArticleEntry)
-        articleService.publishArticleEntry(createdDraft.id)
+        val createdDraft = articleService.createArticle(newArticleEntry)
+        articleService.publishArticle(createdDraft.id)
 
-        articleService.deleteArticleEntry(createdDraft.id)
+        articleService.deleteArticle(createdDraft.id)
 
         Assertions.assertThrows(NoSuchElementException::class.java) {
-            articleService.getArticleEntryDraftByID(createdDraft.id)
+            articleService.getArticleDraftByID(createdDraft.id)
         }
     }
 
