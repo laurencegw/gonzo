@@ -44,7 +44,7 @@
     import {Component, Vue, Watch} from "vue-property-decorator"
     import {Action, Getter} from "vuex-class"
     import VButton from "@/components/VButton.vue"
-    import HeaderList from "@/articles/HeaderList.vue"
+    import HeaderList from "@/mycontent/ArticleDraftHeaderList.vue"
     import {ArticleDraft, ArticleDraftNew, ArticleHeader} from "../articles/api"
     import {User} from "@/users/api"
     import VLoading from "@/components/VLoading.vue"

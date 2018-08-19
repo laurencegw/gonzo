@@ -16,8 +16,8 @@
     import Vue from "vue"
     import Component from "vue-class-component"
     import {Prop} from "vue-property-decorator"
-    import VButton from "@/components/VButton.vue"
-    import {ArticleHeader} from "./api"
+    import VButton from "../components/VButton.vue"
+    import {ArticleHeader} from "../articles/api"
 
     @Component({
         components: {
