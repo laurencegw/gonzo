@@ -57,11 +57,8 @@ export class ArticlesClient implements Articles {
     }
 
     getArticleByID(articleID: number): Promise<Article> {
-        return getToken().then((token) => {
-            return axios.get<Article>(`${this.articlesBasePath}/${articleID}`, {
-                headers: this.headers(token),
-                responseType: "json"
-            })
+        return axios.get<Article>(`${this.articlesBasePath}/${articleID}`, {
+            responseType: "json"
         }).then((response) => {
             return new Article(response.data)
         })

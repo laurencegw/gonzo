@@ -35,7 +35,7 @@
         }
 
         headerClicked(header: ArticleHeader) {
-            console.log(header.title)
+            this.$router.push({ name: "read", params: {id: `${header.id}`}})
         }
 
         get isLoading(): boolean {

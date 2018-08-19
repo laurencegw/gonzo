@@ -9,6 +9,7 @@ import Login from "@/views/Login.vue"
 import NewArticle from "@/mycontent/NewArticle.vue"
 import ExistingArticle from "@/mycontent/ExistingArticle.vue"
 import EditArticle from "@/mycontent/EditArticle.vue"
+import ReadArticle from "@/views/ReadArticle.vue"
 import store from "@/store"
 import {LoginState} from "@/users/store"
 
@@ -50,6 +51,11 @@ export default new Router({
             name: "me",
             component: Me,
             beforeEnter: loginGuard
+        },
+        {
+            path: "read/:id",
+            name: "read",
+            component: ReadArticle,
         },
         {
             path: "/my-content",
