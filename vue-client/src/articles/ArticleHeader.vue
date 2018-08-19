@@ -1,10 +1,14 @@
 <template>
-    <div @click="click" class="margined bordered-light-thin">
-        <div>{{header.title}}</div>
-        <div>Published: {{ header.created | fDate }}</div>
-        <div>Updated: {{header.updated | fDate }}</div>
-        <div>Author: {{ header.author.handle }}</div>
-    </div>
+    <b-container @click="click" class="margined bordered-light-thin">
+        <b-row>
+            <b-col><h4>{{header.title}}</h4></b-col>
+        </b-row>
+        <b-row>
+            <b-col md="auto">@{{header.author.handle}}</b-col>
+            <b-col md="auto">{{header.created | fDate}}</b-col>
+            <b-col md="auto" v-if="showUpdateDate">Updated: {{header.updated | fDate}}</b-col>
+        </b-row>
+    </b-container>
 </template>
 
 <script lang="ts">
@@ -14,12 +18,16 @@
     import {ArticleHeader} from "@/articles/api"
 
     @Component({})
-    export default class ArticletHeader extends Vue {
+    export default class ArticleHeaderComponent extends Vue {
         @Prop() header!: ArticleHeader
 
         @Emit()
         click(event) {
 
+        }
+
+        get showUpdateDate(): boolean {
+            return this.header ? this.header.created !== this.header.updated : false
         }
     }
 </script>

@@ -15,13 +15,13 @@ import org.springframework.stereotype.Component
 class TestUserLoader {
 
     @Autowired
-    lateinit var userService:UserService
+    lateinit var userService: UserService
 
     @Autowired
-    lateinit var articleService:ArticlesService
+    lateinit var articleService: ArticlesService
 
     @EventListener
-    fun onApplicationEvent(event: ApplicationStartedEvent){
+    fun onApplicationEvent(event: ApplicationStartedEvent) {
         val user = userService.createUser(UserNew(
                 handle = "gonzocoder",
                 email = "gonzo@coder.com",
@@ -31,27 +31,28 @@ class TestUserLoader {
 
         articleService.createArticle(ArticleDraftNew(
                 "Never published",
-                "## Markdown is supported\n" +
-                        "This **articles** is only in draft state - no published content\n" +
-                        "\n" +
-                        "Still working on this draft\n" +
-                        "\n" +
-                        "![vegeta](https://vignette.wikia.nocookie.net/dbz-dokkanbattle/images/9/95/Artwork_1012640.png/revision/latest/scale-to-width-down/250?cb=20180325041540)\n" +
-                        "\n" +
-                        "<h2>And so are html tags </h2>",
+                "This content has never seen the light of day",
                 user.id
         ))
 
         var article = articleService.createArticle(ArticleDraftNew(
                 "Published, No Changes",
-                "This articles is published and no current changes",
+                "## Markdown is supported\n" +
+                        "This **article** was published, and is making use of mark down. So far it looks pretty good.\n" +
+                        "\n" +
+                        "\n" +
+                        "![vegeta](https://vignette.wikia.nocookie.net/dbz-dokkanbattle/images/9/95/Artwork_1012640.png/revision/latest/scale-to-width-down/250?cb=20180325041540 \"Vegeta!\")\n" +
+                        "\n" +
+                        "<h2>And so are html tags </h2>" +
+                        "\n" +
+                        "The heading above was written with an html tag. So we can mix and match the html and markdown. Crazy\n",
                 user.id
         ))
         articleService.publishArticle(article.id)
 
         article = articleService.createArticle(ArticleDraftNew(
                 "Published, Unpublished Changes",
-                "This is content that has been published",
+                "This is the original content, and there is some unpublished content as well",
                 user.id
         ))
         articleService.publishArticle(article.id)

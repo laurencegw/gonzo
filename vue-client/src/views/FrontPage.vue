@@ -1,12 +1,11 @@
 <template>
     <div>
         <v-loading :is-loading="isLoading">
-
+            <v-hunter-quote v-if="articleHeaders.length === 0">So we shall let the reader answer this question for himself: who is the happier man, he who has
+                braved the storm of life and lived or he who has stayed securely on shore and merely existed?
+            </v-hunter-quote>
+            <article-header-list v-else :headers="articleHeaders" @header-clicked="headerClicked"></article-header-list>
         </v-loading>
-        <v-hunter-quote>So we shall let the reader answer this question for himself: who is the happier man, he who has
-            braved the storm of life and lived or he who has stayed securely on shore and merely existed?
-        </v-hunter-quote>
-        <article-header-list :headers="articleHeaders" @header-clicked="headerClicked"></article-header-list>
     </div>
 </template>
 <script lang="ts">

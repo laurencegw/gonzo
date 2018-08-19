@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <b-container>
         <b-row>
             <b-col><h2>{{title}}</h2></b-col>
         </b-row>
@@ -8,7 +8,7 @@
                 <vue-markdown :source="content"></vue-markdown>
             </b-col>
         </b-row>
-    </div>
+    </b-container>
 </template>
 
 <script lang="ts">

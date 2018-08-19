@@ -53,7 +53,7 @@ export default new Router({
             beforeEnter: loginGuard
         },
         {
-            path: "read/:id",
+            path: "/read/:id",
             name: "read",
             component: ReadArticle,
         },

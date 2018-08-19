@@ -1,8 +1,7 @@
 <template>
     <v-loading :is-loading="isLoading">
         <published-article
-                :title="title"
-                :content="content"
+                :article="article"
         ></published-article>
     </v-loading>
 </template>
@@ -22,19 +21,12 @@
         article: Article | null = null
         client = new ArticlesClient()
 
-        get title() {
-            return this.article ? this.article.title : ""
-        }
-
-        get content() {
-            return this.article ? this.article.content : ""
-        }
-
         get isLoading(): boolean {
             return !this.loaded
         }
 
         mounted() {
+            console.log("mounted")
             this.load()
         }
 
