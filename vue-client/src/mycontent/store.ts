@@ -51,7 +51,7 @@ const buildActions = function (articleClient: Articles): ActionTree<MyContentSta
                 return articleDraft
             })
         },
-        removeArticle(store: ActionContext<MyContentState, any>) {
+        deleteArticle(store: ActionContext<MyContentState, any>) {
             const currentArticleID = store.getters.articleDraft.id
             return articleClient.deleteArticle(currentArticleID).then((articleDraft) => {
                 store.commit("removeArticle", currentArticleID)

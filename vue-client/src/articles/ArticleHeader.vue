@@ -1,5 +1,5 @@
 <template>
-    <div @click="click">
+    <div @click="click" class="margined bordered-light-thin">
         <div>{{header.title}}</div>
         <div>Published: {{ header.created | fDate }}</div>
         <div>Updated: {{header.updated | fDate }}</div>
